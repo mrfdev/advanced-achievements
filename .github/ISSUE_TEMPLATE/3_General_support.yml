@@ -1,12 +1,12 @@
 name: '❓ General Support'
 description: Request help
-labels: ['general support']
+labels: [ 'general support' ]
 body:
   - type: input
     id: plugin-version
     attributes:
       label: '🎆 Advanced Achievements version'
-      description: 'What version of the plugin are you running?' 
+      description: 'What version of the plugin are you running?'
     validations:
       required: true
 
@@ -14,32 +14,15 @@ body:
     id: server-version
     attributes:
       label: '🖥 Server version'
-      description: 'What server version are you running?' 
+      description: 'What server version are you running?'
     validations:
       required: true
-
-  - type: input
-    id: spigot-username
-    attributes:
-      label: '🚰 Spigot username'
-      description: 'What is your username on spigotmc.org?' 
-    validations:
-      required: true
-
-  - type: checkboxes
-    id: wiki
-    attributes:
-      label: '𝑾 Wiki read'
-      description: 'Have you read through the [Wiki](https://github.com/PyvesB/advanced-achievements/wiki) and all the useful information it contains?' 
-      options:
-        - label: 'I have read the Wiki.'
-          required: true
 
   - type: checkboxes
     id: issues-searched
     attributes:
       label: '📁 Existing issues'
-      description: 'Many new issues tend to be duplicates, have you searched [existing ones](https://github.com/PyvesB/advanced-achievements/issues)?' 
+      description: 'Many new issues tend to be duplicates, have you searched [existing ones](https://github.com/mrfdev/advanced-achievements/issues)?'
       options:
         - label: 'I have searched existing issues.'
           required: true
@@ -63,9 +46,3 @@ body:
         ```
     validations:
       required: false
-
-  - type: markdown
-    attributes:
-      value: |
-        ## :heart: Love Advanced Achievements?
-        Don't forget to star the repository or leave a review on Spigot to boost the project!
