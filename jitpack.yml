@@ -1,4 +1,4 @@
 jdk:
-  - openjdk8
+  - openjdk22
 install:
    - mvn -pl advanced-achievements-api -am clean install
