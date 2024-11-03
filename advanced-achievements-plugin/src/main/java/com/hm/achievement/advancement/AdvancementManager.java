@@ -1,8 +1,10 @@
 package com.hm.achievement.advancement;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -28,6 +30,7 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.StringHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of registering achievements as advancements.
@@ -75,7 +78,7 @@ public class AdvancementManager implements Reloadable {
 		configBackgroundTexture = mainConfig.getString("AdvancementsBackground");
 	}
 
-	public static String getKey(String achName) {
+	public static @NotNull String getKey(String achName) {
 		return REGEX_PATTERN_KEYS.matcher(achName).replaceAll("").toLowerCase();
 	}
 
@@ -104,7 +107,7 @@ public class AdvancementManager implements Reloadable {
 		
 		File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancement");
 		if(dataPack.exists()) {
-			for(File file : dataPack.listFiles()){
+			for(File file : Objects.requireNonNull(dataPack.listFiles())){
 				file.delete();
 			}
 			dataPack.delete();
@@ -175,7 +178,7 @@ public class AdvancementManager implements Reloadable {
 	 * @param lastAchievement
 	 * @return the key of the registered achievement
 	 */
-	private String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
+	private @NotNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
 		// Strip formatting codes as the advancements interface does not support them.
 		String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
 
