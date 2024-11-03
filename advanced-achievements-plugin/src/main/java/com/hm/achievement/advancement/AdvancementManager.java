@@ -101,6 +101,15 @@ public class AdvancementManager implements Reloadable {
 				Bukkit.getUnsafe().removeAdvancement(namespacedKey);
 			}
 		}
+		
+		File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancement");
+		if(dataPack.exists()) {
+			for(File file : dataPack.listFiles()){
+				file.delete();
+			}
+			dataPack.delete();
+		}
+		
 		Bukkit.reloadData();
 		logger.info("Cleaned " + achievementsCleaned + " old advancements.");
 	}
@@ -148,6 +157,11 @@ public class AdvancementManager implements Reloadable {
 				parentKey = registerAdvancement(item, categoryAchievements.get(i), parentKey, last);
 			}
 		}
+		
+		File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancements");
+		File renamedDataPack = new File(dataPack.getPath().substring(0, dataPack.getPath().length() - 1));
+		if(dataPack.exists()) dataPack.renameTo(renamedDataPack);
+		
 		Bukkit.reloadData();
 		logger.info("Generated " + generatedAdvancements + " new advancements.");
 	}
