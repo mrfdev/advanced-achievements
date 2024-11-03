@@ -18,7 +18,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>22</java.version>
+        <java.version>21</java.version>
         <revision>7.0.0</revision>
         <maven.test.skip>true</maven.test.skip>
     </properties>
