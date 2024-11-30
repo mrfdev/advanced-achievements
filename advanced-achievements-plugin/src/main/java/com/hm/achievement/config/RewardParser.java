@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -35,6 +36,8 @@ import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.StringHelper;
 
 import net.milkbowl.vault.economy.Economy;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of handling the rewards for achievements.
@@ -56,7 +59,7 @@ public class RewardParser {
 
 	@Inject
 	public RewardParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			AdvancedAchievements advancedAchievements, MaterialHelper materialHelper) {
+						@NotNull AdvancedAchievements advancedAchievements, MaterialHelper materialHelper) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.materialHelper = materialHelper;
@@ -100,19 +103,20 @@ public class RewardParser {
 		return rewards;
 	}
 
-	private Reward parseMoneyReward(ConfigurationSection configSection) {
+	private @NotNull Reward parseMoneyReward(@NotNull ConfigurationSection configSection) {
 		int amount = configSection.getInt("Money");
 		String currencyName = amount > 1 ? economy.currencyNamePlural() : economy.currencyNameSingular();
 		String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-money"), "AMOUNT",
 				amount + " " + currencyName);
 		String chatText = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langConfig.getString("money-reward-received"), "AMOUNT",
-						amount + " " + currencyName));
+                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("money-reward-received"), "AMOUNT",
+                        amount + " " + currencyName)));
 		Consumer<Player> rewarder = player -> economy.depositPlayer(player, amount);
 		return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
 	}
 
-	private Reward parseItemReward(ConfigurationSection configSection) {
+	@Contract("_ -> new")
+	private @NotNull Reward parseItemReward(@NotNull ConfigurationSection configSection) {
 		List<String> listTexts = new ArrayList<>();
 		List<String> chatTexts = new ArrayList<>();
 		List<ItemStack> itemStacks = new ArrayList<>();
@@ -161,43 +165,43 @@ public class RewardParser {
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 
-	private Reward parseExperienceReward(ConfigurationSection configSection) {
+	private @NotNull Reward parseExperienceReward(@NotNull ConfigurationSection configSection) {
 		int amount = configSection.getInt("Experience");
 		String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-experience"), "AMOUNT",
 				Integer.toString(amount));
 		String chatText = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langConfig.getString("experience-reward-received"), "AMOUNT",
-						Integer.toString(amount)));
+                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("experience-reward-received"), "AMOUNT",
+                        Integer.toString(amount))));
 		Consumer<Player> rewarder = player -> player.giveExp(amount);
 		return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
 	}
 
-	private Reward parseIncreaseMaxHealthReward(ConfigurationSection configSection) {
+	private @NotNull Reward parseIncreaseMaxHealthReward(@NotNull ConfigurationSection configSection) {
 		int amount = configSection.getInt("IncreaseMaxHealth");
 		String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-increase-max-health"), "AMOUNT",
 				Integer.toString(amount));
 		String chatText = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langConfig.getString("increase-max-health-reward-received"), "AMOUNT",
-						Integer.toString(amount)));
+                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("increase-max-health-reward-received"), "AMOUNT",
+                        Integer.toString(amount))));
 		Consumer<Player> rewarder = player -> {
-			AttributeInstance playerAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-			playerAttribute.setBaseValue(playerAttribute.getBaseValue() + amount);
+			AttributeInstance playerAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+			Objects.requireNonNull(playerAttribute).setBaseValue(playerAttribute.getBaseValue() + amount);
 		};
 		return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
 	}
 
-	private Reward parseIncreaseMaxOxygenReward(ConfigurationSection configSection) {
+	private @NotNull Reward parseIncreaseMaxOxygenReward(@NotNull ConfigurationSection configSection) {
 		int amount = configSection.getInt("IncreaseMaxOxygen");
 		String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-increase-max-oxygen"), "AMOUNT",
 				Integer.toString(amount));
 		String chatText = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceOnce(langConfig.getString("increase-max-oxygen-reward-received"), "AMOUNT",
-						Integer.toString(amount)));
+                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("increase-max-oxygen-reward-received"), "AMOUNT",
+                        Integer.toString(amount))));
 		Consumer<Player> rewarder = player -> player.setMaximumAir(player.getMaximumAir() + amount);
 		return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
 	}
 
-	private Reward parseCommandReward(ConfigurationSection configSection) {
+	private @NotNull Reward parseCommandReward(@NotNull ConfigurationSection configSection) {
 		String displayPath = configSection.contains("Command") ? "Command.Display" : "Commands.Display";
 		List<String> listTexts = getOneOrManyConfigStrings(configSection, displayPath);
 		List<String> chatTexts = listTexts.stream()
@@ -210,7 +214,7 @@ public class RewardParser {
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 
-	private List<String> getOneOrManyConfigStrings(ConfigurationSection configSection, String path) {
+	private List<String> getOneOrManyConfigStrings(@NotNull ConfigurationSection configSection, String path) {
 		if (configSection.isList(path)) {
 			// Real YAML list.
 			return configSection.getStringList(path);
