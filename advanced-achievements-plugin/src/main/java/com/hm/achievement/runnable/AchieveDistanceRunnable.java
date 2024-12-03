@@ -1,7 +1,9 @@
 package com.hm.achievement.runnable;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -36,6 +39,17 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	private final Set<Category> disabledCategories;
 
 	private boolean configIgnoreVerticalDistance;
+
+	public static final Set<EntityType> BOAT_TYPES = EnumSet.of(
+			EntityType.ACACIA_BOAT,
+			EntityType.BIRCH_BOAT,
+			EntityType.DARK_OAK_BOAT,
+			EntityType.JUNGLE_BOAT,
+			EntityType.OAK_BOAT,
+			EntityType.SPRUCE_BOAT,
+			EntityType.MANGROVE_BOAT,
+			EntityType.BAMBOO_RAFT
+	);
 
 	@Inject
 	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
@@ -70,13 +84,13 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 	 * 
 	 * @param player
 	 */
-	private void validateMovementAndUpdateDistance(Player player) {
+	private void validateMovementAndUpdateDistance(@NotNull Player player) {
 		Location currentLocation = player.getLocation();
 		Location previousLocation = playerLocations.put(player.getUniqueId(), currentLocation);
 
 		// If player location not found or if player has changed world, ignore previous location.
 		// Evaluating distance would give an exception.
-		if (previousLocation == null || !previousLocation.getWorld().getUID().equals(player.getWorld().getUID())) {
+		if (previousLocation == null || !Objects.requireNonNull(previousLocation.getWorld()).getUID().equals(player.getWorld().getUID())) {
 			return;
 		}
 
@@ -86,14 +100,14 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 		}
 
 		if (player.isInsideVehicle()) {
-			EntityType vehicleType = player.getVehicle().getType();
+			EntityType vehicleType = Objects.requireNonNull(player.getVehicle()).getType();
 			if (vehicleType == EntityType.HORSE) {
 				updateDistance(difference, player, NormalAchievements.DISTANCEHORSE);
 			} else if (vehicleType == EntityType.PIG) {
 				updateDistance(difference, player, NormalAchievements.DISTANCEPIG);
 			} else if (vehicleType == EntityType.MINECART) {
 				updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
-			} else if (vehicleType == EntityType.BOAT) {
+			} else if (BOAT_TYPES.contains(vehicleType)) {
 				updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
 			} else if (vehicleType == EntityType.LLAMA) {
 				updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
