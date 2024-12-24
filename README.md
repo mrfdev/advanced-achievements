@@ -20,8 +20,7 @@ extensive statistics system, handles YAML configuration files and features fancy
 
 ## :star: Support and feedback
 
-Thought of a cool idea? Found a problem or need some help? Simply open an [**issue
-**](https://github.com/mrfdev/advanced-achievements/issues)!
+Thought of a cool idea? Found a problem or need some help? Simply open an [**issue**](https://github.com/mrfdev/advanced-achievements/issues)!
 
 Find the project useful, fun or interesting? **Star** the repository by clicking on the icon on the top right of this
 page!

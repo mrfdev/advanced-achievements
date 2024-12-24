@@ -172,7 +172,7 @@ class RewardParserTest {
 		assertEquals(Arrays.asList("increase max health by 2"), reward.getListTexts());
 		assertEquals(Arrays.asList("Your max health has increased by 2!"), reward.getChatTexts());
 		reward.getRewarder().accept(player);
-		verify(player).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		verify(player).getAttribute(Attribute.MAX_HEALTH);
 		verify(healthAttribute).setBaseValue(3.0);
 	}
 
