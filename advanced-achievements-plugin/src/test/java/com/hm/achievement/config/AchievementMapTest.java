@@ -24,7 +24,7 @@ class AchievementMapTest {
 	private AchievementMap underTest;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		underTest = new AchievementMap();
 	}
 
@@ -106,7 +106,7 @@ class AchievementMapTest {
 		underTest.put(achievement3);
 
 		assertEquals(Arrays.asList(achievement1, achievement3), underTest.getForCategory(MultipleAchievements.PLACES));
-		assertEquals(Arrays.asList(achievement2), underTest.getForCategory(NormalAchievements.SMELTING));
+		assertEquals(Collections.singletonList(achievement2), underTest.getForCategory(NormalAchievements.SMELTING));
 	}
 
 	@Test
@@ -122,7 +122,7 @@ class AchievementMapTest {
 		underTest.put(achievement2);
 		underTest.put(achievement3);
 
-		assertEquals(Arrays.asList(achievement1),
+		assertEquals(Collections.singletonList(achievement1),
 				underTest.getForCategoryAndSubcategory(MultipleAchievements.PLACES, "stone"));
 	}
 

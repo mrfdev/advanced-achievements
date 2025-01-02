@@ -144,7 +144,7 @@ class CommandTabCompleterTest {
 		String[] args = { "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("help"), completionResult);
+		assertEquals(List.of("help"), completionResult);
 	}
 
 	@Test
@@ -152,7 +152,7 @@ class CommandTabCompleterTest {
 		String[] args = { "reset", "C" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("Crafts.workbench"), completionResult);
+		assertEquals(List.of("Crafts.workbench"), completionResult);
 	}
 
 	@Test
@@ -160,7 +160,7 @@ class CommandTabCompleterTest {
 		String[] args = { "add", "" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("1"), completionResult);
+		assertEquals(List.of("1"), completionResult);
 	}
 
 	@Test
@@ -168,7 +168,7 @@ class CommandTabCompleterTest {
 		String[] args = { "add", "1", "Cra" };
 		List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
 
-		assertEquals(asList("Crafts.workbench"), completionResult);
+		assertEquals(List.of("Crafts.workbench"), completionResult);
 	}
 
 	@Test

@@ -54,6 +54,7 @@ import com.hm.achievement.utils.StringHelper;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and
@@ -118,10 +119,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	@Inject
 	public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig,
-			@Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader,
-			CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser,
-			AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand,
-			FancyMessageSender fancyMessageSender) {
+											 @Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader,
+											 CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser,
+											 AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand,
+											 FancyMessageSender fancyMessageSender) {
 		this.mainConfig = mainConfig;
 		this.langConfig = langConfig;
 		this.logger = logger;
@@ -256,7 +257,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param rewards
 	 */
 	private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
-			List<Reward> rewards) {
+										 List<Reward> rewards) {
 		List<String> chatMessages = rewards.stream()
 				.map(Reward::getChatTexts)
 				.flatMap(List::stream)
@@ -286,7 +287,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private void displayNotification(Player receiver, String nameToShowUser, Player otherPlayer) {
 		String message = langAchievementReceived.contains("ACH")
 				? StringUtils.replaceEach(langAchievementReceived, new String[] { "PLAYER", "ACH" },
-						new String[] { receiver.getName(), nameToShowUser })
+				new String[] { receiver.getName(), nameToShowUser })
 				: StringUtils.replaceOnce(langAchievementReceived, "PLAYER", receiver.getName()) + nameToShowUser;
 		if (configActionBarNotify) {
 			otherPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
@@ -301,7 +302,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 *
 	 * @param player
 	 */
-	private void displayFirework(Player player) {
+	private void displayFirework(@NotNull Player player) {
 		// Set firework to launch beneath player.
 		Location location = player.getLocation().subtract(0, 1, 0);
 		Firework firework = player.getWorld().spawn(location, Firework.class);
@@ -338,7 +339,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 *
 	 * @param player
 	 */
-	private void displaySimplifiedReception(Player player) {
+	private void displaySimplifiedReception(@NotNull Player player) {
 		player.playSound(player.getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0.7f);
 		player.spawnParticle(Particle.FIREWORK, player.getLocation(), 500, 0, 3, 0, 0.1f);
 	}
@@ -346,10 +347,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	/**
 	 * Handles rewards and displaying messages when a player has received all
 	 * achievements.
-	 * 
+	 *
 	 * @param player
 	 */
-	private void handleAllAchievementsReceived(Player player) {
+	private void handleAllAchievementsReceived(@NotNull Player player) {
 		List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
 		rewards.forEach(r -> r.getRewarder().accept(player));
 		player.sendMessage(langAllAchievementsReceived);

@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.Objects;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +32,7 @@ class YamlUpdaterTest {
 	private YamlUpdater underTest;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		when(plugin.getResource("config-default.yml")).thenReturn(getClass().getResourceAsStream("/config-default.yml"));
 		underTest = new YamlUpdater(plugin);
 	}
@@ -42,7 +44,7 @@ class YamlUpdaterTest {
 
 		underTest.update("config-default.yml", userFile.getName(), YamlConfiguration.loadConfiguration(userFile));
 
-		byte[] expectedUserConfig = Files.readAllBytes(Paths.get(getClass().getResource("/config-updated.yml").toURI()));
+		byte[] expectedUserConfig = Files.readAllBytes(Paths.get(Objects.requireNonNull(getClass().getResource("/config-updated.yml")).toURI()));
 		byte[] actualUserConfig = Files.readAllBytes(userFile.toPath());
 		assertEquals(new String(expectedUserConfig), new String(actualUserConfig));
 	}
@@ -68,10 +70,10 @@ class YamlUpdaterTest {
 		assertEquals(lastModified, userFile.lastModified());
 	}
 
-	private File createFileFromTestResource(String testResourceName) throws Exception {
+	private @NotNull File createFileFromTestResource(String testResourceName) throws Exception {
 		File userFile = new File(tempDir, testResourceName);
 		try (FileOutputStream targetUserConfig = new FileOutputStream(userFile)) {
-			Files.copy(Paths.get(getClass().getClassLoader().getResource(testResourceName).toURI()), targetUserConfig);
+			Files.copy(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(testResourceName)).toURI()), targetUserConfig);
 		}
 		return userFile;
 	}

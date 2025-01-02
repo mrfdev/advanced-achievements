@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.boss.BarColor;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -42,7 +43,7 @@ class ColorHelperTest {
 		assertEquals(barColor, color);
 	}
 
-	static Stream<Arguments> chatAndBarColors() {
+	static @NotNull Stream<Arguments> chatAndBarColors() {
 		return Stream.of(
 				Arguments.of(ChatColor.BLACK, BarColor.PURPLE),
 				Arguments.of(ChatColor.DARK_BLUE, BarColor.BLUE),

@@ -19,8 +19,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <revision>7.1.6</revision>
-        <maven.test.skip>true</maven.test.skip>
+        <revision>7.2.0</revision>
+        <!--<maven.test.skip>true</maven.test.skip>!-->
     </properties>
 
     <modules>
@@ -59,6 +59,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.2</version>
+                    <configuration>
+                        <argLine>
+                            -javaagent:${settings.localRepository}/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.jar
+                            -Xshare:off
+                        </argLine>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -71,7 +77,7 @@
         </repository>
         <repository>
             <id>placeholderapi-repo</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/releases</url>
         </repository>
         <repository>
             <id>jitpack-repo</id>
@@ -93,7 +99,7 @@
             <dependency>
                 <groupId>com.google.dagger</groupId>
                 <artifactId>dagger</artifactId>
-                <version>2.52</version>
+                <version>2.54</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -103,7 +109,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.12.0</version>
+                <version>1.13.0</version>
             </dependency>
             <dependency>
                 <groupId>io.papermc.paper</groupId>
@@ -156,7 +162,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>5.11.3</version>
+                <version>5.11.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

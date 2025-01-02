@@ -90,7 +90,7 @@ class PluginCommandExecutorTest {
 
 	@Test
 	void itShouldParseOpenBoxCharactersIntoArray() {
-		String[] args = { "inspect", "one\u2423two", "three\u2423four" };
+		String[] args = { "inspect", "one␣two", "three␣four" };
 		String[] expected = { "inspect", "one", "two", "three", "four" };
 		underTest.onCommand(sender, null, null, args);
 

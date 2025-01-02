@@ -19,28 +19,30 @@ class AdvancementJsonHelperTest {
 				.iconData("0").title("Special Event Achievement!").description("You took part in the \"Special Event\"!")
 				.parent("advancedachievements:advanced_achievements_parent").type(AdvancementType.TASK).build();
 
-		assertEquals("{\n" +
-				"  \"criteria\":{\n" +
-				"    \"aach_handled\":{\n" +
-				"      \"trigger\":\"minecraft:impossible\"\n" +
-				"    }\n" +
-				"  },\n" +
-				"  \"requirements\":[\n" +
-				"    [\n" +
-				"      \"aach_handled\"\n" +
-				"    ]\n" +
-				"  ],\n" +
-				"  \"display\":{\n" +
-				"    \"icon\":{\n" +
-				"      \"item\":\"minecraft:dirt\",\"data\":0\n" +
-				"    },\n" +
-				"    \"title\":\"Special Event Achievement!\",\n" +
-				"    \"description\":\"You took part in the \\\"Special Event\\\"!\",\n" +
-				"    \"frame\":\"task\",\n" +
-				"    \"announce_to_chat\":false\n" +
-				"  },\n" +
-				"  \"parent\":\"advancedachievements:advanced_achievements_parent\"\n" +
-				"}\n", AdvancementJsonHelper.toJson(aa));
+		assertEquals("""
+                {
+                  "criteria":{
+                    "aach_handled":{
+                      "trigger":"minecraft:impossible"
+                    }
+                  },
+                  "requirements":[
+                    [
+                      "aach_handled"
+                    ]
+                  ],
+                  "display":{
+                    "icon":{
+                      "id":"minecraft:dirt","data":0
+                    },
+                    "title":"Special Event Achievement!",
+                    "description":"You took part in the \\"Special Event\\"!",
+                    "frame":"task",
+                    "announce_to_chat":false
+                  },
+                  "parent":"advancedachievements:advanced_achievements_parent"
+                }
+                """, AdvancementJsonHelper.toJson(aa));
 	}
 
 	@Test
@@ -49,45 +51,49 @@ class AdvancementJsonHelperTest {
 				.iconData("0").title("Special Event Achievement!").description("You took part in the special event!")
 				.background("minecraft:book").type(AdvancementType.GOAL).build();
 
-		assertEquals("{\n" +
-				"  \"criteria\":{\n" +
-				"    \"aach_handled\":{\n" +
-				"      \"trigger\":\"minecraft:impossible\"\n" +
-				"    }\n" +
-				"  },\n" +
-				"  \"requirements\":[\n" +
-				"    [\n" +
-				"      \"aach_handled\"\n" +
-				"    ]\n" +
-				"  ],\n" +
-				"  \"display\":{\n" +
-				"    \"icon\":{\n" +
-				"      \"item\":\"minecraft:dirt\",\"data\":0\n" +
-				"    },\n" +
-				"    \"title\":\"Special Event Achievement!\",\n" +
-				"    \"description\":\"You took part in the special event!\",\n" +
-				"    \"frame\":\"goal\",\n" +
-				"    \"announce_to_chat\":false,\n" +
-				"    \"background\":\"minecraft:book\"\n" +
-				"  }\n" +
-				"}\n", AdvancementJsonHelper.toJson(aa));
+		assertEquals("""
+                {
+                  "criteria":{
+                    "aach_handled":{
+                      "trigger":"minecraft:impossible"
+                    }
+                  },
+                  "requirements":[
+                    [
+                      "aach_handled"
+                    ]
+                  ],
+                  "display":{
+                    "icon":{
+                      "id":"minecraft:dirt","data":0
+                    },
+                    "title":"Special Event Achievement!",
+                    "description":"You took part in the special event!",
+                    "frame":"goal",
+                    "announce_to_chat":false,
+                    "background":"minecraft:book"
+                  }
+                }
+                """, AdvancementJsonHelper.toJson(aa));
 	}
 
 	@Test
 	void shouldGenerateHiddenParentAdvancementJson() {
-		assertEquals("{\n" +
-				"  \"criteria\":{\n" +
-				"    \"aach_handled\":{\n" +
-				"      \"trigger\":\"minecraft:impossible\"\n" +
-				"    }\n" +
-				"  },\n" +
-				"  \"requirements\":[\n" +
-				"    [\n" +
-				"      \"aach_handled\"\n" +
-				"    ]\n" +
-				"  ],\n" +
-				"  \"background\":\"minecraft:book\"\n" +
-				"}\n", AdvancementJsonHelper.toHiddenJson("minecraft:book"));
+		assertEquals("""
+                {
+                  "criteria":{
+                    "aach_handled":{
+                      "trigger":"minecraft:impossible"
+                    }
+                  },
+                  "requirements":[
+                    [
+                      "aach_handled"
+                    ]
+                  ],
+                  "background":"minecraft:book"
+                }
+                """, AdvancementJsonHelper.toHiddenJson("minecraft:book"));
 	}
 
 }
