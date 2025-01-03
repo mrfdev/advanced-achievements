@@ -14,7 +14,7 @@ earn rewards, climb the rankings and receive RP books! The plugin supports SQLit
 extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
 
 ## Spigot release!
-We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachivements.121486/) now (which links to the releases page here on GitHub by the way, but here it is.
+We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachivements.121486/) now (which links to the releases page here on GitHub by the way, but here it is.)
 
 <p>
 <img src ="https://github.com/PyvesB/advanced-achievements/blob/master/images/walking-dead-screenshot.png?raw=true"  alt=""/>
