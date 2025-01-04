@@ -51,7 +51,7 @@ body:
     id: configuration
     attributes:
       label: '⚙ Configuration'
-      description: 'Please paste relevant configuration sections between the ``` lines below.'
+      description: 'Please paste relevant configuration sections between the ``` lines below. (If you have changed it from default)'
       value: |
         ```
         
