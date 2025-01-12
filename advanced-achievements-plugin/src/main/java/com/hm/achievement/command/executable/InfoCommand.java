@@ -65,7 +65,7 @@ public class InfoCommand extends AbstractCommand {
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
 
 		langVersionCommandAuthor = pluginHeader.toString() + configColor + langConfig.getString("version-command-author")
-				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().get(0);
+				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().getFirst();
 
 		langVersionCommandWebsite = pluginHeader.toString() + configColor + langConfig.getString("version-command-website")
 				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();

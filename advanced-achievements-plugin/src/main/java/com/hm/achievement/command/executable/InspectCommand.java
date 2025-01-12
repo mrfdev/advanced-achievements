@@ -140,10 +140,10 @@ public class InspectCommand extends AbstractCommand {
 			// Use Suppliers to avoid huge work on getting UUID - name relations.
 			List<Supplier<String>> messages = recipientList.stream()
 					.map(achievement -> (Supplier<String>) () -> {
-						UUID uuid = achievement.getAwardedTo();
+						UUID uuid = achievement.awardedTo();
 						OfflinePlayer player = advancedAchievements.getServer().getOfflinePlayer(uuid);
 						String identifier = player.hasPlayedBefore() ? player.getName() : uuid.toString();
-						return "  " + identifier + " (" + achievement.getFormattedDate() + ")";
+						return "  " + identifier + " (" + achievement.formattedDate() + ")";
 					}).collect(Collectors.toList());
 
 			SupplierCommandPagination pagination = new SupplierCommandPagination(messages, PER_PAGE, langConfig);

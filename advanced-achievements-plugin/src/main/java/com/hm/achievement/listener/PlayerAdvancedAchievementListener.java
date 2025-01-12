@@ -187,7 +187,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 		databaseManager.registerAchievement(player.getUniqueId(), achievement.getName(), System.currentTimeMillis());
 
-		achievement.getRewards().forEach(r -> r.getRewarder().accept(player));
+		achievement.getRewards().forEach(r -> r.rewarder().accept(player));
 		displayAchievement(player, achievement);
 
 		if (cacheManager.getPlayerAchievements(player.getUniqueId()).size() == achievementMap.getAll().size()) {
@@ -259,7 +259,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
 										 List<Reward> rewards) {
 		List<String> chatMessages = rewards.stream()
-				.map(Reward::getChatTexts)
+				.map(Reward::chatTexts)
 				.flatMap(List::stream)
 				.map(m -> StringHelper.replacePlayerPlaceholders(m, player))
 				.collect(Collectors.toList());
@@ -352,10 +352,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 */
 	private void handleAllAchievementsReceived(@NotNull Player player) {
 		List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
-		rewards.forEach(r -> r.getRewarder().accept(player));
+		rewards.forEach(r -> r.rewarder().accept(player));
 		player.sendMessage(langAllAchievementsReceived);
 		rewards.stream()
-				.map(Reward::getChatTexts)
+				.map(Reward::chatTexts)
 				.flatMap(List::stream)
 				.map(m -> StringHelper.replacePlayerPlaceholders(m, player))
 				.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));

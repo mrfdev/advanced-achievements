@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  */
 public class StringHelper {
 
-	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(&|§)([a-f]|r|[k-o]|[0-9]){1}");
+	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("([&§])([a-f]|r|[k-o]|[0-9]){1}");
 
 	public static String removeFormattingCodes(String text) {
 		return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");

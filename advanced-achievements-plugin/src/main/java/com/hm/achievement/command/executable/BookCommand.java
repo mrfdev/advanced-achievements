@@ -112,13 +112,11 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player player)) {
 			return;
 		}
 
-		Player player = (Player) sender;
-
-		if (!isInCooldownPeriod(player)) {
+        if (!isInCooldownPeriod(player)) {
 			List<AwardedDBAchievement> playerAchievementsList = databaseManager
 					.getPlayerAchievementsList(player.getUniqueId());
 			if (playerAchievementsList.isEmpty()) {
@@ -153,10 +151,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
 		for (AwardedDBAchievement awardedAchievement : achievements) {
-			Achievement achievement = achievementMap.getForName(awardedAchievement.getName());
+			Achievement achievement = achievementMap.getForName(awardedAchievement.name());
 			if (achievement != null) {
 				String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator
-						+ achievement.getMessage() + configBookSeparator + awardedAchievement.getFormattedDate();
+						+ achievement.getMessage() + configBookSeparator + awardedAchievement.formattedDate();
 				currentAchievement = translateColorCodes(currentAchievement);
 				bookPages.add(currentAchievement);
 			}

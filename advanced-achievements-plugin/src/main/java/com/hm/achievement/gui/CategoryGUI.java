@@ -141,7 +141,7 @@ public class CategoryGUI implements Reloadable {
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
 			if (achievementItem.getValue().getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) {
-				Category category = achievementItem.getKey().getCategory();
+				Category category = achievementItem.getKey().category();
 				Map<String, Long> subcategoriesToStatistics;
 				List<Achievement> achievements = achievementMap.getForCategory(category);
 				if (category instanceof MultipleAchievements) {
@@ -401,7 +401,7 @@ public class CategoryGUI implements Reloadable {
 			String dot = StringEscapeUtils.unescapeJava(
 					date == null ? configListColorNotReceived + "\u25CF " + configFormatNotReceived : "&r&f\u25CF ");
 			for (Reward reward : rewards) {
-				for (String listText : reward.getListTexts()) {
+				for (String listText : reward.listTexts()) {
 					lore.add(StringHelper.replacePlayerPlaceholders(translateColorCodes(dot + listText), player));
 				}
 			}

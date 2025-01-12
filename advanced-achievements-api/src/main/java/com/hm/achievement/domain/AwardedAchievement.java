@@ -8,28 +8,7 @@ import java.util.UUID;
  *
  * @author Pyves
  */
-public class AwardedAchievement {
+public record AwardedAchievement(Achievement achievement, UUID player, long awardedDate) {
 
-	private final Achievement achievement;
-	private final UUID player;
-	private final long awardedDate;
-
-	public AwardedAchievement(Achievement achievement, UUID player, long awardedDate) {
-		this.achievement = achievement;
-		this.player = player;
-		this.awardedDate = awardedDate;
-	}
-
-	public Achievement getAchievement() {
-		return achievement;
-	}
-
-	public UUID getPlayer() {
-		return player;
-	}
-
-	public long getAwardedDate() {
-		return awardedDate;
-	}
 
 }

@@ -53,7 +53,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
 		List<Achievement> achievements = achievementMap.getForCategory(category);
 		hardestCategoryThreshold = achievements.isEmpty() ? Long.MAX_VALUE
-				: achievements.get(achievements.size() - 1).getThreshold();
+				: achievements.getLast().getThreshold();
 		categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
 		configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar");
 		langStatisticCooldown = langConfig.getString("statistic-cooldown");

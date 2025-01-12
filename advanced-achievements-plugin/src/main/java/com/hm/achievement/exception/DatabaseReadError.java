@@ -1,5 +1,6 @@
 package com.hm.achievement.exception;
 
+import java.io.Serial;
 import java.sql.SQLException;
 
 /**
@@ -10,6 +11,7 @@ import java.sql.SQLException;
  */
 public class DatabaseReadError extends RuntimeException {
 
+	@Serial
 	private static final long serialVersionUID = 9076250874454568667L;
 
 	public DatabaseReadError(String context, SQLException e) {

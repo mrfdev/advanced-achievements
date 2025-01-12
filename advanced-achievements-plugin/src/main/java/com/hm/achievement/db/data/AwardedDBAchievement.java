@@ -6,35 +6,8 @@ import java.util.UUID;
 /**
  * Represents an Achievement that has been awarded to a player.
  */
-public class AwardedDBAchievement {
+public record AwardedDBAchievement(UUID awardedTo, String name, long dateAwarded, String formattedDate) {
 
-	private final UUID awardedTo;
-	private final String name;
-	private final long dateAwarded;
-	private final String formattedDate;
-
-	public AwardedDBAchievement(UUID awardedTo, String name, long dateAwarded, String formattedDate) {
-		this.awardedTo = awardedTo;
-		this.name = name;
-		this.dateAwarded = dateAwarded;
-		this.formattedDate = formattedDate;
-	}
-
-	public UUID getAwardedTo() {
-		return awardedTo;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public long getDateAwarded() {
-		return dateAwarded;
-	}
-
-	public String getFormattedDate() {
-		return formattedDate;
-	}
 
 	@Override
 	public int hashCode() {

@@ -44,14 +44,13 @@ public class CraftsListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getWhoClicked() instanceof Player) || event.getAction() == InventoryAction.NOTHING
+		if (!(event.getWhoClicked() instanceof Player player) || event.getAction() == InventoryAction.NOTHING
 				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
 				|| isCraftingIngotFromBlock(event.getRecipe())) {
 			return;
 		}
 
-		Player player = (Player) event.getWhoClicked();
-		ItemStack item = event.getCurrentItem();
+        ItemStack item = event.getCurrentItem();
 		String craftName = item.getType().name().toLowerCase();
 		if (!player.hasPermission(category.toChildPermName(craftName))) {
 			return;
@@ -91,15 +90,13 @@ public class CraftsListener extends AbstractListener {
 	 */
 	private boolean isCraftingIngotFromBlock(Recipe recipe) {
 		Material ingredient = Material.AIR;
-		if (recipe instanceof ShapelessRecipe) {
-			ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
-			List<ItemStack> ingredientList = shapelessRecipe.getIngredientList();
+		if (recipe instanceof ShapelessRecipe shapelessRecipe) {
+            List<ItemStack> ingredientList = shapelessRecipe.getIngredientList();
 			if (ingredientList.size() == 1) {
-				ingredient = ingredientList.get(0).getType();
+				ingredient = ingredientList.getFirst().getType();
 			}
-		} else if (recipe instanceof ShapedRecipe) {
-			ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
-			Collection<ItemStack> ingredients = shapedRecipe.getIngredientMap().values();
+		} else if (recipe instanceof ShapedRecipe shapedRecipe) {
+            Collection<ItemStack> ingredients = shapedRecipe.getIngredientMap().values();
 			if (ingredients.size() == 1) {
 				ingredient = ingredients.iterator().next().getType();
 			}

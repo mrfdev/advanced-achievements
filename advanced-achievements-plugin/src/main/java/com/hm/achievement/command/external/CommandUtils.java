@@ -2,6 +2,7 @@ package com.hm.achievement.command.external;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandUtils {
 
@@ -75,12 +77,12 @@ public class CommandUtils {
 			ents = new Entity[1];
 			if (sender instanceof Player) {
 				boolean good = true;
-				for (int b = 0; b < tags.length; b++) {
-					if (!canBeAccepted(tags[b], (Entity) sender, loc)) {
-						good = false;
-						break;
-					}
-				}
+                for (String tag : tags) {
+                    if (!canBeAccepted(tag, (Entity) sender, loc)) {
+                        good = false;
+                        break;
+                    }
+                }
 				if (good) {
 					ents[0] = (Entity) sender;
 				}
@@ -111,12 +113,12 @@ public class CommandUtils {
 				if (listOfValidEntities.size() >= C)
 					break;
 				boolean isValid = true;
-				for (int b = 0; b < tags.length; b++) {
-					if (!canBeAccepted(tags[b], e, loc)) {
-						isValid = false;
-						break;
-					}
-				}
+                for (String tag : tags) {
+                    if (!canBeAccepted(tag, e, loc)) {
+                        isValid = false;
+                        break;
+                    }
+                }
 				if (isValid) {
 					listOfValidEntities.add(e);
 				}
@@ -246,30 +248,20 @@ public class CommandUtils {
 	public static int getIntRelative(String arg, String rel, Entity e) {
 		int relInt = 0;
 		if (arg.startsWith("~")) {
-			switch (rel.toLowerCase()) {
-				case "x":
-					relInt = e.getLocation().getBlockX();
-					break;
-				case "y":
-					relInt = e.getLocation().getBlockY();
-					break;
-				case "z":
-					relInt = e.getLocation().getBlockZ();
-					break;
-			}
+            relInt = switch (rel.toLowerCase()) {
+                case "x" -> e.getLocation().getBlockX();
+                case "y" -> e.getLocation().getBlockY();
+                case "z" -> e.getLocation().getBlockZ();
+                default -> relInt;
+            };
 			return mathIt(arg, relInt);
 		} else if (arg.startsWith("^")) {
-			switch (rel.toLowerCase()) {
-				case "x":
-					relInt = e.getLocation().getBlockX();
-					break;
-				case "y":
-					relInt = e.getLocation().getBlockY();
-					break;
-				case "z":
-					relInt = e.getLocation().getBlockZ();
-					break;
-			}
+            relInt = switch (rel.toLowerCase()) {
+                case "x" -> e.getLocation().getBlockX();
+                case "y" -> e.getLocation().getBlockY();
+                case "z" -> e.getLocation().getBlockZ();
+                default -> relInt;
+            };
 			return mathIt(arg, relInt);
 		}
 		return 0;
@@ -338,7 +330,8 @@ public class CommandUtils {
 		return tags.split(",");
 	}
 
-	private static int mathIt(String args, int relInt) {
+	@SuppressWarnings("UnstableApiUsage")
+    private static int mathIt(String args, int relInt) {
 		int total = 0;
 		short mode = 0;
 		String arg = args.replace("~", String.valueOf(relInt));
@@ -346,20 +339,13 @@ public class CommandUtils {
 		for (int i = 0; i < arg.length(); i++) {
 			if (arg.charAt(i) == '+' || arg.charAt(i) == '-' || arg.charAt(i) == '*' || arg.charAt(i) == '/') {
 				try {
-					switch (mode) {
-						case 0:
-							total = total + Integer.parseInt(intString);
-							break;
-						case 1:
-							total = total - Integer.parseInt(intString);
-							break;
-						case 2:
-							total = total * Integer.parseInt(intString);
-							break;
-						case 3:
-							total = total / Integer.parseInt(intString);
-							break;
-					}
+                    total = switch (mode) {
+                        case 0 -> total + Integer.parseInt(intString);
+                        case 1 -> total - Integer.parseInt(intString);
+                        case 2 -> total * Integer.parseInt(intString);
+                        case 3 -> total / Integer.parseInt(intString);
+                        default -> total;
+                    };
 					mode = (short) ((arg.charAt(i) == '+') ? 0
 							: ((arg.charAt(i) == '-') ? 1
 									: ((arg.charAt(i) == '*') ? 2 : ((arg.charAt(i) == '/') ? 3 : -1))));
@@ -369,20 +355,13 @@ public class CommandUtils {
 
 			} else if (args.length() == i || arg.charAt(i) == ' ' || arg.charAt(i) == ',' || arg.charAt(i) == ']') {
 				try {
-					switch (mode) {
-						case 0:
-							total = total + Integer.parseInt(intString);
-							break;
-						case 1:
-							total = total - Integer.parseInt(intString);
-							break;
-						case 2:
-							total = total * Integer.parseInt(intString);
-							break;
-						case 3:
-							total = total / Integer.parseInt(intString);
-							break;
-					}
+                    total = switch (mode) {
+                        case 0 -> total + Integer.parseInt(intString);
+                        case 1 -> total - Integer.parseInt(intString);
+                        case 2 -> total * Integer.parseInt(intString);
+                        case 3 -> total / Integer.parseInt(intString);
+                        default -> total;
+                    };
 				} catch (Exception e) {
 					Bukkit.getLogger().severe("There has been an issue with a plugin using the CommandUtils class!");
 				}
@@ -567,17 +546,17 @@ public class CommandUtils {
 		if (!(e instanceof Player))
 			return false;
 		String[] scores = arg.split("\\{")[1].split("\\}")[0].split(",");
-		for (int i = 0; i < scores.length; i++) {
-			String[] s = scores[i].split("=");
-			String name = s[0];
+        for (String score : scores) {
+            String[] s = score.split("=");
+            String name = s[0];
 
-			for (Objective o : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
-				if (o.getName().equalsIgnoreCase(name)) {
-					if (!isWithinDoubleValue(isInverted(arg), s[1], o.getScore(e.getName()).getScore()))
-						return false;
-				}
-			}
-		}
+            for (Objective o : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
+                if (o.getName().equalsIgnoreCase(name)) {
+                    if (!isWithinDoubleValue(isInverted(arg), s[1], o.getScore(e.getName()).getScore()))
+                        return false;
+                }
+            }
+        }
 		return true;
 
 	}
@@ -614,19 +593,19 @@ public class CommandUtils {
 
 	}
 
-	private static boolean isRXM(String arg, Entity e) {
+	private static boolean isRXM(String arg, @NotNull Entity e) {
 		return isLessThan(arg, e.getLocation().getYaw());
 	}
 
-	private static boolean isRX(String arg, Entity e) {
+	private static boolean isRX(String arg, @NotNull Entity e) {
 		return isGreaterThan(arg, e.getLocation().getYaw());
 	}
 
-	private static boolean isRYM(String arg, Entity e) {
+	private static boolean isRYM(String arg, @NotNull Entity e) {
 		return isLessThan(arg, e.getLocation().getPitch());
 	}
 
-	private static boolean isRY(String arg, Entity e) {
+	private static boolean isRY(String arg, @NotNull Entity e) {
 		return isGreaterThan(arg, e.getLocation().getPitch());
 	}
 
@@ -677,8 +656,8 @@ public class CommandUtils {
 	private static boolean isName(String arg, Entity e) {
 		if (getName(arg) == null)
 			return true;
-		if ((isInverted(arg) != (e.getCustomName() != null) && isInverted(arg) != (getName(arg)
-				.equals(e.getCustomName().replace(" ", "_"))
+		if ((isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg)
+				.equals(Objects.requireNonNull(e.getCustomName()).replace(" ", "_"))
 				|| (e instanceof Player && ((Player) e).getName().replace(" ", "_").equalsIgnoreCase(getName(arg))))))
 			return true;
 		return false;
@@ -771,7 +750,7 @@ public class CommandUtils {
 		Y_ROTATION("y_rotation"),
 		X_ROTATION("x_rotation");
 
-		String name;
+		final String name;
 
 		SelectorType(String s) {
 			this.name = s;

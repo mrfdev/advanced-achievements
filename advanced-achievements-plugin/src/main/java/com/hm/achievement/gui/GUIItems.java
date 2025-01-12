@@ -68,7 +68,7 @@ public class GUIItems implements Reloadable {
 	}
 
 	@Override
-	public void extractConfigurationParameters() throws PluginLoadError {
+	public void extractConfigurationParameters() {
 		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 

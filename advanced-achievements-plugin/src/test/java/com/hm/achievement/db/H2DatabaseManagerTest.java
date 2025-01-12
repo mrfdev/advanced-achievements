@@ -81,8 +81,8 @@ class H2DatabaseManagerTest {
 		List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.getFirst();
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.getDateAwarded(),
-				found.getFormattedDate());
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(),
+				found.formattedDate());
 		assertEquals(expected, found);
 	}
 
@@ -93,8 +93,8 @@ class H2DatabaseManagerTest {
 		List<AwardedDBAchievement> achievements = db.getAchievementsRecipientList(TEST_ACHIEVEMENT);
 		assertEquals(1, achievements.size());
 		AwardedDBAchievement found = achievements.getFirst();
-		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.getDateAwarded(),
-				found.getFormattedDate());
+		AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(),
+				found.formattedDate());
 		assertEquals(expected, found);
 	}
 

@@ -41,7 +41,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
 	}
 
 	@Override
-	void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError {
+	void performPreliminaryTasks() throws ClassNotFoundException {
 		Class.forName(driverPath);
 
 		if (mainConfig.getBoolean("DatabaseBackup")) {

@@ -69,9 +69,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 1 coin"), reward.getListTexts());
-		assertEquals(List.of("You received: 1 coin!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("receive 1 coin"), reward.listTexts());
+		assertEquals(List.of("You received: 1 coin!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(economy).depositPlayer(player, 1);
 	}
 
@@ -84,9 +84,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 2 coins"), reward.getListTexts());
-		assertEquals(List.of("You received: 2 coins!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("receive 2 coins"), reward.listTexts());
+		assertEquals(List.of("You received: 2 coins!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(economy).depositPlayer(player, 2);
 	}
 
@@ -103,9 +103,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("teleportation to somewhere special!"), reward.getListTexts());
-		assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
+		assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(server).dispatchCommand(any(), eq("teleport Pyves"));
 	}
 
@@ -122,10 +122,10 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(Arrays.asList("display 1", "display 2"), reward.getListTexts());
+		assertEquals(Arrays.asList("display 1", "display 2"), reward.listTexts());
 		assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"),
-				reward.getChatTexts());
-		reward.getRewarder().accept(player);
+				reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(server).dispatchCommand(any(), eq("execute 1"));
 		verify(server).dispatchCommand(any(), eq("execute 2"));
 	}
@@ -138,9 +138,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 500 experience"), reward.getListTexts());
-		assertEquals(List.of("You received: 500 experience!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("receive 500 experience"), reward.listTexts());
+		assertEquals(List.of("You received: 500 experience!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(player).giveExp(500);
 	}
 	@Disabled("Cannot fix right now")
@@ -155,9 +155,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("increase max health by 2"), reward.getListTexts());
-		assertEquals(List.of("Your max health has increased by 2!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("increase max health by 2"), reward.listTexts());
+		assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(player).getAttribute(Attribute.MAX_HEALTH);
 		verify(healthAttribute).setBaseValue(3.0);
 	}
@@ -171,9 +171,9 @@ class RewardParserTest {
 
 		assertEquals(1, rewards.size());
 		Reward reward = rewards.getFirst();
-		assertEquals(List.of("increase max oxygen by 10"), reward.getListTexts());
-		assertEquals(List.of("Your max oxygen has increased by 10!"), reward.getChatTexts());
-		reward.getRewarder().accept(player);
+		assertEquals(List.of("increase max oxygen by 10"), reward.listTexts());
+		assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts());
+		reward.rewarder().accept(player);
 		verify(player).setMaximumAir(15);
 	}
 

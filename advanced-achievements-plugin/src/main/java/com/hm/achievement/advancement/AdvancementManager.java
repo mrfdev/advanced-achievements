@@ -145,7 +145,7 @@ public class AdvancementManager implements Reloadable {
 	private void registerOtherAdvancements() {
 		generatedAdvancements = 1; // Already generated 1 for parent.
 		for (Entry<OrderedCategory, ItemStack> categoryItemPair : guiItems.getOrderedAchievementItems().entrySet()) {
-			Category category = categoryItemPair.getKey().getCategory();
+			Category category = categoryItemPair.getKey().category();
 			if (disabledCategories.contains(category)) {
 				continue;
 			}

@@ -149,28 +149,12 @@ public interface AdvancedAchievementsAPI {
 	 */
 	void incrementCategoryForPlayer(MultipleAchievements category, String subcategory, Player player, int valueToAdd);
 
-	final class Rank {
+	record Rank(int playerRank, int totalPlayers) {
 
-		public final int playerRank;
-		public final int totalPlayers;
-
-		public Rank(int playerRank, int totalPlayers) {
-			this.playerRank = playerRank;
-			this.totalPlayers = totalPlayers;
-		}
 	}
 
-	final class Version {
+	record Version(int major, int minor, int patch) {
 
-		public final int major;
-		public final int minor;
-		public final int patch;
-
-		public Version(int major, int minor, int patch) {
-			this.major = major;
-			this.minor = minor;
-			this.patch = patch;
-		}
 	}
 
 }

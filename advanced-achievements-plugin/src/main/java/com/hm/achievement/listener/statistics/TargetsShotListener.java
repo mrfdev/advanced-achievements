@@ -28,7 +28,7 @@ public class TargetsShotListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onProjectileHit(ProjectileHitEvent event) {
-		if (!(event.getEntity().getShooter() instanceof Player)) {
+		if (!(event.getEntity().getShooter() instanceof Player player)) {
 			return;
 		}
 
@@ -41,8 +41,7 @@ public class TargetsShotListener extends AbstractListener {
 			return;
 		}
 
-		Player player = (Player) event.getEntity().getShooter();
-		if (!player.hasPermission(category.toChildPermName(targetName))) {
+        if (!player.hasPermission(category.toChildPermName(targetName))) {
 			return;
 		}
 

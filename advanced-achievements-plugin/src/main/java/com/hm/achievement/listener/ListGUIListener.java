@@ -53,7 +53,7 @@ public class ListGUIListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		Inventory inventory = event.getInventory();
-		if (!(inventory.getHolder() instanceof AchievementInventoryHolder) || event.getRawSlot() < 0) {
+		if (!(inventory.getHolder() instanceof AchievementInventoryHolder holder) || event.getRawSlot() < 0) {
 			return;
 		}
 
@@ -66,8 +66,7 @@ public class ListGUIListener implements Listener {
 			return;
 		}
 
-		AchievementInventoryHolder holder = (AchievementInventoryHolder) inventory.getHolder();
-		int currentPage = holder.getPageIndex();
+        int currentPage = holder.getPageIndex();
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.

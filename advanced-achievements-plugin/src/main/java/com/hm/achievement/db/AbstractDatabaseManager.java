@@ -116,10 +116,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 	 * Performs any needed tasks before opening a connection to the database.
 	 *
 	 * @throws ClassNotFoundException
-	 * @throws PluginLoadError
 	 * @throws UnsupportedEncodingException
 	 */
-	abstract void performPreliminaryTasks() throws ClassNotFoundException, PluginLoadError, UnsupportedEncodingException;
+	abstract void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException;
 
 	/**
 	 * Shuts the thread pool down and closes connection to database.

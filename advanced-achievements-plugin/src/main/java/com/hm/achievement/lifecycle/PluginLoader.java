@@ -169,9 +169,8 @@ public class PluginLoader {
 		HandlerList.unregisterAll(advancedAchievements);
 		PluginManager pluginManager = advancedAchievements.getServer().getPluginManager();
 		reloadables.forEach(r -> {
-			if (r instanceof AbstractListener) {
-				AbstractListener listener = (AbstractListener) r;
-				if (!disabledCategories.contains(listener.getCategory())) {
+			if (r instanceof AbstractListener listener) {
+                if (!disabledCategories.contains(listener.getCategory())) {
 					pluginManager.registerEvents(listener, advancedAchievements);
 				}
 			}

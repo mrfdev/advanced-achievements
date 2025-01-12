@@ -83,7 +83,7 @@ public class MainGUI implements Reloadable {
 
 		int displayedSoFar = 0;
 		for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
-			Category category = achievementItem.getKey().getCategory();
+			Category category = achievementItem.getKey().category();
 			ItemStack item = achievementItem.getValue();
 			if (shouldDisplayCategory(item, player, category)) {
 				displayCategory(item, mainGUI, player, category, displayedSoFar);

@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import org.jetbrains.annotations.NotNull;
 
 @Singleton
 public class EffectsHeldListener extends AbstractListener {
@@ -27,13 +28,12 @@ public class EffectsHeldListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onEntityPotionEffectEvent(EntityPotionEffectEvent event) {
-		if (!(event.getEntity() instanceof Player) || event.getNewEffect() == null) {
+	public void onEntityPotionEffectEvent(@NotNull EntityPotionEffectEvent event) {
+		if (!(event.getEntity() instanceof Player player) || event.getNewEffect() == null) {
 			return;
 		}
 
-		Player player = (Player) event.getEntity();
-		String effectName = event.getNewEffect().getType().getName().toLowerCase();
+        String effectName = event.getNewEffect().getType().getName().toLowerCase();
 		if (!player.hasPermission(category.toChildPermName(effectName))) {
 			return;
 		}

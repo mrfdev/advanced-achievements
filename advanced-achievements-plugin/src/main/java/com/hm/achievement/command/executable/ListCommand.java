@@ -54,13 +54,11 @@ public class ListCommand extends AbstractCommand {
 
 	@Override
 	void onExecute(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player player)) {
 			return;
 		}
 
-		Player player = (Player) sender;
-
-		if (player.isSleeping()) {
+        if (player.isSleeping()) {
 			sender.sendMessage(langConfig.getString("list-unavailable-whilst-sleeping"));
 			return;
 		}
@@ -71,14 +69,14 @@ public class ListCommand extends AbstractCommand {
 			String categoryName = args[1];
 			Optional<Entry<OrderedCategory, ItemStack>> matchingCategory = guiItems.getOrderedAchievementItems().entrySet()
 					.stream()
-					.filter(e -> e.getKey().getCategory().toString().equals(categoryName))
+					.filter(e -> e.getKey().category().toString().equals(categoryName))
 					.findFirst();
 			if (matchingCategory.isPresent()) {
 				categoryGUI.displayCategoryGUI(matchingCategory.get().getValue(), player, 0);
 			} else {
 				List<String> allGUICategoryNames = guiItems.getOrderedAchievementItems().keySet()
 						.stream()
-						.map(c -> c.getCategory().toString())
+						.map(c -> c.category().toString())
 						.collect(Collectors.toList());
 				sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[] { "CAT", "CLOSEST_MATCH" },
 						new String[] { categoryName, StringHelper.getClosestMatch(categoryName, allGUICategoryNames) }));

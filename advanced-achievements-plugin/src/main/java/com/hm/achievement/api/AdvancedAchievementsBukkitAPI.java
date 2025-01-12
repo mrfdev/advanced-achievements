@@ -73,8 +73,8 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 	public List<AwardedAchievement> getPlayerAchievements(UUID player) {
 		validateNotNull(player, "Player");
 		return databaseManager.getPlayerAchievementsList(player).stream()
-				.filter(a -> achievementMap.getForName(a.getName()) != null)
-				.map(a -> new AwardedAchievement(achievementMap.getForName(a.getName()), player, a.getDateAwarded()))
+				.filter(a -> achievementMap.getForName(a.name()) != null)
+				.map(a -> new AwardedAchievement(achievementMap.getForName(a.name()), player, a.dateAwarded()))
 				.collect(Collectors.toList());
 	}
 

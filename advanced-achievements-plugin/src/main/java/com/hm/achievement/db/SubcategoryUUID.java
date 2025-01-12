@@ -33,11 +33,10 @@ public class SubcategoryUUID {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof SubcategoryUUID)) {
+		if (!(obj instanceof SubcategoryUUID other)) {
 			return false;
 		}
-		SubcategoryUUID other = (SubcategoryUUID) obj;
-		return Objects.equals(subcategory, other.subcategory) && Objects.equals(uuid, other.uuid);
+        return Objects.equals(subcategory, other.subcategory) && Objects.equals(uuid, other.uuid);
 	}
 
 }
