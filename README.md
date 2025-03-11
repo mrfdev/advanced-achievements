@@ -36,3 +36,7 @@ share your code! Simply **fork** the repository by clicking on the icon on the t
 ## :balance_scale: License
 
 GNU General Public License v3.0
+
+## Special credits
+
+Pierre-Yves Bigourdan, [@PyvesB](https://github.com/PyvesB/) 
