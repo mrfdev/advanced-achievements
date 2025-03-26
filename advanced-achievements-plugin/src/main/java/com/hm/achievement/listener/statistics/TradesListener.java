@@ -34,7 +34,7 @@ public class TradesListener extends AbstractListener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-		if ((event.getClick() != ClickType.NUMBER_KEY || event.getAction() != InventoryAction.HOTBAR_MOVE_AND_READD)
+		if ((event.getClick() != ClickType.NUMBER_KEY || event.getAction() != InventoryAction.HOTBAR_SWAP)
 				&& event.getRawSlot() == 2 && event.getInventory().getType() == InventoryType.MERCHANT
 				&& event.getAction() != InventoryAction.NOTHING) {
 			updateStatisticAndAwardAchievementsIfAvailable((Player) event.getWhoClicked(), 1);

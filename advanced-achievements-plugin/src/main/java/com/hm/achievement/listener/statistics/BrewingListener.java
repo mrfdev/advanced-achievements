@@ -45,7 +45,7 @@ public class BrewingListener extends AbstractRateLimitedListener {
 	public void onInventoryClick(InventoryClickEvent event) {
 		ItemStack item = event.getCurrentItem();
 		if (event.getInventory().getType() != InventoryType.BREWING || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_SWAP
 				|| !isBrewablePotion(item)) {
 			return;
 		}

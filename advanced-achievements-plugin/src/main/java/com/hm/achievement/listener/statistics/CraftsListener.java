@@ -45,7 +45,7 @@ public class CraftsListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player player) || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_SWAP
 				|| isCraftingIngotFromBlock(event.getRecipe())) {
 			return;
 		}
