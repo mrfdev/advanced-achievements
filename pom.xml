@@ -5,7 +5,7 @@
     <groupId>com.hm.achievement</groupId>
     <artifactId>advanced-achievements</artifactId>
     <version>${revision}</version>
-    <url>https://github.com/PyvesB/advanced-achievements</url>
+    <url>https://github.com/mrfdev/advanced-achievements/</url>
     <name>AdvancedAchievements</name>
     <description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI,
         rankings, rewards, effects and more!
@@ -164,7 +164,6 @@
                 <version>2.3.232</version>
             </dependency>
 
-            <!-- Test dependencies -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>

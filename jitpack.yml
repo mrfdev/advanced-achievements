@@ -1,4 +1,0 @@
-jdk:
-  - openjdk23
-install:
-   - mvn -pl advanced-achievements-api -am clean install

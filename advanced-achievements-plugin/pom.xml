@@ -43,14 +43,10 @@
                                 </filter>
                             </filters>
                             <relocations>
-                                <!-- Older versions of Minecraft may ship antique builds of Apache
-                                    Commons, relocate our own managed version. -->
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.hm.apache.commons</shadedPattern>
                                 </relocation>
-                                <!-- Reduce risks of conflicts with dependencies commonly used in
-                                    other plugins. -->
                                 <relocation>
                                     <pattern>org.h2</pattern>
                                     <shadedPattern>com.hm.h2</shadedPattern>
@@ -183,8 +179,7 @@
             <artifactId>bungeecord-chat</artifactId>
             <version>1.20-R0.2</version>
         </dependency>
-
-        <!-- Test dependencies -->
+        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
