@@ -51,8 +51,8 @@
                     <version>3.14.0</version>
                     <configuration>
                         <compilerArgs>
-                            -Xlint:-options
-                            -Xlint:deprecation
+                            <arg>-Xlint:deprecation</arg>
+                            <arg>-Xlint:-options</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>
