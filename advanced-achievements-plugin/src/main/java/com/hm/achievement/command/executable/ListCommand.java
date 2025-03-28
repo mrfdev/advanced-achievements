@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,7 @@ public class ListCommand extends AbstractCommand {
 		}
 
         if (player.isSleeping()) {
-			sender.sendMessage(langConfig.getString("list-unavailable-whilst-sleeping"));
+			sender.sendMessage(Objects.requireNonNull(langConfig.getString("list-unavailable-whilst-sleeping")));
 			return;
 		}
 

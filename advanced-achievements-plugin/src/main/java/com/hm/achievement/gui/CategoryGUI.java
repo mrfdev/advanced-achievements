@@ -1,12 +1,15 @@
 package com.hm.achievement.gui;
 
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,16 +18,23 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -70,21 +80,21 @@ public class CategoryGUI implements Reloadable {
 	private boolean configHideRewardDisplayInList;
 	private boolean configEnrichedProgressBars;
 	private boolean configNumberedItemsInList;
-	private ChatColor configColor;
-	private ChatColor configListColorNotReceived;
+    private boolean configBackButtonIsCategoryItem;
+	private TextColor configColor;
+	private TextColor configListColorNotReceived;
 	private String configFormatNotReceived;
-	private boolean configBackButtonIsCategoryItem;
-	private String langListBackMessage;
-	private String langListBackLore;
-	private String langListGUITitle;
 	private String langListAchievementReceived;
 	private String langListAchievementNotReceived;
-	private String langListDescription;
-	private String langListReception;
-	private String langListGoal;
-	private String langListProgress;
-	private String langListReward;
-	private String langListRewards;
+	private Component langListBackLore;
+	private Component langListDescription;
+	private Component langListReception;
+	private Component langListGoal;
+	private Component langListProgress;
+	private Component langListReward;
+	private Component langListRewards;
+    private Component langListGUITitle;
+	private Component langListBackMessage;
 
 	@Inject
 	public CategoryGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
@@ -106,8 +116,24 @@ public class CategoryGUI implements Reloadable {
 		configHideRewardDisplayInList = mainConfig.getBoolean("HideRewardDisplayInList");
 		configEnrichedProgressBars = mainConfig.getBoolean("EnrichedListProgressBars");
 		configNumberedItemsInList = mainConfig.getBoolean("NumberedItemsInList");
-		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
-		configListColorNotReceived = ChatColor.getByChar(mainConfig.getString("ListColorNotReceived"));
+		String colourName = mainConfig.getString("Color");
+		if (colourName != null) {
+			configColor = NamedTextColor.NAMES.value(colourName.toLowerCase());
+			if (configColor == null) {
+				configColor = NamedTextColor.WHITE;
+			}
+		} else {
+			configColor = NamedTextColor.WHITE;
+		}
+		String listColorNotReceived = mainConfig.getString("ListColorNotReceived");
+		if (listColorNotReceived != null) {
+			configListColorNotReceived = NamedTextColor.NAMES.value(listColorNotReceived.toLowerCase());
+			if (configListColorNotReceived == null) {
+				configListColorNotReceived = NamedTextColor.GRAY;
+			}
+		} else {
+			configListColorNotReceived = NamedTextColor.GRAY;
+		}
 		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived") ? "&o" : "";
 		configBackButtonIsCategoryItem = mainConfig.getBoolean("BackButtonIsCategoryItem");
 
@@ -118,17 +144,17 @@ public class CategoryGUI implements Reloadable {
 		langListAchievementNotReceived = StringEscapeUtils
 				.unescapeJava(langConfig.getString("list-achievement-not-received")) + configListColorNotReceived;
 		String description = langConfig.getString("list-description");
-		langListDescription = description.isEmpty() ? "" : translateColorCodes("&7&l" + description);
+		langListDescription = Objects.requireNonNull(description).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + description);
 		String reception = langConfig.getString("list-reception");
-		langListReception = reception.isEmpty() ? "" : translateColorCodes("&7&l" + reception);
+		langListReception = Objects.requireNonNull(reception).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + reception);
 		String goal = langConfig.getString("list-goal");
-		langListGoal = goal.isEmpty() ? "" : translateColorCodes("&7&l" + goal);
+		langListGoal = Objects.requireNonNull(goal).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + goal);
 		String progress = langConfig.getString("list-progress");
-		langListProgress = progress.isEmpty() ? "" : translateColorCodes("&7&l" + progress);
+		langListProgress = Objects.requireNonNull(progress).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + progress);
 		String reward = langConfig.getString("list-reward");
-		langListReward = reward.isEmpty() ? "" : translateColorCodes("&7&l" + reward);
+		langListReward = Objects.requireNonNull(reward).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + reward);
 		String rewards = langConfig.getString("list-rewards");
-		langListRewards = rewards.isEmpty() ? "" : translateColorCodes("&7&l" + rewards);
+		langListRewards = Objects.requireNonNull(rewards).isEmpty() ? Component.empty() : translateColorCodes("&7&l" + rewards);
 	}
 
 	/**
@@ -140,7 +166,7 @@ public class CategoryGUI implements Reloadable {
 	 */
 	public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
 		for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
-			if (achievementItem.getValue().getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) {
+			if (Objects.requireNonNull(achievementItem.getValue().getItemMeta().customName()).equals(item.getItemMeta().customName())) {
 				Category category = achievementItem.getKey().category();
 				Map<String, Long> subcategoriesToStatistics;
 				List<Achievement> achievements = achievementMap.getForCategory(category);
@@ -169,7 +195,7 @@ public class CategoryGUI implements Reloadable {
 	 * @param achievements
 	 */
 	private void displayPage(Player player, Map<String, Long> subcategoriesToStatistics, int requestedIndex,
-			ItemStack clickedItem, List<Achievement> achievements) {
+							 ItemStack clickedItem, @NotNull List<Achievement> achievements) {
 		int pageIndex = getPageIndex(requestedIndex, achievements.size());
 		int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
 		int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
@@ -177,7 +203,7 @@ public class CategoryGUI implements Reloadable {
 		// The inventory must be big enough to contain all page achievements and an entire row for the navigation items.
 		int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size()), MAX_ACHIEVEMENTS_PER_PAGE) + ROW_SIZE;
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex, clickedItem);
-		Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
+		Inventory inventory = Bukkit.createInventory(inventoryHolder, InventoryType.CHEST, langListGUITitle);
 		inventoryHolder.setInventory(inventory);
 
 		String previousItemDate = null;
@@ -189,10 +215,14 @@ public class CategoryGUI implements Reloadable {
 			previousSubcategory = previousAchievement.getSubcategory();
 			String currentSubcategory = achievements.get(pageStart).getSubcategory();
 			if (!currentSubcategory.isEmpty()) {
-				seriesStart = IntStream.range(0, achievements.size())
+				OptionalInt firstMatchingIndex = IntStream.range(0, achievements.size())
 						.filter(i -> achievements.get(i).getSubcategory().equals(currentSubcategory))
-						.findFirst()
-						.getAsInt();
+						.findFirst();
+				if (firstMatchingIndex.isPresent()) {
+					seriesStart = firstMatchingIndex.getAsInt();
+				} else {
+					throw new IllegalStateException("No subcategory found for: " + currentSubcategory);
+				}
 			}
 		}
 		// Populate the current GUI page with all of the achievements for the category.
@@ -206,15 +236,12 @@ public class CategoryGUI implements Reloadable {
 			if (differentSubcategory) {
 				seriesStart = index;
 			}
-			boolean ineligibleSeriesItem = true;
-			if (statistic == NO_STAT || receptionDate != null || previousItemDate != null
-					|| index == pageStart && pageStart == 0 || differentSubcategory) {
-				// Commands achievement OR achievement has been completed OR previous achievement has been completed OR
-				// first achievement in the category OR different subcategory.
-				ineligibleSeriesItem = false;
-			}
+			boolean ineligibleSeriesItem = statistic != NO_STAT && receptionDate == null && previousItemDate == null
+                    && (index != pageStart || pageStart != 0) && !differentSubcategory;
+            // Commands achievement OR achievement has been completed OR previous achievement has been completed OR
+            // first achievement in the category OR different subcategory.
 
-			if (configHideProgressiveAchievements && ineligibleSeriesItem) {
+            if (configHideProgressiveAchievements && ineligibleSeriesItem) {
 				inventory.setItem(index - pageStart, guiItems.getAchievementLock());
 			} else {
 				List<String> lore = buildLore(achievement, receptionDate, statistic, ineligibleSeriesItem, player);
@@ -230,11 +257,11 @@ public class CategoryGUI implements Reloadable {
 		if (configBackButtonIsCategoryItem) {
 			ItemStack backButton = clickedItem.clone();
 			ItemMeta backMeta = backButton.getItemMeta();
-			backMeta.setDisplayName(langListBackMessage);
-			if (StringUtils.isNotBlank(langListBackLore)) {
-				backMeta.setLore(Collections.singletonList(langListBackLore));
+			backMeta.customName(langListBackMessage);
+			if (langListBackLore instanceof TextComponent && !((TextComponent) langListBackLore).content().isEmpty()) {
+				backMeta.lore(Collections.singletonList(langListBackLore));
 			} else {
-				backMeta.setLore(Collections.emptyList());
+				backMeta.lore(Collections.emptyList());
 			}
 			backButton.setItemMeta(backMeta);
 			inventory.setItem(guiSize - (ROW_SIZE + 1) / 2, backButton);
@@ -281,8 +308,11 @@ public class CategoryGUI implements Reloadable {
 		String displayName = date == null ? langListAchievementNotReceived + notReceivedStyle(name, ineligibleSeriesItem)
 				: langListAchievementReceived + name;
 		ItemMeta itemMeta = achItem.getItemMeta();
-		itemMeta.setDisplayName(translateColorCodes(displayName));
-		itemMeta.setLore(lore);
+		itemMeta.customName(translateColorCodes(displayName));
+		List<Component> componentLore = lore.stream()
+						.map(this::translateColorCodes)
+								.collect(Collectors.toList());
+		itemMeta.lore(componentLore);
 		achItem.setItemMeta(itemMeta);
 		if (configNumberedItemsInList) {
 			achItem.setAmount(seriesIndex + 1);
@@ -310,7 +340,7 @@ public class CategoryGUI implements Reloadable {
 	 * @param player
 	 * @return the player's statistic for the category
 	 */
-	public long getNormalStatistic(NormalAchievements category, Player player) {
+	public long getNormalStatistic(NormalAchievements category, @NotNull Player player) {
 		return cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
 	}
 
@@ -357,32 +387,32 @@ public class CategoryGUI implements Reloadable {
 	 * @param player
 	 * @return the list representing the lore of a category item
 	 */
-	private List<String> buildLore(Achievement achievement, String date, long statistic, boolean ineligibleSeriesItem,
-			Player player) {
+	private @NotNull List<String> buildLore(Achievement achievement, String date, long statistic, boolean ineligibleSeriesItem,
+											Player player) {
 		List<String> descriptions = getDescriptionsToDisplay(achievement, date != null);
-		List<String> lore = new ArrayList<>();
-		lore.add("");
+		List<Component> lore = new ArrayList<>();
+		lore.add(Component.empty());
 
 		if (date != null) {
-			if (!langListDescription.isEmpty()) {
-				lore.add(langListDescription);
+			if (langListDescription instanceof TextComponent && !((TextComponent) langListDescription).content().isEmpty()) {
+				lore.add(Component.text(((TextComponent) langListDescription).content()));
 			}
 			descriptions.forEach(d -> lore.add(translateColorCodes("&r&f" + d)));
-			lore.add("");
-			if (!langListReception.isEmpty()) {
+			lore.add(Component.empty());
+			if (langListReception instanceof TextComponent && !((TextComponent) langListReception).content().isEmpty()) {
 				lore.add(langListReception);
 			}
 			lore.add(translateColorCodes("&r&f" + date));
 		} else {
-			if (!langListGoal.isEmpty()) {
+			if (langListGoal instanceof TextComponent && !((TextComponent) langListReception).content().isEmpty()) {
 				lore.add(langListGoal);
 			}
 			descriptions.forEach(d -> lore.add(translateColorCodes(notReceivedStyle(d, ineligibleSeriesItem))));
 			// Display progress if not Commands category.
 			if (!configObfuscateNotReceived && statistic != NO_STAT) {
-				lore.add("");
+				lore.add(Component.empty());
 				boolean timeStat = NormalAchievements.PLAYEDTIME == achievement.getCategory();
-				if (!langListProgress.isEmpty()) {
+				if (langListProgress instanceof TextComponent && !((TextComponent) langListReception).content().isEmpty()) {
 					lore.add(langListProgress);
 				}
 				lore.add(translateColorCodes(constructProgressBar(achievement.getThreshold(), statistic, timeStat)));
@@ -392,21 +422,25 @@ public class CategoryGUI implements Reloadable {
 		List<Reward> rewards = achievement.getRewards();
 		// Add the rewards information.
 		if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
-			lore.add("");
-			if (rewards.size() == 1 && !langListReward.isEmpty()) {
+			lore.add(Component.empty());
+			if (rewards.size() == 1 && langListReward instanceof TextComponent && !((TextComponent) langListReception).content().isEmpty()) {
 				lore.add(langListReward);
-			} else if (rewards.size() > 1 && !langListRewards.isEmpty()) {
+			} else if (rewards.size() > 1 && langListRewards instanceof TextComponent && !((TextComponent) langListReception).content().isEmpty()) {
 				lore.add(langListRewards);
 			}
 			String dot = StringEscapeUtils.unescapeJava(
-					date == null ? configListColorNotReceived + "\u25CF " + configFormatNotReceived : "&r&f\u25CF ");
+					date == null ? configListColorNotReceived + "● " + configFormatNotReceived : "&r&f● ");
 			for (Reward reward : rewards) {
 				for (String listText : reward.listTexts()) {
-					lore.add(StringHelper.replacePlayerPlaceholders(translateColorCodes(dot + listText), player));
+					Component translatedComponent = translateColorCodes(dot + listText);
+					String translatedText = LegacyComponentSerializer.legacyAmpersand().serialize(translatedComponent);
+					lore.add(Component.text(String.valueOf(StringHelper.replacePlayerPlaceholders(translatedText, player))));
 				}
 			}
 		}
-		return lore;
+        return lore.stream()
+                .map(componet -> LegacyComponentSerializer.legacyAmpersand().serialize(componet))
+                .collect(Collectors.toList());
 	}
 
 	/**
@@ -417,7 +451,7 @@ public class CategoryGUI implements Reloadable {
 	 * @param time
 	 * @return progress bar
 	 */
-	private String constructProgressBar(long threshold, long statistic, boolean time) {
+	private @NotNull String constructProgressBar(long threshold, long statistic, boolean time) {
 		double statisticDouble;
 		String statisticString;
 		if (time) {
@@ -469,18 +503,23 @@ public class CategoryGUI implements Reloadable {
 	 * @param text
 	 * @return a string with randomised alphabetic characters
 	 */
-	private String randomiseParts(String text) {
+	private String randomiseParts(@NotNull String text) {
 		if (text.isEmpty()) {
 			return "";
 		}
 		StringBuilder randomisedText = new StringBuilder();
+		@SuppressWarnings("deprecation")
+ 		RandomStringGenerator generator = new RandomStringGenerator.Builder()
+				.withinRange('a', 'z')
+				.filteredBy(Character::isLetter)
+				.build();
 		for (String part : StringUtils.split(text)) {
-			randomisedText.append(RandomStringUtils.randomAlphabetic(part.length())).append(' ');
+			randomisedText.append(generator.generate(part.length())).append(' ');
 		}
 		return randomisedText.substring(0, randomisedText.length() - 1);
 	}
 
-	private String notReceivedStyle(String input, boolean ineligibleSeriesItem) {
+	private @NotNull String notReceivedStyle(String input, boolean ineligibleSeriesItem) {
 		if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
 			return configListColorNotReceived + "&k" + randomiseParts(StringHelper.removeFormattingCodes(input));
 		} else {
@@ -488,8 +527,7 @@ public class CategoryGUI implements Reloadable {
 		}
 	}
 
-	private String translateColorCodes(String translate) {
-		return ChatColor.translateAlternateColorCodes('&', translate);
+	private @NotNull Component translateColorCodes(String translate) {
+		return LegacyComponentSerializer.legacyAmpersand().deserialize(translate);
 	}
-
 }

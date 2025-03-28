@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -56,10 +58,12 @@ class StringHelperTest {
 		when(player.getWorld()).thenReturn(world);
 		when(world.getName()).thenReturn("Nether");
 
-		String result = StringHelper.replacePlayerPlaceholders(
+		Component result = StringHelper.replacePlayerPlaceholders(
 				"Player PLAYER is in the PLAYER_WORLD at position PLAYER_X PLAYER_Y PLAYER_Z", player);
 
-		assertEquals("Player Pyves is in the Nether at position 1 5 8", result);
+		String resultString = PlainTextComponentSerializer.plainText().serialize(result);
+
+		assertEquals("Player Pyves is in the Nether at position 1 5 8", resultString);
 	}
 
 }

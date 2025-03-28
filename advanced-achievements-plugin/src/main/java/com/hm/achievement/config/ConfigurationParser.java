@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,7 +99,7 @@ public class ConfigurationParser {
 	 */
 	private Set<String> getSectionKeys(String path) {
 		return this.mainConfig.isConfigurationSection(path)
-				? this.mainConfig.getConfigurationSection(path).getKeys(false)
+				? Objects.requireNonNull(this.mainConfig.getConfigurationSection(path)).getKeys(false)
 				: Collections.emptySet();
 	}
 
@@ -128,8 +129,10 @@ public class ConfigurationParser {
 			if (!configFile.exists()) {
 				configFile.getParentFile().mkdir();
 				try (InputStream defaultConfig = plugin.getResource(userConfigName)) {
-					Files.copy(defaultConfig, configFile.toPath());
-				}
+                    if (defaultConfig != null) {
+                        Files.copy(defaultConfig, configFile.toPath());
+                    }
+                }
 			}
 			userConfig.load(configFile);
 			yamlUpdater.update(latestConfigName, userConfigName, userConfig);
@@ -146,10 +149,10 @@ public class ConfigurationParser {
 		pluginHeader.setLength(0);
 		String icon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 		if (StringUtils.isNotBlank(icon)) {
-			String coloredIcon = ChatColor.getByChar(mainConfig.getString("Color")) + icon;
+			String coloredIcon = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color"))) + icon;
 			pluginHeader
 					.append(ChatColor.translateAlternateColorCodes('&',
-							StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))
+                            Objects.requireNonNull(StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon))))
 					.append(" ");
 		}
 		pluginHeader.trimToSize();
@@ -220,9 +223,7 @@ public class ConfigurationParser {
 
 	/**
 	 * Goes through all the achievements for non-disabled categories.
-	 * 
 	 * Populates relevant data structures and performs basic validation.
-	 *
 	 * @throws PluginLoadError If an achievement fails to parse due to misconfiguration.
 	 */
 	private void parseAchievements() throws PluginLoadError {
@@ -272,7 +273,7 @@ public class ConfigurationParser {
 	}
 
 	private List<Long> getSortedThresholds(String path) {
-		return mainConfig.getConfigurationSection(path).getKeys(false).stream()
+		return Objects.requireNonNull(mainConfig.getConfigurationSection(path)).getKeys(false).stream()
 				.map(Long::parseLong)
 				.sorted()
 				.collect(Collectors.toList());
@@ -297,7 +298,7 @@ public class ConfigurationParser {
 			path = category + "." + subcategory + "." + threshold;
 		}
 		ConfigurationSection section = mainConfig.getConfigurationSection(path);
-		if (!section.contains("Name")) {
+		if (!Objects.requireNonNull(section).contains("Name")) {
 			throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
 		} else if (achievementMap.getForName(section.getString("Name")) != null) {
 			throw new PluginLoadError("Duplicate achievement Name (" + section.getString("Name") + "). "
@@ -310,9 +311,9 @@ public class ConfigurationParser {
 
 		Achievement achievement = new AchievementBuilder()
 				.name(section.getString("Name"))
-				.displayName(StringUtils.defaultString(section.getString("DisplayName"), section.getString("Name")))
+				.displayName(Objects.toString(section.getString("DisplayName"), section.getString("Name")))
 				.message(section.getString("Message"))
-				.goal(StringUtils.defaultString(section.getString("Goal"), section.getString("Message")))
+				.goal(Objects.toString(section.getString("Goal"), section.getString("Message")))
 				.type(section.getString("Type"))
 				.threshold(threshold)
 				.category(category)
@@ -322,7 +323,8 @@ public class ConfigurationParser {
 		achievementMap.put(achievement);
 	}
 
-	private void logLoadingMessages() {
+	@SuppressWarnings("UnnecessaryToStringCall")
+    private void logLoadingMessages() {
 		int disabledCategoryCount = disabledCategories.size();
 		int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
 				- disabledCategoryCount;

@@ -48,9 +48,10 @@ public class AdvancedAchievementsBukkitAPI implements AdvancedAchievementsAPI {
 		this.achievementMap = achievementMap;
 	}
 
-	@Override
+	@SuppressWarnings("UnstableApiUsage")
+    @Override
 	public Version getAdvancedAchievementsVersion() {
-		String[] versionParts = StringUtils.split(advancedAchievements.getDescription().getVersion(), '.');
+		String[] versionParts = StringUtils.split(advancedAchievements.getPluginMeta().getVersion(), '.');
 		int major = versionParts.length > 0 ? NumberUtils.toInt(versionParts[0]) : 0;
 		int minor = versionParts.length > 1 ? NumberUtils.toInt(versionParts[1]) : 0;
 		int patch = versionParts.length > 2 ? NumberUtils.toInt(versionParts[2]) : 0;

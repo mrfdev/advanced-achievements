@@ -1,18 +1,22 @@
 package com.hm.achievement.gui;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.kyori.adventure.text.Component;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,7 +27,6 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.utils.NumberHelper;
 
 /**
  * Represents the main GUI, corresponding to all the different available categories and their names.
@@ -43,9 +46,10 @@ public class MainGUI implements Reloadable {
 	private boolean configHideNotReceivedCategories;
 	private boolean configHideNoPermissionCategories;
 
-	private String langListGUITitle;
 	private String langListAchievementsInCategoryPlural;
 	private String langListAchievementInCategorySingular;
+
+	private Component langListGUITitle;
 
 	@Inject
 	public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
@@ -63,7 +67,7 @@ public class MainGUI implements Reloadable {
 		configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
 		configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
 
-		langListGUITitle = ChatColor.translateAlternateColorCodes('&', langConfig.getString("list-gui-title"));
+		langListGUITitle = Component.text(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("list-gui-title"))));
 		langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
 		langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
 	}
@@ -73,12 +77,12 @@ public class MainGUI implements Reloadable {
 	 *
 	 * @param player
 	 */
-	public void displayMainGUI(Player player) {
+	@SuppressWarnings("unused")
+    public void displayMainGUI(Player player) {
 		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
 				- disabledCategories.size();
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder();
-		int guiSize = NumberHelper.nextMultipleOf9(totalEnabledCategories);
-		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
+		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, InventoryType.CHEST, langListGUITitle);
 		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;
@@ -105,7 +109,8 @@ public class MainGUI implements Reloadable {
 	 */
 	private boolean shouldDisplayCategory(ItemStack item, Player player, Category category) {
 		// Hide category if an empty name is defined for it, if it's disabled or if the player is missing permissions.
-		return item.getItemMeta().getDisplayName().length() > 0 && !disabledCategories.contains(category)
+		return item.getItemMeta().hasCustomName() && !Objects.requireNonNull(item.getItemMeta().customName()).equals(Component.empty()) &&
+				!disabledCategories.contains(category)
 				&& (!configHideNoPermissionCategories || player.hasPermission(category.toPermName()));
 	}
 
@@ -131,7 +136,8 @@ public class MainGUI implements Reloadable {
 				ItemStack itemWithLore = item.clone();
 				ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
 				String amountMessage = StringUtils.replaceOnce(message, "AMOUNT", receivedAmount + "/" + totalAmount);
-				itemMetaWithLore.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+				List<Component> loreComponents = List.of(Component.text(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+				itemMetaWithLore.lore(loreComponents);
 				itemWithLore.setItemMeta(itemMetaWithLore);
 				gui.setItem(position, itemWithLore);
 			}

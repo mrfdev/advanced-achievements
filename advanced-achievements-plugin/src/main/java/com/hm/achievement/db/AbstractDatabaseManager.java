@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +71,7 @@ public abstract class AbstractDatabaseManager implements Reloadable {
 		configBookChronologicalOrder = mainConfig.getBoolean("BookChronologicalOrder");
 		String localeString = mainConfig.getString("DateLocale");
 		boolean dateDisplayTime = mainConfig.getBoolean("DateDisplayTime");
-		Locale locale = new Locale(localeString);
+		Locale locale = Locale.forLanguageTag(Objects.requireNonNull(localeString));
 		if (dateDisplayTime) {
 			dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 		} else {

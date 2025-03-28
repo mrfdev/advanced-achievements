@@ -78,7 +78,7 @@ public class CommandUtils {
 			if (sender instanceof Player) {
 				boolean good = true;
                 for (String tag : tags) {
-                    if (!canBeAccepted(tag, (Entity) sender, loc)) {
+                    if (canBeAccepted(tag, (Entity) sender, loc)) {
                         good = false;
                         break;
                     }
@@ -114,7 +114,7 @@ public class CommandUtils {
 					break;
 				boolean isValid = true;
                 for (String tag : tags) {
-                    if (!canBeAccepted(tag, e, loc)) {
+                    if (canBeAccepted(tag, e, loc)) {
                         isValid = false;
                         break;
                     }
@@ -142,7 +142,7 @@ public class CommandUtils {
 					if (closestInt > distance) {
 						boolean good = true;
 						for (String tag : tags) {
-							if (!canBeAccepted(tag, e, temp)) {
+							if (canBeAccepted(tag, e, temp)) {
 								good = false;
 								break;
 							}
@@ -166,7 +166,7 @@ public class CommandUtils {
 						continue;
 					boolean valid = true;
 					for (String tag : tags) {
-						if (!canBeAccepted(tag, e, loc)) {
+						if (canBeAccepted(tag, e, loc)) {
 							valid = false;
 							break;
 						}
@@ -187,7 +187,7 @@ public class CommandUtils {
 					for (Entity e : w.getEntities()) {
 						boolean good = true;
 						for (String tag : tags) {
-							if (!canBeAccepted(tag, e, loc)) {
+							if (canBeAccepted(tag, e, loc)) {
 								good = false;
 								break;
 							}
@@ -199,7 +199,7 @@ public class CommandUtils {
 					for (Entity e : Bukkit.getOnlinePlayers()) {
 						boolean good = true;
 						for (String tag : tags) {
-							if (!canBeAccepted(tag, e, loc)) {
+							if (canBeAccepted(tag, e, loc)) {
 								good = false;
 								break;
 							}
@@ -269,64 +269,62 @@ public class CommandUtils {
 
 	private static boolean canBeAccepted(String arg, Entity e, Location loc) {
 		if (hasTag(SelectorType.X_ROTATION, arg) && isWithinYaw(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.Y_ROTATION, arg) && isWithinPitch(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.TYPE, arg) && isType(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.NAME, arg) && isName(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.TEAM, arg) && isTeam(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.SCORE_FULL, arg) && isScore(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.SCORE_MIN, arg) && isScoreMin(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.SCORE_13, arg) && isScoreWithin(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.DISTANCE, arg) && isWithinDistance(arg, loc, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.LEVEL, arg) && isWithinLevel(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.TAG, arg) && isHasTags(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.RYM, arg) && isRYM(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.RXM, arg) && isRXM(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.HM, arg) && isHM(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.RY, arg) && isRY(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.RX, arg) && isRX(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.RM, arg) && isRM(arg, loc, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.LMax, arg) && isLM(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.L, arg) && isL(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.m, arg) && isM(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.H, arg) && isH(arg, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.World, arg) && isW(arg))
-			return true;
+			return false;
 		if (hasTag(SelectorType.R, arg) && isR(arg, loc, e))
-			return true;
+			return false;
 		if (hasTag(SelectorType.X, arg))
-			return true;
+			return false;
 		if (hasTag(SelectorType.Y, arg))
-			return true;
-		if (hasTag(SelectorType.Z, arg))
-			return true;
-		return false;
-	}
+			return false;
+        return !hasTag(SelectorType.Z, arg);
+    }
 
 	private static String[] getTags(String arg) {
 		if (!arg.contains("["))
 			return new String[0];
-		String tags = arg.split("\\[")[1].split("\\]")[0];
+		String tags = arg.split("\\[")[1].split("]")[0];
 		return tags.split(",");
 	}
 
@@ -471,7 +469,7 @@ public class CommandUtils {
 			return false;
 		for (Team t : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
 			if ((t.getName().equalsIgnoreCase(getTeam(arg)) != isInverted(arg))) {
-				if ((t.getEntries().contains(((Player) e).getName()) != isInverted(arg)))
+				if ((t.getEntries().contains(e.getName()) != isInverted(arg)))
 					return true;
 			}
 		}
@@ -535,7 +533,7 @@ public class CommandUtils {
 			return false;
 		for (Objective o : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
 			if (o.getName().equalsIgnoreCase(getScoreName(arg))) {
-				if ((o.getScore(((Player) e).getName()).getScore() <= getValueAsInteger(arg) != isInverted(arg)))
+				if ((o.getScore(e.getName()).getScore() <= getValueAsInteger(arg) != isInverted(arg)))
 					return true;
 			}
 		}
@@ -545,7 +543,7 @@ public class CommandUtils {
 	private static boolean isScoreWithin(String arg, Entity e) {
 		if (!(e instanceof Player))
 			return false;
-		String[] scores = arg.split("\\{")[1].split("\\}")[0].split(",");
+		String[] scores = arg.split("\\{")[1].split("}")[0].split(",");
         for (String score : scores) {
             String[] s = score.split("=");
             String name = s[0];
@@ -573,7 +571,7 @@ public class CommandUtils {
 			return false;
 		for (Objective o : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
 			if (o.getName().equalsIgnoreCase(getScoreMinName(arg))) {
-				if ((o.getScore(((Player) e).getName()).getScore() >= getValueAsInteger(arg) != isInverted(arg)))
+				if ((o.getScore(e.getName()).getScore() >= getValueAsInteger(arg) != isInverted(arg)))
 					return true;
 			}
 		}
@@ -639,8 +637,7 @@ public class CommandUtils {
 		if (getM(arg) == null)
 			return true;
 		if (e instanceof HumanEntity) {
-			if ((isInverted(arg) != (getM(arg) == ((HumanEntity) e).getGameMode())))
-				return true;
+            return isInverted(arg) != (getM(arg) == ((HumanEntity) e).getGameMode());
 		}
 		return false;
 	}
@@ -648,37 +645,30 @@ public class CommandUtils {
 	private static boolean isW(String arg) {
 		if (getW(arg) == null) {
 			return true;
-		} else if ((isInverted(arg) != getAcceptedWorlds(arg).contains(getW(arg))))
-			return true;
-		return false;
-	}
+		} else return isInverted(arg) != getAcceptedWorlds(arg).contains(getW(arg));
+    }
 
 	private static boolean isName(String arg, Entity e) {
 		if (getName(arg) == null)
 			return true;
-		if ((isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg)
-				.equals(Objects.requireNonNull(e.getCustomName()).replace(" ", "_"))
-				|| (e instanceof Player && ((Player) e).getName().replace(" ", "_").equalsIgnoreCase(getName(arg))))))
-			return true;
-		return false;
-	}
+        return isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg)
+                .equals(Objects.requireNonNull(e.getCustomName()).replace(" ", "_"))
+                || (e instanceof Player && e.getName().replace(" ", "_").equalsIgnoreCase(getName(arg))));
+    }
 
 	private static boolean isType(String arg, Entity e) {
 		boolean invert = isInverted(arg);
 		String type = getType(arg);
-		if (invert != e.getType().name().equalsIgnoreCase(type))
-			return true;
-		return false;
+        return invert != e.getType().name().equalsIgnoreCase(type);
 
-	}
+    }
 
 	private static boolean isInverted(String arg) {
 		return arg.toLowerCase().split("!").length != 1;
 	}
 
 	private static int getInt(String arg) {
-		int mult = Integer.parseInt(arg.split("=")[1]);
-		return mult;
+        return Integer.parseInt(arg.split("=")[1]);
 	}
 
 	public static String getString(String arg) {

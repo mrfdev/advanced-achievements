@@ -3,16 +3,19 @@ package com.hm.achievement.command.executable;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import net.kyori.adventure.text.Component;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -91,7 +94,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		configBookSeparator = "\n&r" + mainConfig.getString("BookSeparator") + "\n&r";
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
 		configSound = mainConfig.getBoolean("Sound");
-		configSoundBook = mainConfig.getString("SoundBook").toUpperCase();
+		configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
 
 		langBookDelay = pluginHeader + StringUtils.replaceOnce(langConfig.getString("book-delay"), "TIME",
 				Integer.toString(configTimeBook / 1000));
@@ -101,7 +104,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		langBookReceived = pluginHeader + langConfig.getString("book-received");
 
 		String localeString = mainConfig.getString("DateLocale");
-		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(localeString));
+		dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.forLanguageTag(Objects.requireNonNull(localeString)));
 	}
 
 	@Override
@@ -165,9 +168,9 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 		setBookPages(bookPages, bookMeta);
 		bookMeta.setAuthor(player.getName());
 		bookMeta.setTitle(langBookName);
-		bookMeta.setLore(
-				Arrays.asList(
-						StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis()))));
+		bookMeta.lore(
+                Collections.singletonList(
+						Component.text(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis())))));
 		book.setItemMeta(bookMeta);
 
 		// Check whether player has room in his inventory, else drop book on the ground.
@@ -213,7 +216,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
 	 * @param bookPages
 	 * @param bookMeta
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "deprecation"})
 	private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
 		if (serverVersion <= 15) {
 			try {

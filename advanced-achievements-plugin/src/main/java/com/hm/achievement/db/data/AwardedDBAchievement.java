@@ -19,11 +19,10 @@ public record AwardedDBAchievement(UUID awardedTo, String name, long dateAwarded
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof AwardedDBAchievement)) {
+		if (!(obj instanceof AwardedDBAchievement other)) {
 			return false;
 		}
-		AwardedDBAchievement other = (AwardedDBAchievement) obj;
-		return Objects.equals(awardedTo, other.awardedTo) && dateAwarded == other.dateAwarded
+        return Objects.equals(awardedTo, other.awardedTo) && dateAwarded == other.dateAwarded
 				&& Objects.equals(name, other.name);
 	}
 

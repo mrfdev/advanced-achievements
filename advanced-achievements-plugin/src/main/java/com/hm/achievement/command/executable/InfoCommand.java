@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -46,11 +47,12 @@ public class InfoCommand extends AbstractCommand {
 		this.rewardParser = rewardParser;
 	}
 
-	@Override
+	@SuppressWarnings("UnstableApiUsage")
+    @Override
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		ChatColor configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		ChatColor configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
 		String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 		configDatabaseType = mainConfig.getString("DatabaseType");
 
@@ -62,21 +64,21 @@ public class InfoCommand extends AbstractCommand {
 				+ langConfig.getString("version-command-description-details");
 
 		langVersionCommandVersion = pluginHeader.toString() + configColor + langConfig.getString("version-command-version")
-				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getVersion();
+				+ " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getVersion();
 
 		langVersionCommandAuthor = pluginHeader.toString() + configColor + langConfig.getString("version-command-author")
-				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getAuthors().getFirst();
+				+ " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getAuthors().getFirst();
 
 		langVersionCommandWebsite = pluginHeader.toString() + configColor + langConfig.getString("version-command-website")
-				+ " " + ChatColor.GRAY + advancedAchievements.getDescription().getWebsite();
+				+ " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getWebsite();
 
 		// Display whether Advanced Achievements is linked to Vault.
-		String vaultState = rewardParser.getEconomy() != null ? "&a\u2714" : "&4\u2718";
+		String vaultState = rewardParser.getEconomy() != null ? "&a✔" : "&4✘";
 		langVersionCommandVault = pluginHeader.toString() + configColor + langConfig.getString("version-command-vault")
 				+ " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
 
 		// Display whether Advanced Achievements is linked to Pet Master.
-		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a\u2714" : "&4\u2718";
+		String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a✔" : "&4✘";
 		langVersionCommandPetmaster = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-petmaster") + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
@@ -84,13 +86,13 @@ public class InfoCommand extends AbstractCommand {
 		// Display whether Advanced Achievements is linked to Essentials.
 		boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
 				&& mainConfig.getBoolean("IgnoreAFKPlayedTime");
-		String essentialsState = essentialsUsed ? "&a\u2714" : "&4\u2718";
+		String essentialsState = essentialsUsed ? "&a✔" : "&4✘";
 		langVersionCommandEssentials = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-essentials") + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
 
 		// Display whether Advanced Achievements is linked to PlaceholderAPI.
-		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a\u2714" : "&4\u2718";
+		String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a✔" : "&4✘";
 		langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
 				+ langConfig.getString("version-command-placeholderapi") + " " + ChatColor.GRAY
 				+ translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));

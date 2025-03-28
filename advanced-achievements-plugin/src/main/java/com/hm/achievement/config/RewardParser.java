@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
@@ -139,7 +140,8 @@ public class RewardParser {
 				} else {
 					ItemMeta itemMeta = itemStack.getItemMeta();
 					if (itemMeta != null) {
-						itemMeta.setDisplayName(name);
+						Component displayName = Component.text(name);
+						itemMeta.displayName(displayName);
 						itemStack.setItemMeta(itemMeta);
 					}
 				}
@@ -154,7 +156,9 @@ public class RewardParser {
 			ItemStack playerItem = item.clone();
 			ItemMeta itemMeta = playerItem.getItemMeta();
 			if (itemMeta != null && itemMeta.hasDisplayName()) {
-				itemMeta.setDisplayName(StringHelper.replacePlayerPlaceholders(itemMeta.getDisplayName(), player));
+				Component displayName = item.displayName();
+				Component newDisplayName = StringHelper.replacePlayerPlaceholders(displayName, player);
+				itemMeta.displayName(newDisplayName);
 				playerItem.setItemMeta(itemMeta);
 			}
 			Map<Integer, ItemStack> leftoverItem = player.getInventory().addItem(playerItem);
@@ -210,7 +214,7 @@ public class RewardParser {
 		String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
 		Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream()
 				.map(command -> StringHelper.replacePlayerPlaceholders(command, player))
-				.forEach(command -> server.dispatchCommand(server.getConsoleSender(), command));
+				.forEach(command -> server.dispatchCommand(server.getConsoleSender(), String.valueOf(command)));
 		return new Reward(listTexts, chatTexts, rewarder);
 	}
 

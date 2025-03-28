@@ -53,6 +53,7 @@
                         <compilerArgs>
                             <arg>-Xlint:deprecation</arg>
                             <arg>-Xlint:-options</arg>
+                            <args>-Xdiags:verbose</args>
                         </compilerArgs>
                     </configuration>
                 </plugin>

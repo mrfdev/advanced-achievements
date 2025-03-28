@@ -17,7 +17,6 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.exception.PluginLoadError;
 
 /**
  * Class used to handle a file-backed database.
