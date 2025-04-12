@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -12,9 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -57,7 +54,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	private long lastCacheUpdate = 0L;
 
 	AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
-			Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+						   Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
 		super(mainConfig, langConfig, pluginHeader);
 		this.logger = logger;
 		this.languageKey = languageKey;
@@ -69,11 +66,11 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
 		configTopList = mainConfig.getInt("TopList");
 		configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
 		configSound = mainConfig.getBoolean("Sound");
-		configSoundRanking = Objects.requireNonNull(mainConfig.getString("SoundRanking")).toUpperCase();
+		configSoundRanking = mainConfig.getString("SoundRanking").toUpperCase();
 
 		langPeriodAchievement = pluginHeader + langConfig.getString(languageKey);
 		langPlayerRank = pluginHeader + langConfig.getString("player-rank") + " " + configColor;
@@ -179,13 +176,12 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 * @param player
 	 */
 	private void launchEffects(Player player) {
-
 		if (configAdditionalEffects) {
 			player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
 		}
 
 		if (configSound) {
-			soundPlayer.play(player, configSoundRanking, "BLOCK_HEAVY_CORE_BREAK");
+			soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
 		}
 	}
 }

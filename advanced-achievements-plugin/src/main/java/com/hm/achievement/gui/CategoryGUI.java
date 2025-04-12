@@ -116,7 +116,6 @@ public class CategoryGUI implements Reloadable {
 		configListColorNotReceived = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("ListColorNotReceived")));
 		configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived") ? "&o" : "";
 		configBackButtonIsCategoryItem = mainConfig.getBoolean("BackButtonIsCategoryItem");
-
 		langListBackMessage = translateColorCodes(langConfig.getString("list-back-message"));
 		langListBackLore = translateColorCodes(langConfig.getString("list-back-lore"));
 		langListGUITitle = translateColorCodes(langConfig.getString("list-gui-title"));
