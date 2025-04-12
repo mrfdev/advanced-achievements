@@ -1,13 +1,10 @@
 package com.hm.achievement.utils;
 
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -49,15 +46,15 @@ public class SoundPlayer {
 	 */
 	private @NotNull Sound parseSound(String soundName, String fallbackSound) {
 		try {
-			NamespacedKey soundKey = new NamespacedKey("minecraft", soundName);
-			return Objects.requireNonNull(Registry.SOUNDS.get(soundKey));
-		} catch (RuntimeException e) {
-			logger.severe("Sound " + soundName + " is invalid. using fallback sound");
+			return Sound.valueOf(soundName);
+		} catch (IllegalArgumentException e) {
+			logger.warning("Sound " + soundName + " is invalid, using default instead.");
 			try {
-                return Objects.requireNonNull(Registry.SOUNDS.get(new NamespacedKey("minecraft", fallbackSound)));
-			} catch (RuntimeException ex) {
-				throw new RuntimeException("Fallback sound " + fallbackSound + " is also invalid", ex);
+				return Sound.valueOf(fallbackSound);
+			} catch (IllegalArgumentException ex) {
+				throw new RuntimeException("Fallback sound " + fallbackSound + " is also invalid!", ex);
 			}
 		}
 	}
 }
+// TODO: Fix

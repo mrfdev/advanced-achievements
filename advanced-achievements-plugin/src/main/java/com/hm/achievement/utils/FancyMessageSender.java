@@ -60,10 +60,10 @@ public final class FancyMessageSender {
 	 * @param hover The text to display in the hover.
 	 * @param color The color of the hover text.
 	 */
-	@SuppressWarnings("deprecation")
+
 	public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover,
 											@NotNull String color) {
-		String hexColor = chatColorToHex(ChatColor.valueOf(color));
+		String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
 		TextComponent textComponent = Component.text(message)
 				.color(TextColor.fromHexString(hexColor))
 				.clickEvent(ClickEvent.runCommand(command));

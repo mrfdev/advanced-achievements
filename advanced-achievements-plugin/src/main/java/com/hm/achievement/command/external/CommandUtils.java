@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -65,12 +66,18 @@ public class CommandUtils {
 		// prefab fix
 		for (String s : tags) {
 			if (hasTag(SelectorType.X, s)) {
-				loc.setX(getInt(s));
-			} else if (hasTag(SelectorType.Y, s)) {
-				loc.setY(getInt(s));
-			} else if (hasTag(SelectorType.Z, s)) {
-				loc.setZ(getInt(s));
-			}
+                if (loc != null) {
+                    loc.setX(getInt(s));
+                }
+            } else if (hasTag(SelectorType.Y, s)) {
+                if (loc != null) {
+                    loc.setY(getInt(s));
+                }
+            } else if (hasTag(SelectorType.Z, s)) {
+                if (loc != null) {
+                    loc.setZ(getInt(s));
+                }
+            }
 		}
 
 		if (arg.startsWith("@s")) {
@@ -652,7 +659,7 @@ public class CommandUtils {
 		if (getName(arg) == null)
 			return true;
         return isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg)
-                .equals(Objects.requireNonNull(e.getCustomName()).replace(" ", "_"))
+                .equals(Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.customName()))).replace(" ", "_"))
                 || (e instanceof Player && e.getName().replace(" ", "_").equalsIgnoreCase(getName(arg))));
     }
 

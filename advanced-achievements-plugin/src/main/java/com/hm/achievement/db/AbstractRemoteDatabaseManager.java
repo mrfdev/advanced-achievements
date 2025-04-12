@@ -55,7 +55,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private String getDatabaseAddress() {
 		String databaseAddress = mainConfig.getString("DatabaseAddress");
 		// Attempt to deal with common address mistakes where prefixes such as jdbc: or jdbc:mysql:// are omitted.
-		if (!databaseAddress.startsWith("jdbc:")) {
+		if (!Objects.requireNonNull(databaseAddress).startsWith("jdbc:")) {
 			if (databaseAddress.startsWith(databaseType + "://")) {
 				return "jdbc:" + databaseAddress;
 			} else {

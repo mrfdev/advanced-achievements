@@ -12,7 +12,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -177,12 +179,13 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 	 * @param player
 	 */
 	private void launchEffects(Player player) {
+
 		if (configAdditionalEffects) {
 			player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
 		}
 
 		if (configSound) {
-			soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
+			soundPlayer.play(player, configSoundRanking, "BLOCK_HEAVY_CORE_BREAK");
 		}
 	}
 }

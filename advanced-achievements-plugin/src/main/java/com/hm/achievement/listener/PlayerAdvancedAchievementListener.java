@@ -68,6 +68,7 @@ import com.hm.achievement.utils.StringHelper;
  *
  * @author Pyves
  */
+@SuppressWarnings("deprecation")
 @Singleton
 public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
@@ -239,7 +240,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 			Title title = Title.title(
 					Component.text(nameToShowUser),
 					Component.text(messageToShowUser),
-					Title.Times.times(Duration.ofSeconds(10), Duration.ofSeconds(70), Duration.ofSeconds(20))
+					Title.Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5))
 			);
 			player.showTitle(title);
 		}

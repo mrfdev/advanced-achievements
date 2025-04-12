@@ -16,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -79,10 +78,10 @@ public class MainGUI implements Reloadable {
 	 */
 	@SuppressWarnings("unused")
     public void displayMainGUI(Player player) {
-		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1
-				- disabledCategories.size();
+		int totalEnabledCategories = MultipleAchievements.values().length + NormalAchievements.values().length + 1 - disabledCategories.size();
 		AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder();
-		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, InventoryType.CHEST, langListGUITitle);
+		int guiSize = ((totalEnabledCategories - 1) / 9 + 1) * 9; // Round up to multiple of 9
+		Inventory mainGUI = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
 		inventoryHolder.setInventory(mainGUI);
 
 		int displayedSoFar = 0;

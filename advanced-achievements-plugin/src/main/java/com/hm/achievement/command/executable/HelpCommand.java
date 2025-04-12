@@ -1,10 +1,10 @@
 package com.hm.achievement.command.executable;
 
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -72,7 +72,7 @@ public class HelpCommand extends AbstractCommand {
 	public void extractConfigurationParameters() {
 		super.extractConfigurationParameters();
 
-		configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+		configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
 		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 
 		langCommandList = header("/aach list") + langConfig.getString("aach-command-list");
@@ -95,26 +95,17 @@ public class HelpCommand extends AbstractCommand {
 		langCommandReloadHover = langConfig.getString("aach-command-reload-hover");
 		langCommandGenerate = header("/aach generate") + langConfig.getString("aach-command-generate");
 		langCommandGenerateHover = langConfig.getString("aach-command-generate-hover");
-		langCommandGive = header("/aach give &oach player")
-				+ translateColorCodes(StringUtils.replaceEach(langConfig.getString("aach-command-give"),
-						new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
-		langCommandInspect = header("/aach inspect &oach")
-				+ translateColorCodes(
-						StringUtils.replaceOnce(langConfig.getString("aach-command-inspect"), "ACH", "&oach&7"));
+		langCommandGive = header("/aach give player") + langConfig.getString("aach-command-give");
+		langCommandInspect = header("/aach inspect") + langConfig.getString("aach-command-inspect");
 		langCommandInspectHover = langConfig.getString("aach-command-inspect-hover");
 		langCommandGiveHover = langConfig.getString("aach-command-give-hover");
-		langCommandAdd = header("/aach add &ox cat player") + langConfig.getString("aach-command-add");
+		langCommandAdd = header("/aach add 1 cat player") + langConfig.getString("aach-command-add");
 		langCommandAddHover = langConfig.getString("aach-command-add-hover");
-		langCommandReset = header("/aach reset &ocat player")
-				+ StringUtils.replaceOnce(langConfig.getString("aach-command-reset"), "CAT", "&ocat&7");
+		langCommandReset = header("/aach reset cat player") + langConfig.getString("aach-command-reset");
 		langCommandResetHover = langConfig.getString("aach-command-reset-hover");
-		langCommandCheck = header("/aach check &oach player")
-				+ translateColorCodes(StringUtils.replaceEach(langConfig.getString("aach-command-check"),
-						new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandCheck = header("/aach check cat player") + langConfig.getString("aach-command-check");
 		langCommandCheckHover = langConfig.getString("aach-command-check-hover");
-		langCommandDelete = header("/aach delete &oach player")
-				+ translateColorCodes(StringUtils.replaceEach(langConfig.getString("aach-command-delete"),
-						new String[] { "ACH", "NAME" }, new String[] { "&oach&7", "&oplayer&7" }));
+		langCommandDelete = header("/aach delete cat player") + langConfig.getString("aach-command-delete");
 		langCommandDeleteHover = langConfig.getString("aach-command-delete-hover");
 		langTip = ChatColor.GRAY + translateColorCodes(langConfig.getString("aach-tip"));
 	}
