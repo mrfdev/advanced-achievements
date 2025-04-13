@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.CommandAchievements;
@@ -40,7 +41,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	}
 
 	@Override
-	public String onPlaceholderRequest(Player p, String identifier) {
+	public String onPlaceholderRequest(Player p, @NotNull String identifier) {
 		if ("total_achievements".equalsIgnoreCase(identifier)) {
 			return Integer.toString(achievementMap.getAll().size());
 		}
@@ -87,17 +88,19 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
 	}
 
 	@Override
-	public String getIdentifier() {
+	public @NotNull String getIdentifier() {
 		return "aach";
 	}
 
-	@Override
-	public String getAuthor() {
-		return String.join(", ", advancedAchievements.getDescription().getAuthors());
+	@SuppressWarnings("UnstableApiUsage")
+    @Override
+	public @NotNull String getAuthor() {
+		return String.join(", ", advancedAchievements.getPluginMeta().getAuthors());
 	}
 
-	@Override
-	public String getVersion() {
-		return advancedAchievements.getDescription().getVersion();
+	@SuppressWarnings("UnstableApiUsage")
+    @Override
+	public @NotNull String getVersion() {
+		return advancedAchievements.getPluginMeta().getVersion();
 	}
 }

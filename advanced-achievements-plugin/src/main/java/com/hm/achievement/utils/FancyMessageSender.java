@@ -3,26 +3,30 @@ package com.hm.achievement.utils;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.TextColor;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used to send fancy messages to the player; can be titles, hoverable chat messages or action bar messages. All
  * methods are static and this class cannot be instanciated.
- * 
+ *
  * @author Pyves
  *
  */
 @Singleton
 public final class FancyMessageSender {
 
-	private final int serverVersion;
+	@SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private final int serverVersion;
 
 	@Inject
 	public FancyMessageSender(int serverVersion) {
@@ -31,52 +35,62 @@ public final class FancyMessageSender {
 
 	/**
 	 * Sends a hoverable message to the player.
-	 * 
+	 *
 	 * @param player Online player to send the message to.
 	 * @param message The text to display in the chat.
 	 * @param hover The text to display in the hover.
 	 * @param color The color of the hover text.
 	 */
 	@SuppressWarnings("deprecation")
-	public void sendHoverableMessage(Player player, String message, String hover, String color) {
-		TextComponent tc = new TextComponent();
-		tc.setText(ChatColor.translateAlternateColorCodes('&', message));
-		tc.setColor(ChatColor.valueOf(color.toUpperCase()).asBungee());
-
-		if (serverVersion >= 16) {
-			tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-					new Text(ChatColor.translateAlternateColorCodes('&', hover))));
-		} else {
-			tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-					new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-		}
-		player.spigot().sendMessage(tc);
+	public void sendHoverableMessage(@NotNull Player player, String message, String hover, String color) {
+		String hexColor = chatColorToHex(ChatColor.valueOf(color));
+		net.kyori.adventure.text.TextComponent textComponent = Component.text(message)
+				.color(TextColor.fromHexString(hexColor));
+		net.kyori.adventure.text.event.HoverEvent<Component> hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
+		textComponent = textComponent.hoverEvent(hoverEvent);
+		player.sendMessage(textComponent);
 	}
 
 	/**
 	 * Sends a clickable and hoverable message to the player.
-	 * 
+	 *
 	 * @param player Online player to send the message to.
 	 * @param message The text to display in the chat.
 	 * @param command The command that is entered when clicking on the message.
 	 * @param hover The text to display in the hover.
 	 * @param color The color of the hover text.
 	 */
-	@SuppressWarnings("deprecation")
-	public void sendHoverableCommandMessage(Player player, String message, String command, String hover,
-			String color) {
-		TextComponent tc = new TextComponent();
-		tc.setText(ChatColor.translateAlternateColorCodes('&', message));
-		tc.setColor(ChatColor.valueOf(color.toUpperCase()).asBungee());
-		tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
 
-		if (serverVersion >= 16) {
-			tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-					new Text(ChatColor.translateAlternateColorCodes('&', hover))));
-		} else {
-			tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-					new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-		}
-		player.spigot().sendMessage(tc);
+	public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover,
+											@NotNull String color) {
+		String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
+		TextComponent textComponent = Component.text(message)
+				.color(TextColor.fromHexString(hexColor))
+				.clickEvent(ClickEvent.runCommand(command));
+		HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(hover));
+		textComponent = textComponent.hoverEvent(hoverEvent);
+		player.sendMessage(textComponent);
+
+	}
+	@Contract(pure = true)
+	private @NotNull String chatColorToHex(@NotNull ChatColor chatColor) {
+        return switch (chatColor) {
+            case DARK_BLUE -> "#0000AA";
+            case GREEN -> "#00AA00";
+            case AQUA -> "#00AAAA";
+            case RED -> "#AA0000";
+            case LIGHT_PURPLE -> "#AA00AA";
+            case YELLOW -> "#AAAA00";
+            case WHITE, GRAY -> "#AAAAAA";
+            case DARK_GRAY -> "#555555";
+            case DARK_RED -> "#550000";
+            case DARK_GREEN -> "#005500";
+            case DARK_AQUA -> "#005555";
+            case DARK_PURPLE -> "#550055";
+            case GOLD -> "#FFAA00";
+            case BLUE -> "#5555FF";
+            case BLACK -> "#000000";
+            default -> "#FFFFFF";
+        };
 	}
 }

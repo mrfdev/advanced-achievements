@@ -7,10 +7,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Paths;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -31,8 +36,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.utils.MaterialHelper;
-
-import net.milkbowl.vault.economy.Economy;
 
 @ExtendWith(MockitoExtension.class)
 class RewardParserTest {
@@ -106,7 +109,8 @@ class RewardParserTest {
 		assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
 		assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
 		reward.rewarder().accept(player);
-		verify(server).dispatchCommand(any(), eq("teleport Pyves"));
+		TextComponent expectedCommand = Component.text("teleport Pyves");
+		verify(server).dispatchCommand(any(), eq(expectedCommand.toString()));
 	}
 
 	@Test
@@ -126,8 +130,10 @@ class RewardParserTest {
 		assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"),
 				reward.chatTexts());
 		reward.rewarder().accept(player);
-		verify(server).dispatchCommand(any(), eq("execute 1"));
-		verify(server).dispatchCommand(any(), eq("execute 2"));
+		TextComponent exec1 = Component.text("execute 1");
+		TextComponent exec2 = Component.text("execute 2");
+		verify(server).dispatchCommand(any(), eq(exec1.toString()));
+		verify(server).dispatchCommand(any(), eq(exec2.toString()));
 	}
 
 	@Test

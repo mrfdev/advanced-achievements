@@ -40,7 +40,7 @@ public class SmeltingListener extends AbstractListener {
 		ItemStack item = event.getCurrentItem();
 		if (event.getRawSlot() != 2 || event.getInventory().getType() != InventoryType.FURNACE || item == null
 				|| item.getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
-				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+				|| event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_SWAP) {
 			return;
 		}
 

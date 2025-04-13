@@ -21,7 +21,7 @@
                         <path>
                             <groupId>com.google.dagger</groupId>
                             <artifactId>dagger-compiler</artifactId>
-                            <version>2.54</version>
+                            <version>2.56</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -43,14 +43,10 @@
                                 </filter>
                             </filters>
                             <relocations>
-                                <!-- Older versions of Minecraft may ship antique builds of Apache
-                                    Commons, relocate our own managed version. -->
                                 <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>com.hm.apache.commons</shadedPattern>
                                 </relocation>
-                                <!-- Reduce risks of conflicts with dependencies commonly used in
-                                    other plugins. -->
                                 <relocation>
                                     <pattern>org.h2</pattern>
                                     <shadedPattern>com.hm.h2</shadedPattern>
@@ -100,12 +96,12 @@
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.8</version>
         </dependency>
         <dependency>
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger</artifactId>
-            <version>2.54</version>
+            <version>2.56.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -115,12 +111,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.13.0</version>
+            <version>1.13.1</version>
         </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -132,7 +128,7 @@
         <dependency>
             <groupId>com.github.pyvesb</groupId>
             <artifactId>petmaster</artifactId>
-            <version>1.12.4</version>
+            <version>1.12.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -140,7 +136,7 @@
             <artifactId>CMILib</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/CMILib1.5.2.6.jar</systemPath>
+            <systemPath>${basedir}/libs/CMILib1.5.3.5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
@@ -154,12 +150,12 @@
             <artifactId>Jobs</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.4.5.jar</systemPath>
+            <systemPath>${basedir}/libs/Jobs5.2.4.6.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.20.1</version>
+            <version>2.21.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -171,20 +167,14 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
+            <version>42.7.5</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.3.232</version>
         </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-chat</artifactId>
-            <version>1.20-R0.2</version>
-        </dependency>
-
-        <!-- Test dependencies -->
+        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

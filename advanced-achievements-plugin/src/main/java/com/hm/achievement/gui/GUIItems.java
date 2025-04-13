@@ -5,31 +5,35 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.StringHelper;
 
+
 /**
  * Class providing all the items displayed in the GUIs.
- * 
+ *
  * @author Pyves
  */
 @Singleton
@@ -101,13 +105,13 @@ public class GUIItems implements Reloadable {
 		achievementNotStartedDefault = new ItemStack(Material.RED_TERRACOTTA, 1);
 		achievementStartedDefault = new ItemStack(Material.YELLOW_TERRACOTTA, 1);
 		achievementReceivedDefault = new ItemStack(Material.LIME_TERRACOTTA, 1);
-		for (String type : guiConfig.getConfigurationSection("AchievementNotStarted").getKeys(false)) {
+		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementNotStarted")).getKeys(false)) {
 			achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
 		}
-		for (String type : guiConfig.getConfigurationSection("AchievementStarted").getKeys(false)) {
+		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementStarted")).getKeys(false)) {
 			achievementStarted.put(type, createItemStack("AchievementStarted." + type));
 		}
-		for (String type : guiConfig.getConfigurationSection("AchievementReceived").getKeys(false)) {
+		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementReceived")).getKeys(false)) {
 			achievementReceived.put(type, createItemStack("AchievementReceived." + type));
 		}
 		previousButton = createButton("PreviousButton", "list-previous-message", "list-previous-lore");
@@ -132,23 +136,23 @@ public class GUIItems implements Reloadable {
 
 	/**
 	 * Creates an ItemStack used as a button in the category GUI.
-	 * 
+	 *
 	 * @param category
 	 * @param msg
 	 * @param lore
 	 * @return the item stack
 	 */
-	private ItemStack createButton(String category, String msg, String lore) {
+	private @NotNull ItemStack createButton(String category, String msg, String lore) {
 		ItemStack button = createItemStack(category);
 		ItemMeta meta = button.getItemMeta();
-		String displayName = ChatColor.translateAlternateColorCodes('&',
-				StringEscapeUtils.unescapeJava(langConfig.getString(msg)));
-		meta.setDisplayName(displayName);
+		Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(msg))));
+		meta.displayName(displayName);
 		if (lore != null) {
-			String loreString = ChatColor.translateAlternateColorCodes('&',
-					StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
+			String loreString = Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
 			if (!loreString.isEmpty()) {
-				meta.setLore(Collections.singletonList(loreString));
+				Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(loreString);
+				List<Component> loreComponents = Collections.singletonList(loreComponent);
+				meta.lore(loreComponents);
 			}
 		}
 		button.setItemMeta(meta);
@@ -161,18 +165,18 @@ public class GUIItems implements Reloadable {
 	 * @param item
 	 * @param categoryName
 	 */
-	private void buildItemLore(ItemStack item, String categoryName) {
+	private void buildItemLore(@NotNull ItemStack item, @NotNull String categoryName) {
 		ItemMeta itemMeta = item.getItemMeta();
 		// Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
 		String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
 		String displayName = langConfig.getString(langKey);
 		// Construct title of the category item.
 		if (StringUtils.isBlank(displayName)) {
-			itemMeta.setDisplayName("");
+			itemMeta.customName(null);
 		} else {
 			String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat,
 					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" });
-			itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', formattedDisplayName));
+			itemMeta.customName(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedDisplayName));
 		}
 		item.setItemMeta(itemMeta);
 	}

@@ -1,15 +1,23 @@
 package com.hm.achievement.listener;
 
+import io.papermc.paper.registry.keys.SoundEventKeys;
+
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.title.Title;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +29,7 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.boss.BarColor;
@@ -35,6 +44,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement;
@@ -52,16 +62,13 @@ import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
 import com.hm.achievement.utils.StringHelper;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Listener class to deal with achievement receptions: rewards, display and
  * database operations.
  *
  * @author Pyves
  */
+@SuppressWarnings("deprecation")
 @Singleton
 public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
@@ -138,7 +145,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
 	@Override
 	public void extractConfigurationParameters() {
-		configFireworkStyle = mainConfig.getString("FireworkStyle").toUpperCase();
+		configFireworkStyle = Objects.requireNonNull(mainConfig.getString("FireworkStyle")).toUpperCase();
 		if (!"RANDOM".equals(configFireworkStyle) && !EnumUtils.isValidEnum(Type.class, configFireworkStyle)) {
 			configFireworkStyle = Type.BALL_LARGE.name();
 			logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: "
@@ -152,8 +159,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
 		configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
 		configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
-		ChatColor chatColor = ChatColor.getByChar(mainConfig.getString("Color"));
-		configColor = ColorHelper.convertChatColorToColor(chatColor);
+		ChatColor chatColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+		configColor = ColorHelper.convertChatColorToColor(Objects.requireNonNull(chatColor));
 		mixColor = Color.WHITE.mixColors(ColorHelper.convertChatColorToColor(FIREWORK_COLOR_MIX.get(chatColor)));
 		barColor = ColorHelper.convertChatColorToBarColor(chatColor);
 
@@ -164,13 +171,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+	public void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
 		// Cancel damage if the firework was launched by the plugin.
 		event.setCancelled(event.getEntity().hasMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerAdvancedAchievementReception(PlayerAdvancedAchievementEvent event) {
+	public void onPlayerAdvancedAchievementReception(@NotNull PlayerAdvancedAchievementEvent event) {
 		Achievement achievement = event.getAchievement();
 		Player player = event.getPlayer();
 		// Achievement could have already been received if MultiCommand is set to true
@@ -202,7 +209,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param player
 	 * @param achievement
 	 */
-	private void displayAchievement(Player player, Achievement achievement) {
+	private void displayAchievement(@NotNull Player player, @NotNull Achievement achievement) {
 		logger.info("Player " + player.getName() + " received the achievement: " + achievement.getDisplayName());
 
 		String nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getDisplayName());
@@ -230,7 +237,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 		}
 
 		if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
-			player.sendTitle(nameToShowUser, messageToShowUser, 10, 70, 20);
+			Title title = Title.title(
+					Component.text(nameToShowUser),
+					Component.text(messageToShowUser),
+					Title.Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5))
+			);
+			player.showTitle(title);
 		}
 
 		if (configBossBarProgress) {
@@ -257,12 +269,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param rewards
 	 */
 	private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
-										 List<Reward> rewards) {
+										 @NotNull List<Reward> rewards) {
 		List<String> chatMessages = rewards.stream()
 				.map(Reward::chatTexts)
 				.flatMap(List::stream)
 				.map(m -> StringHelper.replacePlayerPlaceholders(m, player))
-				.collect(Collectors.toList());
+				.map(m -> PlainTextComponentSerializer.plainText().serialize(m))
+				.toList();
 		String message = langAchievementNew.contains("ACH")
 				? StringUtils.replaceOnce(langAchievementNew, "ACH", nameToShowUser)
 				: langAchievementNew + nameToShowUser;
@@ -290,10 +303,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				new String[] { receiver.getName(), nameToShowUser })
 				: StringUtils.replaceOnce(langAchievementReceived, "PLAYER", receiver.getName()) + nameToShowUser;
 		if (configActionBarNotify) {
-			otherPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-					ChatColor.ITALIC + message));
+			Component actionBarMessage = Component.text(message).decorate(TextDecoration.ITALIC);
+			otherPlayer.sendActionBar(actionBarMessage);
 		} else {
-			otherPlayer.sendMessage(pluginHeader + message);
+			Component regularMessage = Component.text(pluginHeader + message).decorate(TextDecoration.ITALIC);
+			otherPlayer.sendMessage(regularMessage);
 		}
 	}
 
@@ -340,8 +354,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 	 * @param player
 	 */
 	private void displaySimplifiedReception(@NotNull Player player) {
-		player.playSound(player.getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 1, 0.7f);
-		player.spawnParticle(Particle.FIREWORK, player.getLocation(), 500, 0, 3, 0, 0.1f);
+		Sound sound = Registry.SOUNDS.get(SoundEventKeys.ENTITY_PLAYER_LEVELUP);
+        if (sound != null) {
+            player.playSound(player.getLocation(), sound, 1, 0.7f);
+        }
+        player.spawnParticle(Particle.FIREWORK, player.getLocation(), 500, 0, 3, 0, 0.1f);
 	}
 
 	/**
@@ -358,6 +375,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 				.map(Reward::chatTexts)
 				.flatMap(List::stream)
 				.map(m -> StringHelper.replacePlayerPlaceholders(m, player))
+				.map(m -> PlainTextComponentSerializer.plainText().serialize(m))
 				.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
 	}
 }

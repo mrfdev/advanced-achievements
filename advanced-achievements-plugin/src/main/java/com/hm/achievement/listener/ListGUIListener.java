@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -51,7 +52,7 @@ public class ListGUIListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onInventoryClick(InventoryClickEvent event) {
+	public void onInventoryClick(@NotNull InventoryClickEvent event) {
 		Inventory inventory = event.getInventory();
 		if (!(inventory.getHolder() instanceof AchievementInventoryHolder holder) || event.getRawSlot() < 0) {
 			return;
@@ -66,7 +67,7 @@ public class ListGUIListener implements Listener {
 			return;
 		}
 
-        int currentPage = holder.getPageIndex();
+		int currentPage = holder.getPageIndex();
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
@@ -77,7 +78,7 @@ public class ListGUIListener implements Listener {
 		}
 
 		// Check whether a navigation button was clicked in a category GUI.
-		if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 1) / 2) {
+		if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 19) / 2) {
 			String command = mainConfig.getString("OverrideBackButtonBehaviour");
 			if (StringUtils.isBlank(command)) {
 				mainGUI.displayMainGUI(player);

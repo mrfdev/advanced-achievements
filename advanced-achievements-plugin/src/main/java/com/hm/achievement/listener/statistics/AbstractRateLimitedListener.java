@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.Category;
@@ -18,9 +22,6 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
-
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Abstract class in charge of factoring out common functionality for the
@@ -67,14 +68,14 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	}
 
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue, int slotNumber) {
-		if (!isInCooldownPeriod(player, slotNumber)) {
+		if (isInCooldownPeriod(player, slotNumber)) {
 			super.updateStatisticAndAwardAchievementsIfAvailable(player, incrementValue);
 		}
 	}
 
 	@Override
 	void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue) {
-		if (!isInCooldownPeriod(player, 0)) {
+		if (isInCooldownPeriod(player, 0)) {
 			super.updateStatisticAndAwardAchievementsIfAvailable(player, incrementValue);
 		}
 	}
@@ -87,13 +88,13 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param slotNumber
 	 * @return true if the player is still in cooldown, false otherwise
 	 */
-	private boolean isInCooldownPeriod(Player player, int slotNumber) {
+	private boolean isInCooldownPeriod(@NotNull Player player, int slotNumber) {
 		UUID uuid = player.getUniqueId();
 		long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, uuid,
 				0);
 		// Ignore cooldown if player has received all achievements in the category.
 		if (currentPlayerStatistic >= hardestCategoryThreshold) {
-			return false;
+			return true;
 		}
 
 		Map<UUID, Long> playersLastActionTimes = slotsToPlayersLastActionTimes.computeIfAbsent(slotNumber,
@@ -111,10 +112,10 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 					displayActionBarMessage(player, timeToWait);
 				}
 			}
-			return true;
+			return false;
 		}
 		playersLastActionTimes.put(uuid, currentTimeMillis);
-		return false;
+		return true;
 	}
 
 	/**
@@ -123,9 +124,11 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 	 * @param player
 	 * @param timeToWait
 	 */
-	private void displayActionBarMessage(Player player, long timeToWait) {
+	private void displayActionBarMessage(@NotNull Player player, long timeToWait) {
 		String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
-		String message = ChatColor.ITALIC + StringUtils.replaceOnce(langStatisticCooldown, "TIME", timeWithOneDecimal);
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+		String message = TextDecoration.ITALIC + StringUtils.replaceOnce(langStatisticCooldown, "TIME", timeWithOneDecimal);
+		try (BukkitAudiences audiences = BukkitAudiences.create(advancedAchievements)) {
+			audiences.player(player).sendActionBar(Component.text(message));
+		}
 	}
 }

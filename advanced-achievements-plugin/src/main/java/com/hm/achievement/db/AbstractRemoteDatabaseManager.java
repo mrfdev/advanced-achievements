@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
@@ -40,8 +41,8 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 		Class.forName(driverPath);
 
 		databaseAddress = getDatabaseAddress();
-		databaseUser = URLEncoder.encode(mainConfig.getString("DatabaseUser"), UTF_8.name());
-		databasePassword = URLEncoder.encode(mainConfig.getString("DatabasePassword"), UTF_8.name());
+		databaseUser = URLEncoder.encode(Objects.requireNonNull(mainConfig.getString("DatabaseUser")), UTF_8);
+		databasePassword = URLEncoder.encode(Objects.requireNonNull(mainConfig.getString("DatabasePassword")), UTF_8);
 		additionalConnectionOptions = mainConfig.getString("AdditionalConnectionOptions");
 	}
 
@@ -54,7 +55,7 @@ public class AbstractRemoteDatabaseManager extends AbstractDatabaseManager {
 	private String getDatabaseAddress() {
 		String databaseAddress = mainConfig.getString("DatabaseAddress");
 		// Attempt to deal with common address mistakes where prefixes such as jdbc: or jdbc:mysql:// are omitted.
-		if (!databaseAddress.startsWith("jdbc:")) {
+		if (!Objects.requireNonNull(databaseAddress).startsWith("jdbc:")) {
 			if (databaseAddress.startsWith(databaseType + "://")) {
 				return "jdbc:" + databaseAddress;
 			} else {
