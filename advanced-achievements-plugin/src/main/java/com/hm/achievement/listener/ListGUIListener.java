@@ -26,14 +26,18 @@ import com.hm.achievement.gui.AchievementInventoryHolder;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Listener class to deal with the GUIs from the /aach list command.
  *
  * @author Pyves
  */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class ListGUIListener implements Listener {
 
+	private static final Logger log = LoggerFactory.getLogger(ListGUIListener.class);
 	private final YamlConfiguration mainConfig;
 	private final Set<Category> disabledCategories;
 	private final MainGUI mainGUI;
@@ -66,7 +70,7 @@ public class ListGUIListener implements Listener {
 			return;
 		}
 
-        int currentPage = holder.getPageIndex();
+		int currentPage = holder.getPageIndex();
 		Player player = (Player) event.getWhoClicked();
 		if (currentPage == MAIN_GUI_PAGE) {
 			// Main GUI, check whether player can interact with the selected item.
@@ -77,7 +81,7 @@ public class ListGUIListener implements Listener {
 		}
 
 		// Check whether a navigation button was clicked in a category GUI.
-		if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 1) / 2) {
+		if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 19) / 2) {
 			String command = mainConfig.getString("OverrideBackButtonBehaviour");
 			if (StringUtils.isBlank(command)) {
 				mainGUI.displayMainGUI(player);
