@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
@@ -26,18 +27,14 @@ import com.hm.achievement.gui.AchievementInventoryHolder;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Listener class to deal with the GUIs from the /aach list command.
  *
  * @author Pyves
  */
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class ListGUIListener implements Listener {
 
-	private static final Logger log = LoggerFactory.getLogger(ListGUIListener.class);
 	private final YamlConfiguration mainConfig;
 	private final Set<Category> disabledCategories;
 	private final MainGUI mainGUI;
@@ -55,7 +52,7 @@ public class ListGUIListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onInventoryClick(InventoryClickEvent event) {
+	public void onInventoryClick(@NotNull InventoryClickEvent event) {
 		Inventory inventory = event.getInventory();
 		if (!(inventory.getHolder() instanceof AchievementInventoryHolder holder) || event.getRawSlot() < 0) {
 			return;
