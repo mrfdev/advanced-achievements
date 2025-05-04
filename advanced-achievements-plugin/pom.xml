@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMILib</artifactId>
-            <version>latest</version>
+            <version>1.4.7.4</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/CMILib1.5.3.5.jar</systemPath>
         </dependency>
