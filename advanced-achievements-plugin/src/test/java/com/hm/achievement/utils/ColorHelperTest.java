@@ -1,13 +1,13 @@
 package com.hm.achievement.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.stream.Stream;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.boss.BarColor;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -21,9 +21,9 @@ class ColorHelperTest {
 			"ITALIC", "RESET" })
 	void shouldConvertChatColorsToColor(ChatColor chatColor) {
 		Color color = ColorHelper.convertChatColorToColor(chatColor);
-
-		java.awt.Color javaColor = chatColor.asBungee().getColor();
-		assertEquals(Color.fromRGB(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue()), color);
+		NamedTextColor namedTextColor = NamedTextColor.NAMES.value(chatColor.name().toLowerCase());
+		assert namedTextColor != null;
+		Assertions.assertEquals(Color.fromRGB(namedTextColor.red(), namedTextColor.green(), namedTextColor.blue()), color);
 	}
 
 	@ParameterizedTest
@@ -32,7 +32,7 @@ class ColorHelperTest {
 	void shouldConvertChatFormatsToWhite(ChatColor chatColor) {
 		Color color = ColorHelper.convertChatColorToColor(chatColor);
 
-		assertEquals(Color.WHITE, color);
+		Assertions.assertEquals(Color.WHITE, color);
 	}
 
 	@ParameterizedTest
@@ -40,7 +40,7 @@ class ColorHelperTest {
 	void shouldConvertChatColorToBarColor(ChatColor chatColor, BarColor barColor) {
 		BarColor color = ColorHelper.convertChatColorToBarColor(chatColor);
 
-		assertEquals(barColor, color);
+		Assertions.assertEquals(barColor, color);
 	}
 
 	static @NotNull Stream<Arguments> chatAndBarColors() {
