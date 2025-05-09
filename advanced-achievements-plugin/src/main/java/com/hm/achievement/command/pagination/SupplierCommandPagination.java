@@ -2,12 +2,14 @@ package com.hm.achievement.command.pagination;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility for paginating command messages.
@@ -28,7 +30,7 @@ public class SupplierCommandPagination extends CommandPagination {
 	private final int size;
 	private final int maxPage;
 
-	public SupplierCommandPagination(List<Supplier<String>> toPaginate, int perPage, YamlConfiguration langConfig) {
+	public SupplierCommandPagination(@NotNull List<Supplier<String>> toPaginate, int perPage, YamlConfiguration langConfig) {
 		super(new ArrayList<>(), perPage, langConfig);
 		this.toPaginate = toPaginate;
 		size = toPaginate.size();
@@ -44,13 +46,13 @@ public class SupplierCommandPagination extends CommandPagination {
 	}
 
 	@Override
-	public void sendPage(int page, Consumer<String> to) {
-		int pageToSend = page > maxPage ? maxPage : page;
+	public void sendPage(int page, @NotNull Consumer<String> to) {
+		int pageToSend = Math.min(page, maxPage);
 
 		String header = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[] { "PAGE", "MAX" },
-						new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) }));
-		String footer = ChatColor.translateAlternateColorCodes('&', langConfig.getString("pagination-footer"));
+                Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[]{"PAGE", "MAX"},
+                        new String[]{Integer.toString(pageToSend), Integer.toString(maxPage)})));
+		String footer = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("pagination-footer")));
 
 		to.accept(header);
 

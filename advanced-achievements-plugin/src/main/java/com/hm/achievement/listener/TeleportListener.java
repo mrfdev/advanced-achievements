@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 
@@ -50,11 +51,11 @@ public class TeleportListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onEntityTeleport(EntityTeleportEvent event) {
+	public void onEntityTeleport(@NotNull EntityTeleportEvent event) {
 		for (Entity passenger : event.getEntity().getPassengers()) {
 			if (passenger instanceof Player) {
 				// Update location of player if they teleport somewhere else.
-				distanceRunnable.updateLocation(((Player) passenger).getUniqueId(), event.getTo());
+				distanceRunnable.updateLocation(passenger.getUniqueId(), event.getTo());
 			}
 		}
 

@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
@@ -33,7 +34,7 @@ public class PlayerCommandsListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+	public void onPlayerCommand(@NotNull PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
 		Set<String> matchingSubcategories = new HashSet<>();
@@ -58,7 +59,7 @@ public class PlayerCommandsListener extends AbstractListener {
 	 * @param command
 	 * @return the list of commands have the same effect as the input one
 	 */
-	private List<String> getEquivalentCommands(String command) {
+	private @NotNull List<String> getEquivalentCommands(@NotNull String command) {
 		int firstSpaceIndex = command.indexOf(' ');
 		String commandName;
 		String commandParameters;
@@ -72,7 +73,7 @@ public class PlayerCommandsListener extends AbstractListener {
 		}
 
 		PluginCommand pluginCommand = Bukkit.getPluginCommand(commandName);
-		if (pluginCommand == null || pluginCommand.getAliases() == null) {
+		if (pluginCommand == null) {
 			return Arrays.asList(commandName.toLowerCase() + commandParameters);
 		}
 
