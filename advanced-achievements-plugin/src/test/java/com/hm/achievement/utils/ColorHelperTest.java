@@ -3,6 +3,7 @@ package com.hm.achievement.utils;
 import java.util.stream.Stream;
 
 import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.boss.BarColor;
