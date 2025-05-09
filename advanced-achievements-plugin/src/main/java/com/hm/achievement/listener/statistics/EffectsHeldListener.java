@@ -33,7 +33,7 @@ public class EffectsHeldListener extends AbstractListener {
 			return;
 		}
 
-        String effectName = event.getNewEffect().getType().getName().toLowerCase();
+        String effectName = event.getNewEffect().getType().getKey().getKey().toLowerCase();
 		if (!player.hasPermission(category.toChildPermName(effectName))) {
 			return;
 		}

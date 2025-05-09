@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -15,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
@@ -36,7 +40,7 @@ public class PlacesListener extends AbstractListener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent event) {
+	public void onBlockPlace(@NotNull BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		ItemStack placedItem = event.getItemInHand();
 
@@ -49,12 +53,14 @@ public class PlacesListener extends AbstractListener {
 
 		ItemMeta itemMeta = placedItem.getItemMeta();
 		if (itemMeta != null && itemMeta.hasDisplayName()) {
-			String displayName = itemMeta.getDisplayName();
-			if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(displayName)))) {
-				addMatchingSubcategories(subcategories, displayName);
+			Component displayNameComp = itemMeta.customName();
+			if (displayNameComp != null) {
+				String displayName = LegacyComponentSerializer.legacySection().serialize(displayNameComp);
+				if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(displayName)))) {
+					addMatchingSubcategories(subcategories, displayName);
+				}
 			}
 		}
-
 		updateStatisticAndAwardAchievementsIfAvailable(player, subcategories, 1);
 	}
 }
