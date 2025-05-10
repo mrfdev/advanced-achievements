@@ -79,5 +79,4 @@ class PlayerAdvancedAchievementListenerTest {
 
         verify(abstractDatabaseManager).registerAchievement(eq(PLAYER_UUID), eq("connect_1"), anyLong());
     }
-
 }
