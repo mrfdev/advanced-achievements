@@ -1,25 +1,5 @@
 package com.hm.achievement.advancement;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import com.hm.achievement.category.Category;
@@ -30,174 +10,191 @@ import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.OrderedCategory;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.StringHelper;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of registering achievements as advancements.
- * 
+ *
  * @author Pyves
  */
 @SuppressWarnings("deprecation")
 @Singleton
 public class AdvancementManager implements Reloadable {
 
-	public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
-	private static final String MINECRAFT_BOOK_KEY = "minecraft:book";
-	// Pattern to produce keys for advancements.
-	private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9_]");
+    public static final String ADVANCED_ACHIEVEMENTS_PARENT = "advanced_achievements_parent";
+    private static final String MINECRAFT_BOOK_KEY = "minecraft:book";
+    // Pattern to produce keys for advancements.
+    private static final Pattern REGEX_PATTERN_KEYS = Pattern.compile("[^A-Za-z0-9_]");
 
-	private final YamlConfiguration mainConfig;
-	private final GUIItems guiItems;
-	private final AdvancedAchievements advancedAchievements;
-	private final Logger logger;
-	private final Set<Category> disabledCategories;
-	private final AchievementMap achievementMap;
+    private final YamlConfiguration mainConfig;
+    private final GUIItems guiItems;
+    private final AdvancedAchievements advancedAchievements;
+    private final Logger logger;
+    private final Set<Category> disabledCategories;
+    private final AchievementMap achievementMap;
 
-	private boolean configRegisterAdvancementDescriptions;
-	private boolean configHideAdvancements;
-	private String configRootAdvancementTitle;
-	private String configBackgroundTexture;
-	private int generatedAdvancements;
+    private boolean configRegisterAdvancementDescriptions;
+    private boolean configHideAdvancements;
+    private String configRootAdvancementTitle;
+    private String configBackgroundTexture;
+    private int generatedAdvancements;
 
-	@Inject
-	public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap,
-			AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories) {
-		this.mainConfig = mainConfig;
-		this.guiItems = guiItems;
-		this.advancedAchievements = advancedAchievements;
-		this.logger = logger;
-		this.disabledCategories = disabledCategories;
-		this.achievementMap = achievementMap;
-	}
+    @Inject
+    public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap,
+                              AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories) {
+        this.mainConfig = mainConfig;
+        this.guiItems = guiItems;
+        this.advancedAchievements = advancedAchievements;
+        this.logger = logger;
+        this.disabledCategories = disabledCategories;
+        this.achievementMap = achievementMap;
+    }
 
-	@Override
-	public void extractConfigurationParameters() {
-		configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions");
-		configHideAdvancements = mainConfig.getBoolean("HideAdvancements");
-		configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle");
-		configBackgroundTexture = mainConfig.getString("AdvancementsBackground");
-	}
+    public static @NotNull String getKey(String achName) {
+        return REGEX_PATTERN_KEYS.matcher(achName).replaceAll("").toLowerCase();
+    }
 
-	public static @NotNull String getKey(String achName) {
-		return REGEX_PATTERN_KEYS.matcher(achName).replaceAll("").toLowerCase();
-	}
+    @Override
+    public void extractConfigurationParameters() {
+        configRegisterAdvancementDescriptions = mainConfig.getBoolean("RegisterAdvancementDescriptions");
+        configHideAdvancements = mainConfig.getBoolean("HideAdvancements");
+        configRootAdvancementTitle = mainConfig.getString("RootAdvancementTitle");
+        configBackgroundTexture = mainConfig.getString("AdvancementsBackground");
+    }
 
-	/**
-	 * Registers all achievements as advancements.
-	 */
-	public void registerAdvancements() {
-		cleanupOldAchievementAdvancements();
-		registerParentAdvancement();
-		registerOtherAdvancements();
-	}
+    /**
+     * Registers all achievements as advancements.
+     */
+    public void registerAdvancements() {
+        cleanupOldAchievementAdvancements();
+        registerParentAdvancement();
+        registerOtherAdvancements();
+    }
 
-	/**
-	 * Removes all advancements previously generated by the plugin.
-	 */
-	private void cleanupOldAchievementAdvancements() {
-		int achievementsCleaned = 0;
-		Iterator<Advancement> advancements = Bukkit.advancementIterator();
-		while (advancements.hasNext()) {
-			NamespacedKey namespacedKey = advancements.next().getKey();
-			if ("advancedachievements".equals(namespacedKey.getNamespace())) {
-				++achievementsCleaned;
-				Bukkit.getUnsafe().removeAdvancement(namespacedKey);
-			}
-		}
-		
-		File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancement");
-		if(dataPack.exists()) {
-			for(File file : Objects.requireNonNull(dataPack.listFiles())){
-				file.delete();
-			}
-			dataPack.delete();
-		}
-		
-		Bukkit.reloadData();
-		logger.info("Cleaned " + achievementsCleaned + " old advancements.");
-	}
+    /**
+     * Removes all advancements previously generated by the plugin.
+     */
+    private void cleanupOldAchievementAdvancements() {
+        int achievementsCleaned = 0;
+        Iterator<Advancement> advancements = Bukkit.advancementIterator();
+        while (advancements.hasNext()) {
+            NamespacedKey namespacedKey = advancements.next().getKey();
+            if ("advancedachievements".equals(namespacedKey.getNamespace())) {
+                ++achievementsCleaned;
+                Bukkit.getUnsafe().removeAdvancement(namespacedKey);
+            }
+        }
 
-	/**
-	 * Registers an "Advanced Achievements" advancement, which will be used as the parent of all advancements generated
-	 * by Advanced Achievements.
-	 */
-	private void registerParentAdvancement() {
-		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
-		if (Bukkit.getAdvancement(namespacedKey) == null) {
-			if (configHideAdvancements) {
-				Bukkit.getUnsafe().loadAdvancement(namespacedKey,
-						AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
-			} else {
-				AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-						.iconItem(MINECRAFT_BOOK_KEY)
-						.title(configRootAdvancementTitle)
-						.description("")
-						.background(configBackgroundTexture)
-						.type(AdvancementType.GOAL);
-				Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
-			}
-		}
-	}
+        File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancement");
+        if (dataPack.exists()) {
+            for (File file : Objects.requireNonNull(dataPack.listFiles())) {
+                file.delete();
+            }
+            dataPack.delete();
+        }
 
-	/**
-	 * Registers all non parent advancements.
-	 */
-	private void registerOtherAdvancements() {
-		generatedAdvancements = 1; // Already generated 1 for parent.
-		for (Entry<OrderedCategory, ItemStack> categoryItemPair : guiItems.getOrderedAchievementItems().entrySet()) {
-			Category category = categoryItemPair.getKey().category();
-			if (disabledCategories.contains(category)) {
-				continue;
-			}
-			ItemStack item = categoryItemPair.getValue();
-			String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
-			List<Achievement> categoryAchievements = achievementMap.getForCategory(category);
-			for (int i = 0; i < categoryAchievements.size(); ++i) {
-				Achievement achievement = categoryAchievements.get(i);
-				boolean last = achievement.getCategory() == CommandAchievements.COMMANDS
-						|| i == categoryAchievements.size() - 1
-						|| !achievement.getSubcategory().equals(categoryAchievements.get(i + 1).getSubcategory());
-				parentKey = registerAdvancement(item, categoryAchievements.get(i), parentKey, last);
-			}
-		}
-		
-		File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancements");
-		File renamedDataPack = new File(dataPack.getPath().substring(0, dataPack.getPath().length() - 1));
-		if(dataPack.exists()) dataPack.renameTo(renamedDataPack);
-		
-		Bukkit.reloadData();
-		logger.info("Generated " + generatedAdvancements + " new advancements.");
-	}
+        Bukkit.reloadData();
+        logger.info("Cleaned " + achievementsCleaned + " old advancements.");
+    }
 
-	/**
-	 * Registers an individual advancement.
-	 * 
-	 * @param item
-	 * @param achievement
-	 * @param parentKey
-	 * @param lastAchievement
-	 * @return the key of the registered achievement
-	 */
-	private @NotNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
-		// Strip formatting codes as the advancements interface does not support them.
-		String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
+    /**
+     * Registers an "Advanced Achievements" advancement, which will be used as the parent of all advancements generated
+     * by Advanced Achievements.
+     */
+    private void registerParentAdvancement() {
+        NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
+        if (Bukkit.getAdvancement(namespacedKey) == null) {
+            if (configHideAdvancements) {
+                Bukkit.getUnsafe().loadAdvancement(namespacedKey,
+                        AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
+            } else {
+                AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
+                        .iconItem(MINECRAFT_BOOK_KEY)
+                        .title(configRootAdvancementTitle)
+                        .description("")
+                        .background(configBackgroundTexture)
+                        .type(AdvancementType.GOAL);
+                Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
+            }
+        }
+    }
 
-		String achKey = getKey(achievement.getName());
-		NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
-		String description = "";
-		if (configRegisterAdvancementDescriptions) {
-			// Advancement descriptions do not support multiline goals.
-			description = StringHelper.removeFormattingCodes(StringUtils.replace(achievement.getGoal(), "\\n", " "));
-		}
+    /**
+     * Registers all non parent advancements.
+     */
+    private void registerOtherAdvancements() {
+        generatedAdvancements = 1; // Already generated 1 for parent.
+        for (Entry<OrderedCategory, ItemStack> categoryItemPair : guiItems.getOrderedAchievementItems().entrySet()) {
+            Category category = categoryItemPair.getKey().category();
+            if (disabledCategories.contains(category)) {
+                continue;
+            }
+            ItemStack item = categoryItemPair.getValue();
+            String parentKey = ADVANCED_ACHIEVEMENTS_PARENT;
+            List<Achievement> categoryAchievements = achievementMap.getForCategory(category);
+            for (int i = 0; i < categoryAchievements.size(); ++i) {
+                Achievement achievement = categoryAchievements.get(i);
+                boolean last = achievement.getCategory() == CommandAchievements.COMMANDS
+                        || i == categoryAchievements.size() - 1
+                        || !achievement.getSubcategory().equals(categoryAchievements.get(i + 1).getSubcategory());
+                parentKey = registerAdvancement(item, categoryAchievements.get(i), parentKey, last);
+            }
+        }
 
-		AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-				.iconItem(item.getType().name().toLowerCase())
-				.title(displayName)
-				.description(description)
-				.parent("advancedachievements:" + parentKey)
-				.type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
-		Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
-		++generatedAdvancements;
-		return achKey;
-	}
+        File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancements");
+        File renamedDataPack = new File(dataPack.getPath().substring(0, dataPack.getPath().length() - 1));
+        if (dataPack.exists()) dataPack.renameTo(renamedDataPack);
+
+        Bukkit.reloadData();
+        logger.info("Generated " + generatedAdvancements + " new advancements.");
+    }
+
+    /**
+     * Registers an individual advancement.
+     *
+     * @param item
+     * @param achievement
+     * @param parentKey
+     * @param lastAchievement
+     * @return the key of the registered achievement
+     */
+    private @NotNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
+        // Strip formatting codes as the advancements interface does not support them.
+        String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
+
+        String achKey = getKey(achievement.getName());
+        NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, achKey);
+        String description = "";
+        if (configRegisterAdvancementDescriptions) {
+            // Advancement descriptions do not support multiline goals.
+            description = StringHelper.removeFormattingCodes(StringUtils.replace(achievement.getGoal(), "\\n", " "));
+        }
+
+        AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
+                .iconItem(item.getType().name().toLowerCase())
+                .title(displayName)
+                .description(description)
+                .parent("advancedachievements:" + parentKey)
+                .type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
+        Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
+        ++generatedAdvancements;
+        return achKey;
+    }
 }

@@ -2,16 +2,13 @@ package com.hm.achievement.utils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,60 +17,60 @@ import org.jetbrains.annotations.NotNull;
  * methods are static and this class cannot be instanciated.
  *
  * @author Pyves
- *
  */
 @Singleton
 public final class FancyMessageSender {
 
-	@SuppressWarnings({"FieldCanBeLocal", "unused"})
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final int serverVersion;
 
-	@Inject
-	public FancyMessageSender(int serverVersion) {
-		this.serverVersion = serverVersion;
-	}
+    @Inject
+    public FancyMessageSender(int serverVersion) {
+        this.serverVersion = serverVersion;
+    }
 
-	/**
-	 * Sends a hoverable message to the player.
-	 *
-	 * @param player Online player to send the message to.
-	 * @param message The text to display in the chat.
-	 * @param hover The text to display in the hover.
-	 * @param color The color of the hover text.
-	 */
-	@SuppressWarnings("deprecation")
-	public void sendHoverableMessage(@NotNull Player player, String message, String hover, String color) {
-		String hexColor = chatColorToHex(ChatColor.valueOf(color));
-		net.kyori.adventure.text.TextComponent textComponent = Component.text(message)
-				.color(TextColor.fromHexString(hexColor));
-		net.kyori.adventure.text.event.HoverEvent<Component> hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
-		textComponent = textComponent.hoverEvent(hoverEvent);
-		player.sendMessage(textComponent);
-	}
+    /**
+     * Sends a hoverable message to the player.
+     *
+     * @param player  Online player to send the message to.
+     * @param message The text to display in the chat.
+     * @param hover   The text to display in the hover.
+     * @param color   The color of the hover text.
+     */
+    @SuppressWarnings("deprecation")
+    public void sendHoverableMessage(@NotNull Player player, String message, String hover, String color) {
+        String hexColor = chatColorToHex(ChatColor.valueOf(color));
+        net.kyori.adventure.text.TextComponent textComponent = Component.text(message)
+                .color(TextColor.fromHexString(hexColor));
+        net.kyori.adventure.text.event.HoverEvent<Component> hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
+        textComponent = textComponent.hoverEvent(hoverEvent);
+        player.sendMessage(textComponent);
+    }
 
-	/**
-	 * Sends a clickable and hoverable message to the player.
-	 *
-	 * @param player Online player to send the message to.
-	 * @param message The text to display in the chat.
-	 * @param command The command that is entered when clicking on the message.
-	 * @param hover The text to display in the hover.
-	 * @param color The color of the hover text.
-	 */
+    /**
+     * Sends a clickable and hoverable message to the player.
+     *
+     * @param player  Online player to send the message to.
+     * @param message The text to display in the chat.
+     * @param command The command that is entered when clicking on the message.
+     * @param hover   The text to display in the hover.
+     * @param color   The color of the hover text.
+     */
 
-	public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover,
-											@NotNull String color) {
-		String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
-		TextComponent textComponent = Component.text(message)
-				.color(TextColor.fromHexString(hexColor))
-				.clickEvent(ClickEvent.runCommand(command));
-		HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(hover));
-		textComponent = textComponent.hoverEvent(hoverEvent);
-		player.sendMessage(textComponent);
+    public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover,
+                                            @NotNull String color) {
+        String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
+        TextComponent textComponent = Component.text(message)
+                .color(TextColor.fromHexString(hexColor))
+                .clickEvent(ClickEvent.runCommand(command));
+        HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(hover));
+        textComponent = textComponent.hoverEvent(hoverEvent);
+        player.sendMessage(textComponent);
 
-	}
-	@Contract(pure = true)
-	private @NotNull String chatColorToHex(@NotNull ChatColor chatColor) {
+    }
+
+    @Contract(pure = true)
+    private @NotNull String chatColorToHex(@NotNull ChatColor chatColor) {
         return switch (chatColor) {
             case DARK_BLUE -> "#0000AA";
             case GREEN -> "#00AA00";
@@ -92,5 +89,5 @@ public final class FancyMessageSender {
             case BLACK -> "#000000";
             default -> "#FFFFFF";
         };
-	}
+    }
 }

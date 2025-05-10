@@ -10,11 +10,11 @@ import com.hm.achievement.exception.PluginLoadError;
  */
 public interface Reloadable {
 
-	/**
-	 * Extracts and parses configuration parameters.
-	 * 
-	 * @throws PluginLoadError
-	 */
-	void extractConfigurationParameters() throws PluginLoadError;
+    /**
+     * Extracts and parses configuration parameters.
+     *
+     * @throws PluginLoadError
+     */
+    void extractConfigurationParameters() throws PluginLoadError;
 
 }

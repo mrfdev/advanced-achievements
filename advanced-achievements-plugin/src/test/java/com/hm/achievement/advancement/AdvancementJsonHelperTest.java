@@ -1,10 +1,8 @@
 package com.hm.achievement.advancement;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Class for testing advancement JSON strings.
@@ -13,13 +11,13 @@ import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancem
  */
 class AdvancementJsonHelperTest {
 
-	@Test
-	void shouldGenerateAdvancementJson() {
-		AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
-				.iconData("0").title("Special Event Achievement!").description("You took part in the \"Special Event\"!")
-				.parent("advancedachievements:advanced_achievements_parent").type(AdvancementType.TASK).build();
+    @Test
+    void shouldGenerateAdvancementJson() {
+        AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
+                .iconData("0").title("Special Event Achievement!").description("You took part in the \"Special Event\"!")
+                .parent("advancedachievements:advanced_achievements_parent").type(AdvancementType.TASK).build();
 
-		assertEquals("""
+        assertEquals("""
                 {
                   "criteria":{
                     "aach_handled":{
@@ -43,15 +41,15 @@ class AdvancementJsonHelperTest {
                   "parent":"advancedachievements:advanced_achievements_parent"
                 }
                 """, AdvancementJsonHelper.toJson(aa));
-	}
+    }
 
-	@Test
-	void shouldGenerateParentAdvancementJson() {
-		AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
-				.iconData("0").title("Special Event Achievement!").description("You took part in the special event!")
-				.background("minecraft:book").type(AdvancementType.GOAL).build();
+    @Test
+    void shouldGenerateParentAdvancementJson() {
+        AchievementAdvancement aa = new AchievementAdvancementBuilder().iconItem("minecraft:dirt")
+                .iconData("0").title("Special Event Achievement!").description("You took part in the special event!")
+                .background("minecraft:book").type(AdvancementType.GOAL).build();
 
-		assertEquals("""
+        assertEquals("""
                 {
                   "criteria":{
                     "aach_handled":{
@@ -75,11 +73,11 @@ class AdvancementJsonHelperTest {
                   }
                 }
                 """, AdvancementJsonHelper.toJson(aa));
-	}
+    }
 
-	@Test
-	void shouldGenerateHiddenParentAdvancementJson() {
-		assertEquals("""
+    @Test
+    void shouldGenerateHiddenParentAdvancementJson() {
+        assertEquals("""
                 {
                   "criteria":{
                     "aach_handled":{
@@ -94,6 +92,6 @@ class AdvancementJsonHelperTest {
                   "background":"minecraft:book"
                 }
                 """, AdvancementJsonHelper.toHiddenJson("minecraft:book"));
-	}
+    }
 
 }

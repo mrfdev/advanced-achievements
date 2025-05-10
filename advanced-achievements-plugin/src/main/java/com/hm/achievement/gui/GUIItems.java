@@ -1,5 +1,11 @@
 package com.hm.achievement.gui;
 
+import com.hm.achievement.category.CommandAchievements;
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.category.NormalAchievements;
+import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.StringHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,14 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Material;
@@ -22,13 +25,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-
-import com.hm.achievement.category.CommandAchievements;
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.category.NormalAchievements;
-import com.hm.achievement.lifecycle.Reloadable;
-import com.hm.achievement.utils.MaterialHelper;
-import com.hm.achievement.utils.StringHelper;
 
 
 /**
@@ -39,182 +35,179 @@ import com.hm.achievement.utils.StringHelper;
 @Singleton
 public class GUIItems implements Reloadable {
 
-	private final Map<OrderedCategory, ItemStack> orderedAchievementItems = new TreeMap<>();
+    private final Map<OrderedCategory, ItemStack> orderedAchievementItems = new TreeMap<>();
+    private final Map<String, ItemStack> achievementNotStarted = new HashMap<>();
+    private final Map<String, ItemStack> achievementStarted = new HashMap<>();
+    private final Map<String, ItemStack> achievementReceived = new HashMap<>();
+    private final YamlConfiguration mainConfig;
+    private final YamlConfiguration langConfig;
+    private final YamlConfiguration guiConfig;
+    private final MaterialHelper materialHelper;
+    // Various other item stacks displayed in the GUI.
+    private ItemStack previousButton;
+    private ItemStack nextButton;
+    private ItemStack backButton;
+    private ItemStack achievementNotStartedDefault;
+    private ItemStack achievementStartedDefault;
+    private ItemStack achievementReceivedDefault;
+    private ItemStack achievementLock;
+    private ItemStack categoryLock;
+    private String configListAchievementFormat;
+    private String configIcon;
 
-	// Various other item stacks displayed in the GUI.
-	private ItemStack previousButton;
-	private ItemStack nextButton;
-	private ItemStack backButton;
-	private ItemStack achievementNotStartedDefault;
-	private final Map<String, ItemStack> achievementNotStarted = new HashMap<>();
-	private ItemStack achievementStartedDefault;
-	private final Map<String, ItemStack> achievementStarted = new HashMap<>();
-	private ItemStack achievementReceivedDefault;
-	private final Map<String, ItemStack> achievementReceived = new HashMap<>();
-	private ItemStack achievementLock;
-	private ItemStack categoryLock;
+    @Inject
+    public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
+                    @Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper) {
+        this.mainConfig = mainConfig;
+        this.langConfig = langConfig;
+        this.guiConfig = guiConfig;
+        this.materialHelper = materialHelper;
+    }
 
-	private final YamlConfiguration mainConfig;
-	private final YamlConfiguration langConfig;
-	private final YamlConfiguration guiConfig;
-	private final MaterialHelper materialHelper;
+    @Override
+    public void extractConfigurationParameters() {
+        configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
+        configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
 
-	private String configListAchievementFormat;
-	private String configIcon;
+        orderedAchievementItems.clear();
+        // getKeys returns a LinkedHashSet, preserving the ordering specified in the file.
+        List<String> orderedCategories = new ArrayList<>(guiConfig.getKeys(false));
+        // Prepare item stacks displayed in the GUI for Multiple achievements.
+        for (MultipleAchievements category : MultipleAchievements.values()) {
+            String categoryName = category.toString();
+            ItemStack itemStack = createItemStack(categoryName);
+            buildItemLore(itemStack, categoryName);
+            orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
+        }
 
-	@Inject
-	public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-			@Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper) {
-		this.mainConfig = mainConfig;
-		this.langConfig = langConfig;
-		this.guiConfig = guiConfig;
-		this.materialHelper = materialHelper;
-	}
+        // Prepare item stacks displayed in the GUI for Normal achievements.
+        for (NormalAchievements category : NormalAchievements.values()) {
+            String categoryName = category.toString();
+            ItemStack itemStack = createItemStack(categoryName);
+            buildItemLore(itemStack, categoryName);
+            orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
+        }
 
-	@Override
-	public void extractConfigurationParameters() {
-		configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
-		configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
+        // Prepare item stack displayed in the GUI for Commands achievements.
+        String categoryName = CommandAchievements.COMMANDS.toString();
+        ItemStack itemStack = createItemStack(categoryName);
+        buildItemLore(itemStack, categoryName);
+        orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName),
+                CommandAchievements.COMMANDS), itemStack);
 
-		orderedAchievementItems.clear();
-		// getKeys returns a LinkedHashSet, preserving the ordering specified in the file.
-		List<String> orderedCategories = new ArrayList<>(guiConfig.getKeys(false));
-		// Prepare item stacks displayed in the GUI for Multiple achievements.
-		for (MultipleAchievements category : MultipleAchievements.values()) {
-			String categoryName = category.toString();
-			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, categoryName);
-			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
-		}
+        achievementNotStartedDefault = new ItemStack(Material.RED_TERRACOTTA, 1);
+        achievementStartedDefault = new ItemStack(Material.YELLOW_TERRACOTTA, 1);
+        achievementReceivedDefault = new ItemStack(Material.LIME_TERRACOTTA, 1);
+        for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementNotStarted")).getKeys(false)) {
+            achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
+        }
+        for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementStarted")).getKeys(false)) {
+            achievementStarted.put(type, createItemStack("AchievementStarted." + type));
+        }
+        for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementReceived")).getKeys(false)) {
+            achievementReceived.put(type, createItemStack("AchievementReceived." + type));
+        }
+        previousButton = createButton("PreviousButton", "list-previous-message", "list-previous-lore");
+        nextButton = createButton("NextButton", "list-next-message", "list-next-lore");
+        backButton = createButton("BackButton", "list-back-message", "list-back-lore");
+        achievementLock = createButton("AchievementLock", "list-achievement-not-unlocked", null);
+        categoryLock = createButton("CategoryLock", "list-category-not-unlocked", null);
+    }
 
-		// Prepare item stacks displayed in the GUI for Normal achievements.
-		for (NormalAchievements category : NormalAchievements.values()) {
-			String categoryName = category.toString();
-			ItemStack itemStack = createItemStack(categoryName);
-			buildItemLore(itemStack, categoryName);
-			orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), category), itemStack);
-		}
+    /**
+     * Creates an ItemStack based on information extracted from gui.yml.
+     *
+     * @param categoryName
+     * @return the item for the category
+     */
+    private ItemStack createItemStack(String categoryName) {
+        String path = categoryName + ".Item";
+        Material material = materialHelper.matchMaterial(guiConfig.getString(path, null), Material.BEDROCK,
+                "gui.yml (" + path + ")");
+        return new ItemStack(material, 1);
+    }
 
-		// Prepare item stack displayed in the GUI for Commands achievements.
-		String categoryName = CommandAchievements.COMMANDS.toString();
-		ItemStack itemStack = createItemStack(categoryName);
-		buildItemLore(itemStack, categoryName);
-		orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName),
-				CommandAchievements.COMMANDS), itemStack);
+    /**
+     * Creates an ItemStack used as a button in the category GUI.
+     *
+     * @param category
+     * @param msg
+     * @param lore
+     * @return the item stack
+     */
+    private @NotNull ItemStack createButton(String category, String msg, String lore) {
+        ItemStack button = createItemStack(category);
+        ItemMeta meta = button.getItemMeta();
+        Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(msg))));
+        meta.displayName(displayName);
+        if (lore != null) {
+            String loreString = Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
+            if (!loreString.isEmpty()) {
+                Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(loreString);
+                List<Component> loreComponents = Collections.singletonList(loreComponent);
+                meta.lore(loreComponents);
+            }
+        }
+        button.setItemMeta(meta);
+        return button;
+    }
 
-		achievementNotStartedDefault = new ItemStack(Material.RED_TERRACOTTA, 1);
-		achievementStartedDefault = new ItemStack(Material.YELLOW_TERRACOTTA, 1);
-		achievementReceivedDefault = new ItemStack(Material.LIME_TERRACOTTA, 1);
-		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementNotStarted")).getKeys(false)) {
-			achievementNotStarted.put(type, createItemStack("AchievementNotStarted." + type));
-		}
-		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementStarted")).getKeys(false)) {
-			achievementStarted.put(type, createItemStack("AchievementStarted." + type));
-		}
-		for (String type : Objects.requireNonNull(guiConfig.getConfigurationSection("AchievementReceived")).getKeys(false)) {
-			achievementReceived.put(type, createItemStack("AchievementReceived." + type));
-		}
-		previousButton = createButton("PreviousButton", "list-previous-message", "list-previous-lore");
-		nextButton = createButton("NextButton", "list-next-message", "list-next-lore");
-		backButton = createButton("BackButton", "list-back-message", "list-back-lore");
-		achievementLock = createButton("AchievementLock", "list-achievement-not-unlocked", null);
-		categoryLock = createButton("CategoryLock", "list-category-not-unlocked", null);
-	}
+    /**
+     * Sets the metadata of an ItemStack representing a category in the main GUI.
+     *
+     * @param item
+     * @param categoryName
+     */
+    private void buildItemLore(@NotNull ItemStack item, @NotNull String categoryName) {
+        ItemMeta itemMeta = item.getItemMeta();
+        // Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
+        String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
+        String displayName = langConfig.getString(langKey);
+        // Construct title of the category item.
+        if (StringUtils.isBlank(displayName)) {
+            itemMeta.customName(null);
+        } else {
+            String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat,
+                    new String[]{"%ICON%", "%NAME%"}, new String[]{configIcon, "&l" + displayName + "&8"});
+            itemMeta.customName(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedDisplayName));
+        }
+        item.setItemMeta(itemMeta);
+    }
 
-	/**
-	 * Creates an ItemStack based on information extracted from gui.yml.
-	 *
-	 * @param categoryName
-	 * @return the item for the category
-	 */
-	private ItemStack createItemStack(String categoryName) {
-		String path = categoryName + ".Item";
-		Material material = materialHelper.matchMaterial(guiConfig.getString(path, null), Material.BEDROCK,
-				"gui.yml (" + path + ")");
-		return new ItemStack(material, 1);
-	}
+    public ItemStack getAchievementNotStarted(String type) {
+        return achievementNotStarted.getOrDefault(type, achievementNotStartedDefault);
+    }
 
-	/**
-	 * Creates an ItemStack used as a button in the category GUI.
-	 *
-	 * @param category
-	 * @param msg
-	 * @param lore
-	 * @return the item stack
-	 */
-	private @NotNull ItemStack createButton(String category, String msg, String lore) {
-		ItemStack button = createItemStack(category);
-		ItemMeta meta = button.getItemMeta();
-		Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(msg))));
-		meta.displayName(displayName);
-		if (lore != null) {
-			String loreString = Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
-			if (!loreString.isEmpty()) {
-				Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(loreString);
-				List<Component> loreComponents = Collections.singletonList(loreComponent);
-				meta.lore(loreComponents);
-			}
-		}
-		button.setItemMeta(meta);
-		return button;
-	}
+    public ItemStack getAchievementStarted(String type) {
+        return achievementStarted.getOrDefault(type, achievementStartedDefault);
+    }
 
-	/**
-	 * Sets the metadata of an ItemStack representing a category in the main GUI.
-	 *
-	 * @param item
-	 * @param categoryName
-	 */
-	private void buildItemLore(@NotNull ItemStack item, @NotNull String categoryName) {
-		ItemMeta itemMeta = item.getItemMeta();
-		// Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
-		String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
-		String displayName = langConfig.getString(langKey);
-		// Construct title of the category item.
-		if (StringUtils.isBlank(displayName)) {
-			itemMeta.customName(null);
-		} else {
-			String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat,
-					new String[] { "%ICON%", "%NAME%" }, new String[] { configIcon, "&l" + displayName + "&8" });
-			itemMeta.customName(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedDisplayName));
-		}
-		item.setItemMeta(itemMeta);
-	}
+    public ItemStack getAchievementReceived(String type) {
+        return achievementReceived.getOrDefault(type, achievementReceivedDefault);
+    }
 
-	public ItemStack getAchievementNotStarted(String type) {
-		return achievementNotStarted.getOrDefault(type, achievementNotStartedDefault);
-	}
+    public Map<OrderedCategory, ItemStack> getOrderedAchievementItems() {
+        return orderedAchievementItems;
+    }
 
-	public ItemStack getAchievementStarted(String type) {
-		return achievementStarted.getOrDefault(type, achievementStartedDefault);
-	}
+    public ItemStack getPreviousButton() {
+        return previousButton;
+    }
 
-	public ItemStack getAchievementReceived(String type) {
-		return achievementReceived.getOrDefault(type, achievementReceivedDefault);
-	}
+    public ItemStack getNextButton() {
+        return nextButton;
+    }
 
-	public Map<OrderedCategory, ItemStack> getOrderedAchievementItems() {
-		return orderedAchievementItems;
-	}
+    public ItemStack getBackButton() {
+        return backButton;
+    }
 
-	public ItemStack getPreviousButton() {
-		return previousButton;
-	}
+    public ItemStack getAchievementLock() {
+        return achievementLock;
+    }
 
-	public ItemStack getNextButton() {
-		return nextButton;
-	}
-
-	public ItemStack getBackButton() {
-		return backButton;
-	}
-
-	public ItemStack getAchievementLock() {
-		return achievementLock;
-	}
-
-	public ItemStack getCategoryLock() {
-		return categoryLock;
-	}
+    public ItemStack getCategoryLock() {
+        return categoryLock;
+    }
 
 }

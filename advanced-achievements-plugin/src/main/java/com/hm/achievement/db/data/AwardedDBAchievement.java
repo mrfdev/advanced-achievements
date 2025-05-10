@@ -9,21 +9,21 @@ import java.util.UUID;
 public record AwardedDBAchievement(UUID awardedTo, String name, long dateAwarded, String formattedDate) {
 
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(awardedTo, dateAwarded, name);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(awardedTo, dateAwarded, name);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof AwardedDBAchievement other)) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof AwardedDBAchievement other)) {
+            return false;
+        }
         return Objects.equals(awardedTo, other.awardedTo) && dateAwarded == other.dateAwarded
-				&& Objects.equals(name, other.name);
-	}
+                && Objects.equals(name, other.name);
+    }
 
 }

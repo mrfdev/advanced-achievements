@@ -1,158 +1,151 @@
 package com.hm.achievement.runnable;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.util.NumberConversions;
-
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 @Singleton
 public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements Cleanable, Runnable {
 
-	private final Map<UUID, Location> playerLocations = new HashMap<>();
-	private final Set<Category> disabledCategories;
+    public static final Set<EntityType> BOAT_TYPES = EnumSet.of(
+            EntityType.ACACIA_BOAT,
+            EntityType.BIRCH_BOAT,
+            EntityType.DARK_OAK_BOAT,
+            EntityType.JUNGLE_BOAT,
+            EntityType.OAK_BOAT,
+            EntityType.SPRUCE_BOAT,
+            EntityType.MANGROVE_BOAT,
+            EntityType.BAMBOO_RAFT
+    );
+    private final Map<UUID, Location> playerLocations = new HashMap<>();
+    private final Set<Category> disabledCategories;
+    private boolean configIgnoreVerticalDistance;
 
-	private boolean configIgnoreVerticalDistance;
+    @Inject
+    public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
+                                   CacheManager cacheManager, Set<Category> disabledCategories) {
+        super(mainConfig, achievementMap, cacheManager);
+        this.disabledCategories = disabledCategories;
+    }
 
-	public static final Set<EntityType> BOAT_TYPES = EnumSet.of(
-			EntityType.ACACIA_BOAT,
-			EntityType.BIRCH_BOAT,
-			EntityType.DARK_OAK_BOAT,
-			EntityType.JUNGLE_BOAT,
-			EntityType.OAK_BOAT,
-			EntityType.SPRUCE_BOAT,
-			EntityType.MANGROVE_BOAT,
-			EntityType.BAMBOO_RAFT
-	);
+    @Override
+    public void extractConfigurationParameters() {
+        super.extractConfigurationParameters();
 
-	@Inject
-	public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-			CacheManager cacheManager, Set<Category> disabledCategories) {
-		super(mainConfig, achievementMap, cacheManager);
-		this.disabledCategories = disabledCategories;
-	}
+        configIgnoreVerticalDistance = mainConfig.getBoolean("IgnoreVerticalDistance");
+    }
 
-	@Override
-	public void extractConfigurationParameters() {
-		super.extractConfigurationParameters();
+    @Override
+    public void cleanPlayerData() {
+        playerLocations.keySet().removeIf(player -> !Bukkit.getOfflinePlayer(player).isOnline());
+    }
 
-		configIgnoreVerticalDistance = mainConfig.getBoolean("IgnoreVerticalDistance");
-	}
+    @Override
+    public void run() {
+        Bukkit.getOnlinePlayers().forEach(this::validateMovementAndUpdateDistance);
+    }
 
-	@Override
-	public void cleanPlayerData() {
-		playerLocations.keySet().removeIf(player -> !Bukkit.getOfflinePlayer(player).isOnline());
-	}
+    public void updateLocation(UUID uuid, Location location) {
+        playerLocations.put(uuid, location);
+    }
 
-	@Override
-	public void run() {
-		Bukkit.getOnlinePlayers().forEach(this::validateMovementAndUpdateDistance);
-	}
+    /**
+     * Update distances and store them into server's memory until player disconnects.
+     *
+     * @param player
+     */
+    private void validateMovementAndUpdateDistance(@NotNull Player player) {
+        Location currentLocation = player.getLocation();
+        Location previousLocation = playerLocations.put(player.getUniqueId(), currentLocation);
 
-	public void updateLocation(UUID uuid, Location location) {
-		playerLocations.put(uuid, location);
-	}
+        // If player location not found or if player has changed world, ignore previous location.
+        // Evaluating distance would give an exception.
+        if (previousLocation == null || !Objects.requireNonNull(previousLocation.getWorld()).getUID().equals(player.getWorld().getUID())) {
+            return;
+        }
 
-	/**
-	 * Update distances and store them into server's memory until player disconnects.
-	 * 
-	 * @param player
-	 */
-	private void validateMovementAndUpdateDistance(@NotNull Player player) {
-		Location currentLocation = player.getLocation();
-		Location previousLocation = playerLocations.put(player.getUniqueId(), currentLocation);
+        int difference = getDistanceDifference(previousLocation, currentLocation);
+        if (difference == 0L) { // Player has not moved.
+            return;
+        }
 
-		// If player location not found or if player has changed world, ignore previous location.
-		// Evaluating distance would give an exception.
-		if (previousLocation == null || !Objects.requireNonNull(previousLocation.getWorld()).getUID().equals(player.getWorld().getUID())) {
-			return;
-		}
+        if (player.isInsideVehicle()) {
+            EntityType vehicleType = Objects.requireNonNull(player.getVehicle()).getType();
+            if (vehicleType == EntityType.HORSE) {
+                updateDistance(difference, player, NormalAchievements.DISTANCEHORSE);
+            } else if (vehicleType == EntityType.PIG) {
+                updateDistance(difference, player, NormalAchievements.DISTANCEPIG);
+            } else if (vehicleType == EntityType.MINECART) {
+                updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
+            } else if (BOAT_TYPES.contains(vehicleType)) {
+                updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
+            } else if (vehicleType == EntityType.LLAMA) {
+                updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
+            }
+        } else if (player.isGliding()) {
+            updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
+        } else if (player.isSneaking()) {
+            updateDistance(difference, player, NormalAchievements.DISTANCESNEAKING);
+        } else if (!player.isFlying()) {
+            updateDistance(difference, player, NormalAchievements.DISTANCEFOOT);
+        }
+    }
 
-		int difference = getDistanceDifference(previousLocation, currentLocation);
-		if (difference == 0L) { // Player has not moved.
-			return;
-		}
+    /**
+     * Calculates the difference between the player's last location and his current one. May ignore the vertical axis or
+     * not depending on configuration..
+     *
+     * @param previousLocation
+     * @param currentLocation
+     * @return difference
+     */
+    private int getDistanceDifference(Location previousLocation, Location currentLocation) {
+        if (configIgnoreVerticalDistance) {
+            double xSquared = NumberConversions.square(previousLocation.getX() - currentLocation.getX());
+            double zSquared = NumberConversions.square(previousLocation.getZ() - currentLocation.getZ());
+            return (int) Math.sqrt(xSquared + zSquared);
+        } else {
+            return (int) previousLocation.distance(currentLocation);
+        }
+    }
 
-		if (player.isInsideVehicle()) {
-			EntityType vehicleType = Objects.requireNonNull(player.getVehicle()).getType();
-			if (vehicleType == EntityType.HORSE) {
-				updateDistance(difference, player, NormalAchievements.DISTANCEHORSE);
-			} else if (vehicleType == EntityType.PIG) {
-				updateDistance(difference, player, NormalAchievements.DISTANCEPIG);
-			} else if (vehicleType == EntityType.MINECART) {
-				updateDistance(difference, player, NormalAchievements.DISTANCEMINECART);
-			} else if (BOAT_TYPES.contains(vehicleType)) {
-				updateDistance(difference, player, NormalAchievements.DISTANCEBOAT);
-			} else if (vehicleType == EntityType.LLAMA) {
-				updateDistance(difference, player, NormalAchievements.DISTANCELLAMA);
-			}
-		} else if (player.isGliding()) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEGLIDING);
-		} else if (player.isSneaking()) {
-			updateDistance(difference, player, NormalAchievements.DISTANCESNEAKING);
-		} else if (!player.isFlying()) {
-			updateDistance(difference, player, NormalAchievements.DISTANCEFOOT);
-		}
-	}
+    /**
+     * Updates distance if all conditions are met and awards achievements if necessary.
+     *
+     * @param difference
+     * @param player
+     * @param category
+     */
+    private void updateDistance(int difference, Player player, NormalAchievements category) {
+        if (!shouldIncreaseBeTakenIntoAccount(player, category) || disabledCategories.contains(category)) {
+            return;
+        }
 
-	/**
-	 * Calculates the difference between the player's last location and his current one. May ignore the vertical axis or
-	 * not depending on configuration..
-	 * 
-	 * @param previousLocation
-	 * @param currentLocation
-	 * 
-	 * @return difference
-	 */
-	private int getDistanceDifference(Location previousLocation, Location currentLocation) {
-		if (configIgnoreVerticalDistance) {
-			double xSquared = NumberConversions.square(previousLocation.getX() - currentLocation.getX());
-			double zSquared = NumberConversions.square(previousLocation.getZ() - currentLocation.getZ());
-			return (int) Math.sqrt(xSquared + zSquared);
-		} else {
-			return (int) previousLocation.distance(currentLocation);
-		}
-	}
-
-	/**
-	 * Updates distance if all conditions are met and awards achievements if necessary.
-	 * 
-	 * @param difference
-	 * @param player
-	 * @param category
-	 */
-	private void updateDistance(int difference, Player player, NormalAchievements category) {
-		if (!shouldIncreaseBeTakenIntoAccount(player, category) || disabledCategories.contains(category)) {
-			return;
-		}
-
-		long distance = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
-		checkThresholdsAndAchievements(player, category, distance);
-	}
+        long distance = cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), difference);
+        checkThresholdsAndAchievements(player, category, distance);
+    }
 }

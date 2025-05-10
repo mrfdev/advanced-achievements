@@ -1,12 +1,14 @@
 package com.hm.achievement.command.pagination;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility for paginating command messages.
@@ -21,45 +23,46 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class CommandPagination {
 
-	private final List<String> toPaginate;
-	private final YamlConfiguration langConfig;
-	private final int perPage;
-	private final int size;
-	private final int maxPage;
+    private final List<String> toPaginate;
+    private final YamlConfiguration langConfig;
+    private final int perPage;
+    private final int size;
+    private final int maxPage;
 
-	public CommandPagination(List<String> toPaginate, int perPage, YamlConfiguration langConfig) {
-		this.toPaginate = toPaginate;
-		size = toPaginate.size();
-		this.perPage = perPage;
-		this.langConfig = langConfig;
-		int leftovers = size % perPage;
-		// One command window can fit 20 lines, we're leaving 2 for header and footer.
-		maxPage = (size - leftovers) / perPage + (leftovers > 0 ? 1 : 0);
-	}
+    @Contract(pure = true)
+    public CommandPagination(@NotNull List<String> toPaginate, int perPage, YamlConfiguration langConfig) {
+        this.toPaginate = toPaginate;
+        size = toPaginate.size();
+        this.perPage = perPage;
+        this.langConfig = langConfig;
+        int leftovers = size % perPage;
+        // One command window can fit 20 lines, we're leaving 2 for header and footer.
+        maxPage = (size - leftovers) / perPage + (leftovers > 0 ? 1 : 0);
+    }
 
-	public void sendPage(int page, CommandSender to) {
-		sendPage(page, to::sendMessage);
-	}
+    public void sendPage(int page, @NotNull CommandSender to) {
+        sendPage(page, to::sendMessage);
+    }
 
-	public void sendPage(int page, Consumer<String> to) {
-		int pageToSend = page > maxPage ? maxPage : page;
+    public void sendPage(int page, @NotNull Consumer<String> to) {
+        int pageToSend = Math.min(page, maxPage);
 
-		String header = ChatColor.translateAlternateColorCodes('&',
-				StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[] { "PAGE", "MAX" },
-						new String[] { Integer.toString(pageToSend), Integer.toString(maxPage) }));
-		String footer = ChatColor.translateAlternateColorCodes('&', langConfig.getString("pagination-footer"));
+        String header = ChatColor.translateAlternateColorCodes('&',
+                Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[]{"PAGE", "MAX"},
+                        new String[]{Integer.toString(pageToSend), Integer.toString(maxPage)})));
+        String footer = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("pagination-footer")));
 
-		to.accept(header);
+        to.accept(header);
 
-		int index = pageToSend - 1;
-		// Handling case where empty list is given to CommandPagination
-		int pageStart = index > 0 ? (index * perPage) : 0;
-		int nextPageStart = pageToSend * perPage;
+        int index = pageToSend - 1;
+        // Handling case where empty list is given to CommandPagination
+        int pageStart = index > 0 ? (index * perPage) : 0;
+        int nextPageStart = pageToSend * perPage;
 
-		for (int i = pageStart; i < Math.min(nextPageStart, size); i++) {
-			to.accept(toPaginate.get(i));
-		}
+        for (int i = pageStart; i < Math.min(nextPageStart, size); i++) {
+            to.accept(toPaginate.get(i));
+        }
 
-		to.accept(footer);
-	}
+        to.accept(footer);
+    }
 }

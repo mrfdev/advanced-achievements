@@ -6,6 +6,10 @@ import org.bukkit.boss.BarColor;
 
 public class ColorHelper {
 
+    private ColorHelper() {
+        // Not called.
+    }
+
     public static Color convertChatColorToColor(ChatColor chatColor) {
         return switch (chatColor) {
             case AQUA -> Color.fromRGB(0x55, 0xFF, 0xFF);
@@ -48,10 +52,6 @@ public class ColorHelper {
             case YELLOW -> BarColor.YELLOW;
             default -> BarColor.WHITE;
         };
-    }
-
-    private ColorHelper() {
-        // Not called.
     }
 
 }

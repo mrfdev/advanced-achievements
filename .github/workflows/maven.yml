@@ -16,9 +16,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4.2.2
     - name: Set up JDK 21
@@ -29,8 +27,3 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: AdvancedAchievements
-        path: advanced-achievements-plugin/target/advanced-achievements-plugin-7.3.0.jar

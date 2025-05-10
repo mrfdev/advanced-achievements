@@ -1,15 +1,15 @@
 package com.hm.achievement.listener.statistics;
 
+import com.hm.achievement.category.MultipleAchievements;
+import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.db.CacheManager;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creeper;
@@ -18,10 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
-
-import com.hm.achievement.category.MultipleAchievements;
-import com.hm.achievement.config.AchievementMap;
-import com.hm.achievement.db.CacheManager;
 
 /**
  * Listener class to deal with Kills achievements.
