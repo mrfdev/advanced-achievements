@@ -9,6 +9,6 @@ package com.hm.achievement.lifecycle;
  */
 public interface Cleanable {
 
-	void cleanPlayerData();
+    void cleanPlayerData();
 
 }

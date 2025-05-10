@@ -1,22 +1,16 @@
 package com.hm.achievement.config;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.domain.Reward;
+import com.hm.achievement.utils.MaterialHelper;
 import java.nio.file.Paths;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -32,155 +26,157 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.hm.achievement.AdvancedAchievements;
-import com.hm.achievement.domain.Reward;
-import com.hm.achievement.utils.MaterialHelper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RewardParserTest {
 
-	@Mock
-	private Economy economy;
-	@Mock
-	private Player player;
-	@Mock
-	private AdvancedAchievements advancedAchievements;
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private Server server;
-	private YamlConfiguration mainConfig;
+    @Mock
+    private Economy economy;
+    @Mock
+    private Player player;
+    @Mock
+    private AdvancedAchievements advancedAchievements;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private Server server;
+    private YamlConfiguration mainConfig;
     private RewardParser underTest;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		when(advancedAchievements.getServer()).thenReturn(server);
-		when(server.getPluginManager().isPluginEnabled("Vault")).thenReturn(true);
-		when(Objects.requireNonNull(server.getServicesManager().getRegistration(Economy.class)).getProvider()).thenReturn(economy);
+    @BeforeEach
+    void setUp() throws Exception {
+        when(advancedAchievements.getServer()).thenReturn(server);
+        when(server.getPluginManager().isPluginEnabled("Vault")).thenReturn(true);
+        when(Objects.requireNonNull(server.getServicesManager().getRegistration(Economy.class)).getProvider()).thenReturn(economy);
 
-		mainConfig = new YamlConfiguration();
+        mainConfig = new YamlConfiguration();
         YamlConfiguration langConfig = new YamlConfiguration();
-		langConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/lang.yml")).toURI()).toFile());
-		underTest = new RewardParser(mainConfig, langConfig, advancedAchievements, new MaterialHelper(Logger.getGlobal()));
-	}
+        langConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/lang.yml")).toURI()).toFile());
+        underTest = new RewardParser(mainConfig, langConfig, advancedAchievements, new MaterialHelper(Logger.getGlobal()));
+    }
 
-	@Test
-	void shouldParseMoneyRewardSingular() throws Exception {
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-1.yml")).toURI()).toFile());
-		when(economy.currencyNameSingular()).thenReturn("coin");
+    @Test
+    void shouldParseMoneyRewardSingular() throws Exception {
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-1.yml")).toURI()).toFile());
+        when(economy.currencyNameSingular()).thenReturn("coin");
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 1 coin"), reward.listTexts());
-		assertEquals(List.of("You received: 1 coin!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		verify(economy).depositPlayer(player, 1);
-	}
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("receive 1 coin"), reward.listTexts());
+        assertEquals(List.of("You received: 1 coin!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        verify(economy).depositPlayer(player, 1);
+    }
 
-	@Test
-	void shouldParseMoneyRewardPlural() throws Exception {
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-2.yml")).toURI()).toFile());
-		when(economy.currencyNamePlural()).thenReturn("coins");
+    @Test
+    void shouldParseMoneyRewardPlural() throws Exception {
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-2.yml")).toURI()).toFile());
+        when(economy.currencyNamePlural()).thenReturn("coins");
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 2 coins"), reward.listTexts());
-		assertEquals(List.of("You received: 2 coins!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		verify(economy).depositPlayer(player, 2);
-	}
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("receive 2 coins"), reward.listTexts());
+        assertEquals(List.of("You received: 2 coins!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        verify(economy).depositPlayer(player, 2);
+    }
 
-	@Test
-	void shouldParseSingleCommandReward() throws Exception {
-		World world = Mockito.mock(World.class);
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/command.yml")).toURI()).toFile());
-		when(player.getName()).thenReturn("Pyves");
-		when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
-		when(player.getWorld()).thenReturn(world);
-		when(world.getName()).thenReturn("Nether");
+    @Test
+    void shouldParseSingleCommandReward() throws Exception {
+        World world = Mockito.mock(World.class);
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/command.yml")).toURI()).toFile());
+        when(player.getName()).thenReturn("Pyves");
+        when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
+        when(player.getWorld()).thenReturn(world);
+        when(world.getName()).thenReturn("Nether");
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
-		assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		TextComponent expectedCommand = Component.text("teleport Pyves");
-		verify(server).dispatchCommand(any(), eq(expectedCommand.toString()));
-	}
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
+        assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        TextComponent expectedCommand = Component.text("teleport Pyves");
+        verify(server).dispatchCommand(any(), eq(expectedCommand.toString()));
+    }
 
-	@Test
-	void shouldParseMultipleCommandRewards() throws Exception {
-		World world = Mockito.mock(World.class);
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/commands.yml")).toURI()).toFile());
-		when(player.getName()).thenReturn("Pyves");
-		when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
-		when(player.getWorld()).thenReturn(world);
-		when(world.getName()).thenReturn("Nether");
+    @Test
+    void shouldParseMultipleCommandRewards() throws Exception {
+        World world = Mockito.mock(World.class);
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/commands.yml")).toURI()).toFile());
+        when(player.getName()).thenReturn("Pyves");
+        when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
+        when(player.getWorld()).thenReturn(world);
+        when(world.getName()).thenReturn("Nether");
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(Arrays.asList("display 1", "display 2"), reward.listTexts());
-		assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"),
-				reward.chatTexts());
-		reward.rewarder().accept(player);
-		TextComponent exec1 = Component.text("execute 1");
-		TextComponent exec2 = Component.text("execute 2");
-		verify(server).dispatchCommand(any(), eq(exec1.toString()));
-		verify(server).dispatchCommand(any(), eq(exec2.toString()));
-	}
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(Arrays.asList("display 1", "display 2"), reward.listTexts());
+        assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"),
+                reward.chatTexts());
+        reward.rewarder().accept(player);
+        TextComponent exec1 = Component.text("execute 1");
+        TextComponent exec2 = Component.text("execute 2");
+        verify(server).dispatchCommand(any(), eq(exec1.toString()));
+        verify(server).dispatchCommand(any(), eq(exec2.toString()));
+    }
 
-	@Test
-	void shouldParseExperienceReward() throws Exception {
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/experience.yml")).toURI()).toFile());
+    @Test
+    void shouldParseExperienceReward() throws Exception {
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/experience.yml")).toURI()).toFile());
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("receive 500 experience"), reward.listTexts());
-		assertEquals(List.of("You received: 500 experience!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		verify(player).giveExp(500);
-	}
-	@Disabled("Cannot fix right now")
-	@Test
-	void shouldParseMaxHealthReward() throws Exception {
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-health.yml")).toURI()).toFile());
-		AttributeInstance healthAttribute = Mockito.mock(AttributeInstance.class);
-		when(player.getAttribute(any())).thenReturn(healthAttribute);
-		when(healthAttribute.getBaseValue()).thenReturn(1.0);
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("receive 500 experience"), reward.listTexts());
+        assertEquals(List.of("You received: 500 experience!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        verify(player).giveExp(500);
+    }
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+    @Disabled("Cannot fix right now")
+    @Test
+    void shouldParseMaxHealthReward() throws Exception {
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-health.yml")).toURI()).toFile());
+        AttributeInstance healthAttribute = Mockito.mock(AttributeInstance.class);
+        when(player.getAttribute(any())).thenReturn(healthAttribute);
+        when(healthAttribute.getBaseValue()).thenReturn(1.0);
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("increase max health by 2"), reward.listTexts());
-		assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		verify(player).getAttribute(Attribute.MAX_HEALTH);
-		verify(healthAttribute).setBaseValue(3.0);
-	}
+        List<Reward> rewards = underTest.parseRewards("Reward");
 
-	@Test
-	void shouldParseMaxOxygenReward() throws Exception {
-		mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-oxygen.yml")).toURI()).toFile());
-		when(player.getMaximumAir()).thenReturn(5);
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("increase max health by 2"), reward.listTexts());
+        assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        verify(player).getAttribute(Attribute.MAX_HEALTH);
+        verify(healthAttribute).setBaseValue(3.0);
+    }
 
-		List<Reward> rewards = underTest.parseRewards("Reward");
+    @Test
+    void shouldParseMaxOxygenReward() throws Exception {
+        mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-oxygen.yml")).toURI()).toFile());
+        when(player.getMaximumAir()).thenReturn(5);
 
-		assertEquals(1, rewards.size());
-		Reward reward = rewards.getFirst();
-		assertEquals(List.of("increase max oxygen by 10"), reward.listTexts());
-		assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts());
-		reward.rewarder().accept(player);
-		verify(player).setMaximumAir(15);
-	}
+        List<Reward> rewards = underTest.parseRewards("Reward");
+
+        assertEquals(1, rewards.size());
+        Reward reward = rewards.getFirst();
+        assertEquals(List.of("increase max oxygen by 10"), reward.listTexts());
+        assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts());
+        reward.rewarder().accept(player);
+        verify(player).setMaximumAir(15);
+    }
 
 }

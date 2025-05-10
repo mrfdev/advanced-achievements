@@ -5,17 +5,16 @@ import java.sql.SQLException;
 
 /**
  * Runtime exception thrown if the plugin repeatedly fails to read information from the database.
- * 
- * @author Pyves
  *
+ * @author Pyves
  */
 public class DatabaseReadError extends RuntimeException {
 
-	@Serial
-	private static final long serialVersionUID = 9076250874454568667L;
+    @Serial
+    private static final long serialVersionUID = 9076250874454568667L;
 
-	public DatabaseReadError(String context, SQLException e) {
-		super(context, e);
-	}
+    public DatabaseReadError(String context, SQLException e) {
+        super(context, e);
+    }
 
 }

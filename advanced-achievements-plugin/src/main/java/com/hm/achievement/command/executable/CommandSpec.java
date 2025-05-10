@@ -14,11 +14,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface CommandSpec {
 
-	String name();
+    String name();
 
-	String permission();
+    String permission();
 
-	int minArgs();
+    int minArgs();
 
-	int maxArgs();
+    int maxArgs();
 }

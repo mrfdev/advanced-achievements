@@ -19,7 +19,6 @@ import com.hm.achievement.command.executable.StatsCommand;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.command.executable.TopCommand;
 import com.hm.achievement.command.executable.WeekCommand;
-
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
@@ -27,75 +26,75 @@ import dagger.multibindings.IntoSet;
 @Module
 public interface CommandModule {
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindHelpCommand(HelpCommand helpCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindHelpCommand(HelpCommand helpCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindBookCommand(BookCommand bookCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindBookCommand(BookCommand bookCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindInfoCommand(InfoCommand infoCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindInfoCommand(InfoCommand infoCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindListCommand(ListCommand listCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindListCommand(ListCommand listCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindStatsCommand(StatsCommand statsCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindStatsCommand(StatsCommand statsCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindReloadCommand(ReloadCommand reloadCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindReloadCommand(ReloadCommand reloadCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindToggleCommand(ToggleCommand toggleCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindToggleCommand(ToggleCommand toggleCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindGenerateCommand(GenerateCommand generateCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindGenerateCommand(GenerateCommand generateCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindEasterEggCommand(EasterEggCommand easterEggCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindEasterEggCommand(EasterEggCommand easterEggCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindTopCommand(TopCommand topCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindTopCommand(TopCommand topCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindWeekCommand(WeekCommand weekCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindWeekCommand(WeekCommand weekCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindMonthCommand(MonthCommand monthCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindMonthCommand(MonthCommand monthCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindGiveCommand(GiveCommand giveCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindGiveCommand(GiveCommand giveCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindResetCommand(ResetCommand resetCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindResetCommand(ResetCommand resetCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindCheckCommand(CheckCommand checkCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindCheckCommand(CheckCommand checkCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindDeleteCommand(DeleteCommand deleteCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindDeleteCommand(DeleteCommand deleteCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindAddCommand(AddCommand addCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindAddCommand(AddCommand addCommand);
 
-	@Binds
-	@IntoSet
-	AbstractCommand bindInspectCommand(InspectCommand inspectCommand);
+    @Binds
+    @IntoSet
+    AbstractCommand bindInspectCommand(InspectCommand inspectCommand);
 }

@@ -6,14 +6,13 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.concurrent.TimeUnit;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 /**
  * Class used to monitor players' played times.

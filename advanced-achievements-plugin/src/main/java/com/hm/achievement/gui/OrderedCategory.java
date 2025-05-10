@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public record OrderedCategory(int order, Category category) implements Comparable<OrderedCategory> {
 
 
-	@Override
-	public int compareTo(@NotNull OrderedCategory o) {
-		return Integer.compare(order(), o.order());
-	}
+    @Override
+    public int compareTo(@NotNull OrderedCategory o) {
+        return Integer.compare(order(), o.order());
+    }
 }
