@@ -127,7 +127,7 @@
             <dependency>
                 <groupId>com.github.MilkBowl</groupId>
                 <artifactId>VaultAPI</artifactId>
-                <version>-9520d8847e-1</version>
+                <version>1.7.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
