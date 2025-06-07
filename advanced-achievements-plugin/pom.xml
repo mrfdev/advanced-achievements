@@ -32,8 +32,10 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <finalName>${project.build.finalName}</finalName>
+                            <finalName>advanced-achievements-plugin-${project.version}</finalName>
                             <minimizeJar>true</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
                             <filters>
                                 <filter>
                                     <artifact>com.hm.achievement:advanced-achievements-api</artifact>
@@ -60,7 +62,6 @@
                                     <shadedPattern>com.hm.dagger</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                         <phase>package</phase>
                         <goals>
