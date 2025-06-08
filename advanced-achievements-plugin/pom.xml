@@ -137,7 +137,7 @@
             <artifactId>CMILib</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/CMILib1.5.3.5.jar</systemPath>
+            <systemPath>${basedir}/libs/CMILib1.5.4.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
@@ -151,7 +151,7 @@
             <artifactId>Jobs</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.4.6.jar</systemPath>
+            <systemPath>${basedir}/libs/Jobs5.2.6.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
