@@ -281,7 +281,7 @@ BungeeMode: false
 #======================================================================================================================#
 
 # Count blocks placed. You can use any of the following:
-# - block names (available names: https://github.com/PyvesB/advanced-achievements/wiki/Material-names).
+# - block names (available names: https://jd.papermc.io/paper/1.21.5/org/bukkit/Material.html).
 # - notations such as sand:1 (i.e. sand item with metadata 1, red sand) for 1.7-1.12 Minecraft versions .
 # - custom display name of items (e.g. the name of a player's head).
 Places:
@@ -1063,6 +1063,16 @@ Riptides:
     Name: riptides_1
     DisplayName: Poseidon
     Type: normal
+mcMMO:
+  mining:
+    5:
+      Goal: Reach mining level 5
+      Message: LVL 5 Mining
+      Name: mcmmo_test
+      DisplayName: Mining LVL 5
+      Type: normal
+      Reward:
+        Item: iron_pickaxe 1 unbreaking:3
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
