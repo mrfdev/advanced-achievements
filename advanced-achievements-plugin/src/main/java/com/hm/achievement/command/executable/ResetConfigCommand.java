@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.FancyMessageSender;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,18 +14,21 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @Singleton
 @CommandSpec(name = "resetconfig", permission = "achievement.resetconfig", minArgs = 1, maxArgs = 1)
 public class ResetConfigCommand extends AbstractCommand {
     private final AdvancedAchievements plugin;
+    private final FancyMessageSender fancyMessageSender;
     private final Logger LOGGER = Logger.getLogger(ResetConfigCommand.class.getName());
 
     @Inject
-    public ResetConfigCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements plugin) {
+    public ResetConfigCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements plugin, FancyMessageSender fancyMessageSender) {
         super(mainConfig, langConfig, pluginHeader);
         this.plugin = plugin;
+        this.fancyMessageSender = fancyMessageSender;
     }
 
     protected void backupConfig(@NotNull File source, @NotNull File target) throws IOException {
@@ -41,23 +45,23 @@ public class ResetConfigCommand extends AbstractCommand {
                 try {
                     backupConfig(configFile, backupFile);
                 } catch (IOException e) {
-                    sender.sendMessage("Failed to backup current config.yml.");
-                    sender.sendMessage("Run '/resetconfig confirm' to reset without backup.");
+                    sendMessage(sender, "Failed to backup current config.yml.");
+                    sendMessage(sender, "Run '/resetconfig confirm' to reset without backup.");
                     LOGGER.warning("Failed to backup config: " + e.getMessage());
                     return;
                 }
             } else {
-                sender.sendMessage("Warning: Skipping backup as 'confirm' flag was used.");
+                sendMessage(sender, "Warning: Skipping backup as 'confirm' flag was used.");
             }
 
             if (!configFile.delete()) {
-                sender.sendMessage("Failed to delete config.yml");
+                sendMessage(sender, "Failed to delete config.yml");
                 return;
             }
         }
         InputStream is = plugin.getResource("config.yml");
         if (is == null) {
-            sender.sendMessage("Default config.yml not found");
+            sendMessage(sender, "Default config.yml not found");
             return;
         }
         try (FileOutputStream out = new FileOutputStream(configFile)) {
@@ -67,10 +71,18 @@ public class ResetConfigCommand extends AbstractCommand {
                 out.write(buffer, 0, length);
             }
             plugin.reloadConfig();
-            sender.sendMessage("Config.yml has been reset to default. Backup saved as config_old.yml");
+            sendMessage(sender, "Config.yml has been reset to default. Backup saved as config_old.yml");
         } catch (IOException e) {
-            sender.sendMessage("Error occurred whilst resetting config.yml");
+            sendMessage(sender, "Error occurred whilst resetting config.yml");
             e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(CommandSender sender, String message) {
+        if (sender instanceof Player player) {
+            fancyMessageSender.sendHoverableMessage(player, message, "AdvancedAchievements", "GREEN");
+        } else {
+            sender.sendMessage(message);
         }
     }
 }

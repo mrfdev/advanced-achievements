@@ -323,7 +323,9 @@ Places:
       DisplayName: Bedrock Wannabe
       Type: rare
       Reward:
-        Item: obsidian 8
+        Item:
+        - ANGLER_POTTERY_SHERD 1
+        - SHULKER_SHELL 1
   crafting_table:
     25:
       Goal: Place 25 crafting tables.
@@ -332,8 +334,8 @@ Places:
       DisplayName: Workshop Tycoon
       Type: normal
       Reward:
-        Experience: 100
-        Item: oak_log 16
+        Experience: 150
+        Item: NETHERITE_UPGRADE_SMITHING_TEMPLATE 1
   bamboo:
     200:
       Goal: Place 200 bamboo.
@@ -351,7 +353,9 @@ Places:
       DisplayName: The Sticky Architect
       Type: rare
       Reward:
-        Item: honey_bottle 4
+        Item:
+          - honey_bottle 4
+          - BEE_SPAWN_EGG 1
 Breaks:
   ice:
     10:
@@ -377,8 +381,8 @@ Breaks:
       Reward:
         Command:
           Execute:
-            - give PLAYER dispenser 10
-            - give PLAYER lever 5
+            - give PLAYER grass_block 10
+            - give PLAYER oak_wood 15
   deepslate:
     500:
       Goal: Break 500 deepslate blocks.
@@ -388,7 +392,9 @@ Breaks:
       Type: normal
       Reward:
         Experience: 250
-        Item: deepslate_bricks 32
+        Item:
+        - deepslate_bricks 32
+        - DEEPSLATE_COAL_ORE 16
   ancient_debris:
     5:
       Goal: Break 5 ancient debris.
@@ -397,7 +403,10 @@ Breaks:
       DisplayName: Nether Prospector
       Type: rare
       Reward:
-        Item: gold_ingot 8
+        Item:
+        - gold_ingot 8
+        - NETHERITE_SWORD 1
+        - NETHER_QUARTZ_ORE 8
   glass:
     100:
       Goal: Break 100 glass blocks.
@@ -406,7 +415,7 @@ Breaks:
       DisplayName: Glassbreaker
       Type: normal
       Reward:
-        Item: amethyst_shard 8
+        Item: amethyst_shard 16
 Kills:
   zombie:
     1:
@@ -422,13 +431,44 @@ Kills:
     1:
       Goal: Kill the server Owner.
       Message: Yippie! You killed the owner of the server!
-      Name: kills_1_mrfloris
+      Name: kills_1_darkpyves
       DisplayName: No More mrfloris
       Type: rare
       Reward:
         IncreaseMaxHealth: 1
         Money: 25000
         Item: diamond 16
+  skeleton:
+    100:
+      Goal: Slay 100 skeletons.
+      Message: 100 skeletons vanquished!
+      Name: kills_100_skeleton
+      DisplayName: Bone Collector
+      Type: normal
+      Reward:
+        Item: bone 64
+        Item2: bow 1 Power:2
+  enderman:
+    25:
+      Goal: Defeat 25 endermen.
+      Message: 25 endermen met their end!
+      Name: kills_25_enderman
+      DisplayName: The Eyewitness
+      Type: rare
+      Reward:
+        Item: ender_pearl 5
+        Item2: pumpkin 4
+  witch:
+    10:
+      Goal: Defeat 10 witches.
+      Message: Brewed some trouble for those witches!
+      Name: kills_10_witch
+      DisplayName: Potion Purger
+      Type: rare
+      Reward:
+        Experience: 200
+        Item: redstone 8
+        Item2: glowstone_dust 8
 TargetsShot:
   villager:
     10:
@@ -444,6 +484,27 @@ TargetsShot:
       Name: targetsshot_100_glass
       DisplayName: Window Breaker
       Type: normal
+  creeper:
+    15:
+      Goal: Shoot 15 creepers.
+      Message: 15 creepers shot from a distance!
+      Name: targetsshot_15_creeper
+      DisplayName: Safety First
+      Type: normal
+      Reward:
+        Item: bow 1 Power:1
+        Item2: arrow 32
+  item_frame:
+    20:
+      Goal: Hit 20 item frames with projectiles.
+      Message: Picasso would be proud.
+      Name: targetsshot_20_item_frame
+      DisplayName: Frame Smasher
+      Type: normal
+      Reward:
+        Item: item_frame 8
+        Item2: leather 4
+        Item3: stick 8
 Crafts:
   diamond_sword:
     1:
@@ -453,7 +514,7 @@ Crafts:
       DisplayName: Blacksmith Apprentice
       Type: normal
       Reward:
-        Money: 2
+        Money: 2000
     100:
       Goal: Craft 100 diamond swords.
       Message: Next craft, Excalibur?
@@ -462,6 +523,36 @@ Crafts:
       Type: rare
       Reward:
         Experience: 500
+  shield:
+    10:
+      Goal: Craft 10 shields.
+      Message: You are the ultimate defender!
+      Name: craft_10_shield
+      DisplayName: Shieldsmith
+      Type: normal
+      Reward:
+        Item: shield 2
+        Item2: iron_ingot 4
+  cake:
+    5:
+      Goal: Bake 5 cakes.
+      Message: Let them eat cake!
+      Name: craft_5_cake
+      DisplayName: Cake Boss
+      Type: normal
+      Reward:
+        Experience: 50
+        Item: cake 2
+  banner:
+    20:
+      Goal: Craft 20 banners.
+      Message: Made 20 banners—decorate the world!
+      Name: craft_20_banner
+      DisplayName: Banner Designer
+      Type: normal
+      Reward:
+        Item: white_banner 4
+        Item2: glow_ink_sac 2
 PlayerCommands:
   aach stats:
     10:
@@ -474,6 +565,16 @@ PlayerCommands:
         Command:
           Execute: say §7PLAYER is now a statistician
           Display: Broadcast
+  tpa:
+    30:
+      Goal: Use /tpa 30 times.
+      Message: So social!
+      Name: playercommand_tpa_30
+      DisplayName: Teleport Junkie
+      Type: normal
+      Reward:
+        Item: cooked_beef 16
+        Item2: golden_carrot 8
 Breeding:
   sheep:
     1:
@@ -482,6 +583,26 @@ Breeding:
       Name: breeding_1_sheep
       DisplayName: Breeder
       Type: normal
+  cat:
+    3:
+      Goal: Breed 3 cats.
+      Message: Cats everywhere!
+      Name: breeding_3_cat
+      DisplayName: Feline Frenzy
+      Type: normal
+      Reward:
+        Item: cod 8
+        Item2: string 8
+  bee:
+    10:
+      Goal: Breed 10 bees.
+      Message: Buzzing with success!
+      Name: breeding_10_bee
+      DisplayName: Apiarist
+      Type: rare
+      Reward:
+        Item: honeycomb 16
+        Item2: beehive 1
 JobsReborn:
   hunter:
     1:
@@ -490,6 +611,72 @@ JobsReborn:
       Name: jobsreborn_1_hunter
       DisplayName: Hunter
       Type: normal
+  fisherman:
+    10:
+      Goal: Reach fisherman level 10!
+      Message: Master of the seas!
+      Name: jobsreborn_10_fisherman
+      DisplayName: Grand Fisher
+      Type: rare
+      Reward:
+        Item: fishing_rod 1 Luck_of_the_Sea:2
+        Item2: cooked_cod 16
+  miner:
+    5:
+      Goal: Reach miner level 5!
+      Message: Digging deep!
+      Name: jobsreborn_5_miner
+      DisplayName: Pickaxe Prodigy
+      Type: normal
+      Reward:
+        Item: iron_pickaxe 1 Unbreaking:2
+        Item2: cobbled_deepslate 32
+    15:
+      Goal: Reach miner level 15!
+      Message: Legendary digger!
+      Name: jobsreborn_15_miner
+      DisplayName: Bedrock Breaker
+      Type: rare
+      Reward:
+        Item: diamond_pickaxe 1 Efficiency:3
+  farmer:
+    10:
+      Goal: Reach farmer level 10!
+      Message: Green Thumb Unlocked!
+      Name: jobsreborn_10_farmer
+      DisplayName: Harvester Supreme
+      Type: normal
+      Reward:
+        Item: golden_hoe 1
+        Item2: carrot 32
+    25:
+      Goal: Reach farmer level 25!
+      Message: Agriculture Legend!
+      Name: jobsreborn_25_farmer
+      DisplayName: Lord of the Land
+      Type: rare
+      Reward:
+        Item: diamond_hoe 1 Unbreaking:3
+  explorer:
+    10:
+      Goal: Reach explorer level 10!
+      Message: The world awaits!
+      Name: jobsreborn_10_explorer
+      DisplayName: Nomad
+      Type: normal
+      Reward:
+        Item: boat 1
+        Item2: emerald 4
+  lumberjack:
+    8:
+      Goal: Reach lumberjack level 8!
+      Message: Timber!
+      Name: jobsreborn_8_lumberjack
+      DisplayName: Treehugger
+      Type: normal
+      Reward:
+        Item: iron_axe 1
+        Item2: oak_log 32
 Connections:
   1:
     Message: You connected to our server for the first time!
@@ -521,6 +708,15 @@ Snowballs:
     Type: normal
     Reward:
       IncreaseMaxOxygen: 30
+  5000:
+    Goal: Throw 5000 snowballs.
+    Message: 5000 snowballs? Blizzard incoming!
+    Name: snowballs_5000
+    DisplayName: Snowmageddon
+    Type: rare
+    Reward:
+      Item: snow_block 32
+      Item2: ice 16
 Eggs:
   1000:
     Goal: Throw 1000 eggs.
@@ -528,6 +724,15 @@ Eggs:
     Name: eggs_1000
     DisplayName: Omelet Addict
     Type: normal
+  2500:
+    Goal: Throw 2500 eggs.
+    Message: You might start a farm soon.
+    Name: eggs_2500
+    DisplayName: Scrambled Expert
+    Type: rare
+    Reward:
+      Item: chicken_spawn_egg 1
+      Item2: cake 1
 Fish:
   1:
     Goal: Fish a fish.
@@ -535,6 +740,15 @@ Fish:
     Name: fish_1
     DisplayName: Time for Fish and Chips
     Type: normal
+  100:
+    Goal: Catch 100 fish.
+    Message: Fishmaster! Sushi night!
+    Name: fish_100
+    DisplayName: The Angler
+    Type: rare
+    Reward:
+      Item: cooked_cod 32
+      Item2: bucket_of_salmon 1
 Treasures:
   1:
     Goal: Get a treasure from the sea.
@@ -556,6 +770,15 @@ EatenItems:
     Name: eatenitems_1
     DisplayName: First Snack
     Type: normal
+  10:
+    Goal: Eat 10 suspicious stews.
+    Message: You lived to tell the tale!
+    Name: suspiciousstew_10
+    DisplayName: Adventurous Eater
+    Type: fun
+    Reward:
+      Item: bowl 16
+      Item2: suspicious_stew 4
 Shear:
   100:
     Goal: Shear 100 sheep.
@@ -614,6 +837,14 @@ Beds:
     Name: bed_5
     DisplayName: Sleepy Guy
     Type: normal
+  50:
+    Goal: Sleep in a bed 50 times.
+    Message: Wheee! Bounce house champion!
+    Name: bedbounce_50
+    DisplayName: Mattress Acrobat
+    Type: fun
+    Reward:
+      Item: slime_block 8
 MaxLevel:
   10:
     Goal: Reach level 10.
@@ -621,6 +852,15 @@ MaxLevel:
     Name: maxlevel_10
     DisplayName: §4Rookie
     Type: normal
+  50:
+    Goal: Reach level 50.
+    Message: You've become a master!
+    Name: maxlevel_50
+    DisplayName: Overpowered
+    Type: rare
+    Reward:
+      Experience: 1000
+      Item: enchanted_book 1
 ConsumedPotions:
   100:
     Goal: Drink 100 potions.
@@ -635,6 +875,17 @@ PlayedTime:
     Name: playedtime_1
     DisplayName: First Hour
     Type: normal
+  100:
+    Goal: Play for 100 hours.
+    Message: Welcome back - the server recognizes you big time!
+    Name: playedtime_100
+    DisplayName: Server Recognition
+    Type: rare
+    Reward:
+      Command:
+        Execute: say §6PLAYER has been here many times before!
+        Display: Fame and Glory
+      Item: diamond_block 3
 DistanceFoot:
   1000:
     Goal: Travel 1000 Blocks with your feet.
@@ -751,6 +1002,14 @@ MusicDiscs:
     Name: musicdiscs_1
     DisplayName: DJ
     Type: normal
+  10:
+    Goal: Play 10 music discs.
+    Message: The party never ends!
+    Name: musicdiscs_10
+    DisplayName: Party Host
+    Type: normal
+    Reward:
+      Item: music_disc_cat 1
 EnderPearls:
   10:
     Goal: Teleport with ender pearls 10 times.

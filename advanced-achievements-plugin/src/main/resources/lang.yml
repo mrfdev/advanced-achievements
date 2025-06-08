@@ -219,6 +219,9 @@ advancements-generated: "Advancements were successfully generated."
 # Used in /aach inspect
 achievement-not-recognized: "Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?"
 
+# Used in /aach resetconfig
+reset-config: "Config was reset. Backup has been made as 'config_old.yml'"
+
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #
 #                                                                                                                      #
