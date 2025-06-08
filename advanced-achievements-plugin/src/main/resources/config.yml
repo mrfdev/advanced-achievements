@@ -551,8 +551,9 @@ Crafts:
       DisplayName: Banner Designer
       Type: normal
       Reward:
-        Item: white_banner 4
-        Item2: glow_ink_sac 2
+        Item:
+        - white_banner 4
+        - glow_ink_sac 2
 PlayerCommands:
   aach stats:
     10:
