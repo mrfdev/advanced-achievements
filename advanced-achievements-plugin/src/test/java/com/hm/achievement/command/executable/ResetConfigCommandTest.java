@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.AdvancedAchievements;
+import com.hm.achievement.utils.FancyMessageSender;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class ResetConfigCommandTest {
     private AdvancedAchievements plugin;
     private CommandSender sender;
     private ResetConfigCommand command;
+    private FancyMessageSender fancyMessageSender;
     private File tempFolder;
 
     @BeforeEach
@@ -41,8 +43,9 @@ public class ResetConfigCommandTest {
         YamlConfiguration mainConfig = mock(YamlConfiguration.class);
         YamlConfiguration langConfig = mock(YamlConfiguration.class);
         StringBuilder pluginHeader = new StringBuilder();
+        fancyMessageSender = mock(FancyMessageSender.class);
         tempFolder = Files.createTempDirectory("pluginData").toFile();
-        command = new ResetConfigCommand(mainConfig, langConfig, pluginHeader, plugin);
+        command = new ResetConfigCommand(mainConfig, langConfig, pluginHeader, plugin, fancyMessageSender);
     }
 
     @AfterEach
@@ -108,7 +111,7 @@ public class ResetConfigCommandTest {
         InputStream defaultConfigStream = new ByteArrayInputStream("default config content".getBytes());
         when(plugin.getResource("config.yml")).thenReturn(defaultConfigStream);
         doNothing().when(plugin).reloadConfig();
-        ResetConfigCommand failingBackupCommand = new ResetConfigCommand(mock(YamlConfiguration.class), mock(YamlConfiguration.class), new StringBuilder(), plugin) {
+        ResetConfigCommand failingBackupCommand = new ResetConfigCommand(mock(YamlConfiguration.class), mock(YamlConfiguration.class), new StringBuilder(), plugin, fancyMessageSender) {
             @Override
             protected void backupConfig(@NotNull File source, @NotNull File target) throws IOException {
                 throw new IOException("test");
