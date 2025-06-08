@@ -32,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v4.6.2
       with:
         name: dev-build
-        path: target/*.jar
+        path: advanced-achievements-plugin/target/*.jar
