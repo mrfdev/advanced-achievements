@@ -63,6 +63,7 @@ import dagger.multibindings.ElementsIntoSet;
 import dagger.multibindings.IntoSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @Module
 public interface ReloadableModule {
 

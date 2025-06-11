@@ -175,9 +175,10 @@ public class ConfigurationParser {
             logger.warning("Overriding configuration: disabling mcMMO category.");
             logger.warning("Ensure you have placed mcMMO in your plugins folder or add mcMMO to the DisabledCategories list in config.yml.");
         }
+        // Need mcMMO for mcMMO category
         if (Bukkit.getPluginManager().isPluginEnabled("mcMMO")) {
             disabledCategories.remove(MultipleAchievements.MCMMO);
-            logger.severe("mcMMO is enabled");
+            logger.warning("mcMMO is enabled");
         }
     }
 
