@@ -2,9 +2,9 @@ name: Compare Config Files and Create PR
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "*" ]
   pull_request:
-    branches: ["*"]
+    branches: [ "*" ]
   workflow_dispatch:
 
 jobs:
