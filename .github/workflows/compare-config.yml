@@ -1,0 +1,37 @@
+name: Compare Config Files and Create PR
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+jobs:
+  compare-and-create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Download config.yml from 1MB repository
+        run: |
+          curl -o config-1mb.yml https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
+
+      - name: Download config.yml from AdvancedAchievements repository
+        run: |
+          curl -o config-aa.yml https://raw.githubusercontent.com/mrfdev/advanced-achievements/master/advanced-achievements-plugin/src/main/resources/config.yml
+
+      - name: Compare the two config files
+        id: compare
+        run: |
+          diff -u config-1mb.yml config-aa.yml || echo "Files differ"
+
+      - name: Create Pull Request if files differ
+        if: steps.compare.outputs.diff != ''
+        uses: peter-evans/create-pull-request@v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Sync config.yml with 1MB repository'
+          body: 'This PR updates config.yml to match the version from the 1MB repository.'
+          base: main
+          head: sync-config-1mb
+          files: |
+            config.yml=config-1mb.yml
