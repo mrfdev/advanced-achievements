@@ -14,6 +14,9 @@ permissions:
   achievement.resetconfig:
     description: Resets config to default.
     default: false
+  achivement.regenconfigfolder:
+    description: Regenerates config folder.
+    default: false
   achievement.book:
     description: Allows to receive achievements books.
     default: true

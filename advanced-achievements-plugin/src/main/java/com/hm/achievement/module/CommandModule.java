@@ -13,6 +13,7 @@ import com.hm.achievement.command.executable.InfoCommand;
 import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
 import com.hm.achievement.command.executable.MonthCommand;
+import com.hm.achievement.command.executable.RegenConfigFolderCommand;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.command.executable.ResetCommand;
 import com.hm.achievement.command.executable.ResetConfigCommand;
@@ -24,6 +25,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
 
+@SuppressWarnings("unused")
 @Module
 public interface CommandModule {
 
@@ -102,4 +104,8 @@ public interface CommandModule {
     @Binds
     @IntoSet
     AbstractCommand bindResetConfigCommand(ResetConfigCommand resetConfigCommand);
+
+    @Binds
+    @IntoSet
+    AbstractCommand bindsRegenConfigFolderCommand(RegenConfigFolderCommand regenConfigFolderCommand);
 }
