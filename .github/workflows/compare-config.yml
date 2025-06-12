@@ -1,9 +1,10 @@
 name: Compare Config Files and Create PR
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
 jobs:
   compare-and-create-pr:
     runs-on: ubuntu-latest
