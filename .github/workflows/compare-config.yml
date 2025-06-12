@@ -5,9 +5,12 @@ on:
     branches: [ "*" ]
   pull_request:
     branches: [ "*" ]
+  workflow_dispatch:
+
 jobs:
   compare-and-create-pr:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -23,10 +26,16 @@ jobs:
       - name: Compare the two config files
         id: compare
         run: |
-          diff -u config-1mb.yml config-aa.yml || echo "Files differ"
+          if ! diff -q config-1mb.yml config-aa.yml > /dev/null; then
+            echo "Files differ"
+            echo "files_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No differences found"
+            echo "files_changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create Pull Request if files differ
-        if: steps.compare.outputs.diff != ''
+        if: steps.compare.outputs.files_changed == 'true'
         uses: peter-evans/create-pull-request@v7.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,5 +43,6 @@ jobs:
           body: 'This PR updates config.yml to match the version from the 1MB repository.'
           base: main
           head: sync-config-1mb
+          commit-message: 'Update config.yml from 1MB repository'
           files: |
-            config.yml=config-1mb.yml
+            advanced-achievements-plugin/src/main/resources/config.yml=config-1mb.yml
