@@ -54,10 +54,7 @@ public class ConfigurationParser {
     private final RewardParser rewardParser;
 
     @Inject
-    public ConfigurationParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                               @Named("gui") YamlConfiguration guiConfig, AchievementMap achievementMap, Set<Category> disabledCategories,
-                               StringBuilder pluginHeader, Logger logger, int serverVersion, YamlUpdater yamlUpdater,
-                               AdvancedAchievements plugin, RewardParser rewardParser) {
+    public ConfigurationParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, @Named("gui") YamlConfiguration guiConfig, AchievementMap achievementMap, Set<Category> disabledCategories, StringBuilder pluginHeader, Logger logger, int serverVersion, YamlUpdater yamlUpdater, AdvancedAchievements plugin, RewardParser rewardParser) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.guiConfig = guiConfig;
@@ -95,9 +92,7 @@ public class ConfigurationParser {
      * @return A set containing the keys
      */
     private Set<String> getSectionKeys(String path) {
-        return this.mainConfig.isConfigurationSection(path)
-                ? Objects.requireNonNull(this.mainConfig.getConfigurationSection(path)).getKeys(false)
-                : Collections.emptySet();
+        return this.mainConfig.isConfigurationSection(path) ? Objects.requireNonNull(this.mainConfig.getConfigurationSection(path)).getKeys(false) : Collections.emptySet();
     }
 
     /**
@@ -108,8 +103,7 @@ public class ConfigurationParser {
      * @param userConfig
      * @throws PluginLoadError
      */
-    private void backupAndLoadConfiguration(String latestConfigName, String userConfigName, YamlConfiguration userConfig)
-            throws PluginLoadError {
+    private void backupAndLoadConfiguration(String latestConfigName, String userConfigName, YamlConfiguration userConfig) throws PluginLoadError {
         File configFile = new File(plugin.getDataFolder(), userConfigName);
         try {
             File backupFile = new File(plugin.getDataFolder(), userConfigName + ".bak");
@@ -133,8 +127,7 @@ public class ConfigurationParser {
             userConfig.load(configFile);
             yamlUpdater.update(latestConfigName, userConfigName, userConfig);
         } catch (IOException | InvalidConfigurationException e) {
-            throw new PluginLoadError("Failed to load " + userConfigName
-                    + ". Verify its syntax on yaml-online-parser.appspot.com and use the following logs.", e);
+            throw new PluginLoadError("Failed to load " + userConfigName + ". Verify its syntax on yaml-online-parser.appspot.com and use the following logs.", e);
         }
     }
 
@@ -146,10 +139,7 @@ public class ConfigurationParser {
         String icon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
         if (StringUtils.isNotBlank(icon)) {
             String coloredIcon = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color"))) + icon;
-            pluginHeader
-                    .append(ChatColor.translateAlternateColorCodes('&',
-                            Objects.requireNonNull(StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon))))
-                    .append(" ");
+            pluginHeader.append(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))).append(" ");
         }
         pluginHeader.trimToSize();
     }
@@ -162,29 +152,28 @@ public class ConfigurationParser {
     private void parseDisabledCategories() throws PluginLoadError {
         extractDisabledCategoriesFromConfig();
         // Need PetMaster for PetMasterGive and PetMasterReceive categories.
-        if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE)
-                || !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE))
-                && !Bukkit.getPluginManager().isPluginEnabled("PetMaster")) {
+        if ((!disabledCategories.contains(NormalAchievements.PETMASTERGIVE) || !disabledCategories.contains(NormalAchievements.PETMASTERRECEIVE)) && !Bukkit.getPluginManager().isPluginEnabled("PetMaster")) {
             disabledCategories.add(NormalAchievements.PETMASTERGIVE);
             disabledCategories.add(NormalAchievements.PETMASTERRECEIVE);
             logger.warning("Overriding configuration: disabling PetMasterGive and PetMasterReceive categories.");
-            logger.warning(
-                    "Ensure you have placed Pet Master in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
+            logger.warning("Ensure you have placed Pet Master in your plugins folder or add PetMasterGive and PetMasterReceive to the DisabledCategories list in config.yml.");
         }
         // Need Jobs for JobsReborn category.
-        if (!disabledCategories.contains(MultipleAchievements.JOBSREBORN)
-                && !Bukkit.getPluginManager().isPluginEnabled("Jobs")) {
+        if (!disabledCategories.contains(MultipleAchievements.JOBSREBORN) && !Bukkit.getPluginManager().isPluginEnabled("Jobs")) {
             disabledCategories.add(MultipleAchievements.JOBSREBORN);
             logger.warning("Overriding configuration: disabling JobsReborn category.");
-            logger.warning(
-                    "Ensure you have placed JobsReborn in your plugins folder or add JobsReborn to the DisabledCategories list in config.yml.");
+            logger.warning("Ensure you have placed JobsReborn in your plugins folder or add JobsReborn to the DisabledCategories list in config.yml.");
         }
         // Raids introduced in 1.14.
         if (!disabledCategories.contains(NormalAchievements.RAIDSWON) && serverVersion < 14) {
             disabledCategories.add(NormalAchievements.RAIDSWON);
             logger.warning("Overriding configuration: disabling RaidsWon category.");
-            logger.warning(
-                    "Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
+            logger.warning("Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
+        }
+        if (!disabledCategories.contains(MultipleAchievements.MCMMO) && !Bukkit.getPluginManager().isPluginEnabled("mcMMO")) {
+            disabledCategories.add(MultipleAchievements.MCMMO);
+            logger.warning("Overriding configuration: disabling mcMMO category.");
+            logger.warning("Ensure you have placed mcMMO in your plugins folder or add mcMMO to the DisabledCategories list in config.yml.");
         }
     }
 
@@ -196,9 +185,7 @@ public class ConfigurationParser {
     private void extractDisabledCategoriesFromConfig() throws PluginLoadError {
         disabledCategories.clear();
         for (String disabledCategory : mainConfig.getStringList("DisabledCategories")) {
-            Category category = CommandAchievements.COMMANDS.toString().equals(disabledCategory)
-                    ? CommandAchievements.COMMANDS
-                    : null;
+            Category category = CommandAchievements.COMMANDS.toString().equals(disabledCategory) ? CommandAchievements.COMMANDS : null;
             if (category == null) {
                 category = NormalAchievements.getByName(disabledCategory);
             }
@@ -210,8 +197,7 @@ public class ConfigurationParser {
                 Arrays.stream(NormalAchievements.values()).forEach(n -> allCategories.add(n.toString()));
                 Arrays.stream(MultipleAchievements.values()).forEach(m -> allCategories.add(m.toString()));
                 allCategories.add(CommandAchievements.COMMANDS.toString());
-                throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt. "
-                        + "Did you mean " + StringHelper.getClosestMatch(disabledCategory, allCategories) + "?");
+                throw new PluginLoadError("Category " + disabledCategory + " specified in DisabledCategories is misspelt. " + "Did you mean " + StringHelper.getClosestMatch(disabledCategory, allCategories) + "?");
             }
             disabledCategories.add(category);
         }
@@ -270,10 +256,7 @@ public class ConfigurationParser {
     }
 
     private List<Long> getSortedThresholds(String path) {
-        return Objects.requireNonNull(mainConfig.getConfigurationSection(path)).getKeys(false).stream()
-                .map(Long::parseLong)
-                .sorted()
-                .collect(Collectors.toList());
+        return Objects.requireNonNull(mainConfig.getConfigurationSection(path)).getKeys(false).stream().map(Long::parseLong).sorted().collect(Collectors.toList());
     }
 
     /**
@@ -297,33 +280,20 @@ public class ConfigurationParser {
         if (!Objects.requireNonNull(section).contains("Name")) {
             throw new PluginLoadError("Achievement with path (" + path + ") is missing its Name parameter in config.yml.");
         } else if (achievementMap.getForName(section.getString("Name")) != null) {
-            throw new PluginLoadError("Duplicate achievement Name (" + section.getString("Name") + "). "
-                    + "Please ensure each Name is unique in config.yml.");
+            throw new PluginLoadError("Duplicate achievement Name (" + section.getString("Name") + "). " + "Please ensure each Name is unique in config.yml.");
         } else if (!section.contains("Message")) {
-            throw new PluginLoadError(
-                    "Achievement with path (" + path + ") is missing its Message parameter in config.yml.");
+            throw new PluginLoadError("Achievement with path (" + path + ") is missing its Message parameter in config.yml.");
         }
         String rewardPath = mainConfig.isConfigurationSection(path + ".Reward") ? path + ".Reward" : path + ".Rewards";
 
-        Achievement achievement = new AchievementBuilder()
-                .name(section.getString("Name"))
-                .displayName(Objects.toString(section.getString("DisplayName"), section.getString("Name")))
-                .message(section.getString("Message"))
-                .goal(Objects.toString(section.getString("Goal"), section.getString("Message")))
-                .type(section.getString("Type"))
-                .threshold(threshold)
-                .category(category)
-                .subcategory(subcategory)
-                .rewards(rewardParser.parseRewards(rewardPath))
-                .build();
+        Achievement achievement = new AchievementBuilder().name(section.getString("Name")).displayName(Objects.toString(section.getString("DisplayName"), section.getString("Name"))).message(section.getString("Message")).goal(Objects.toString(section.getString("Goal"), section.getString("Message"))).type(section.getString("Type")).threshold(threshold).category(category).subcategory(subcategory).rewards(rewardParser.parseRewards(rewardPath)).build();
         achievementMap.put(achievement);
     }
 
     @SuppressWarnings("UnnecessaryToStringCall")
     private void logLoadingMessages() {
         int disabledCategoryCount = disabledCategories.size();
-        int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1
-                - disabledCategoryCount;
+        int categories = NormalAchievements.values().length + MultipleAchievements.values().length + 1 - disabledCategoryCount;
         logger.info("Loaded " + achievementMap.getAll().size() + " achievements in " + categories + " categories.");
 
         if (!disabledCategories.isEmpty()) {
