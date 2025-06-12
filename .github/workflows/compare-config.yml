@@ -70,6 +70,6 @@ jobs:
           commit-message: "Sync config.yml with 1MB repository"
           title: "Sync config.yml with 1MB repository"
           body: "Sync config.yml with 1MB repository"
-          base: master
+          base: sync-config
           branch: config-change
           delete-branch: true
