@@ -15,18 +15,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
-      - name: Download config.yml from 1MB repository
-        run: |
-          curl -sSL -o config-1mb.yml https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
-
-      - name: Compare to local config.yml
+      - name: Download and compare with 1MB config
         id: compare
         run: |
-          if ! diff -q config-1mb.yml advanced-achievements-plugin/src/main/resources/config.yml > /dev/null; then
+          TMP_FILE="advanced-achievements-plugin/src/main/resources/config-remote.yml"
+          TARGET_FILE="advanced-achievements-plugin/src/main/resources/config.yml"
+
+          curl -sSL -o "$TMP_FILE" https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
+
+          if ! diff -q "$TMP_FILE" "$TARGET_FILE" > /dev/null; then
             echo "files_changed=true" >> $GITHUB_OUTPUT
-            cp config-1mb.yml advanced-achievements-plugin/src/main/resources/config.yml
+            mv "$TMP_FILE" "$TARGET_FILE"
           else
             echo "files_changed=false" >> $GITHUB_OUTPUT
+            rm "$TMP_FILE"
           fi
 
       - name: Create Pull Request if files differ
@@ -35,7 +37,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: 'Sync config.yml with 1MB repository'
-          body: 'This PR updates `config.yml` to match the version from the 1MB repository.'
-          commit-message: 'Update config.yml from 1MB repo'
+          body: 'This PR updates `config.yml` to match the latest version from the 1MB repository.'
+          commit-message: 'Update config.yml to match 1MB repository'
           base: master
           branch: sync-config
