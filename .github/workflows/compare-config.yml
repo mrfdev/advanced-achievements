@@ -2,9 +2,9 @@ name: Compare Config Files and Create PR
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
-    branches: [ "*" ]
+    branches: ["*"]
   workflow_dispatch:
 
 jobs:
@@ -17,20 +17,15 @@ jobs:
 
       - name: Download config.yml from 1MB repository
         run: |
-          curl -o config-1mb.yml https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
+          curl -sSL -o config-1mb.yml https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
 
-      - name: Download config.yml from AdvancedAchievements repository
-        run: |
-          curl -o config-aa.yml https://raw.githubusercontent.com/mrfdev/advanced-achievements/master/advanced-achievements-plugin/src/main/resources/config.yml
-
-      - name: Compare the two config files
+      - name: Compare to local config.yml
         id: compare
         run: |
-          if ! diff -q config-1mb.yml config-aa.yml > /dev/null; then
-            echo "Files differ"
+          if ! diff -q config-1mb.yml advanced-achievements-plugin/src/main/resources/config.yml > /dev/null; then
             echo "files_changed=true" >> $GITHUB_OUTPUT
+            cp config-1mb.yml advanced-achievements-plugin/src/main/resources/config.yml
           else
-            echo "No differences found"
             echo "files_changed=false" >> $GITHUB_OUTPUT
           fi
 
@@ -40,9 +35,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: 'Sync config.yml with 1MB repository'
-          body: 'This PR updates config.yml to match the version from the 1MB repository.'
-          base: main
-          head: sync-config-1mb
-          commit-message: 'Update config.yml from 1MB repository'
-          files: |
-            advanced-achievements-plugin/src/main/resources/config.yml=config-1mb.yml
+          body: 'This PR updates `config.yml` to match the version from the 1MB repository.'
+          commit-message: 'Update config.yml from 1MB repo'
+          base: master
+          branch: sync-config
