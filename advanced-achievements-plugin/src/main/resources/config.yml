@@ -324,8 +324,8 @@ Places:
       Type: rare
       Reward:
         Item:
-        - ANGLER_POTTERY_SHERD 1
-        - SHULKER_SHELL 1
+          - ANGLER_POTTERY_SHERD 1
+          - SHULKER_SHELL 1
   crafting_table:
     25:
       Goal: Place 25 crafting tables.
@@ -415,8 +415,8 @@ Breaks:
       Reward:
         Experience: 250
         Item:
-        - deepslate_bricks 32
-        - DEEPSLATE_COAL_ORE 16
+          - deepslate_bricks 32
+          - DEEPSLATE_COAL_ORE 16
   ancient_debris:
     5:
       Goal: Break 5 ancient debris.
@@ -426,9 +426,9 @@ Breaks:
       Type: rare
       Reward:
         Item:
-        - gold_ingot 8
-        - NETHERITE_SWORD 1
-        - NETHER_QUARTZ_ORE 8
+          - gold_ingot 8
+          - NETHERITE_SWORD 1
+          - NETHER_QUARTZ_ORE 8
   glass:
     100:
       Goal: Break 100 glass blocks.
@@ -574,8 +574,8 @@ Crafts:
       Type: normal
       Reward:
         Item:
-        - white_banner 4
-        - glow_ink_sac 2
+          - white_banner 4
+          - glow_ink_sac 2
 PlayerCommands:
   aach stats:
     10:
@@ -1318,12 +1318,3 @@ FishableFish:
 #         Money: 5
 
 # Statistics for this category can be increased using commands such as '/aach add 1 Custom.votes PLAYER'.
-Custom:
-  votes:
-    10:
-      Message: Voted 10 times for the server!
-      Name: customs_votes_10
-      DisplayName: Server fan
-      Type: normal
-      Reward:
-        Money: 5
