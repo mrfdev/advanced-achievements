@@ -99,17 +99,17 @@ RestrictAdventure: true
 # Stop all stats from increasing when player in a specific world, including PlayedTime (delete the [] before listing
 # values). Connection achievements will only be handled once a player enters a non-excluded world.
 ExcludedWorlds:
-  - test
-  - builders
-  - run
-  - sanctuary
-  - contest
-  - legacy
-  - uwu
-  - owo
-  - sushi
-  - parkour
-  - lumifae
+- test
+- builders
+- run
+- sanctuary
+- contest
+- legacy
+- uwu
+- owo
+- sushi
+- parkour
+- lumifae
 
 # Ignore vertical dimension (Y axis) when calculating distance statistics.
 IgnoreVerticalDistance: false
@@ -117,9 +117,9 @@ IgnoreVerticalDistance: false
 # Hide these categories from the GUI or the stats output and prevent statisticss from increasing. To not disable any
 # categories, remove all listed items and instead specify DisabledCategories: []
 DisabledCategories:
-  - AdvancementsCompleted
-  - PetMasterGive
-  - PetMasterReceive
+- AdvancementsCompleted
+- PetMasterGive
+- PetMasterReceive
 
 # Do not take into account items broken with Silk Touch for the Breaks achievements.
 DisableSilkTouchBreaks: true
@@ -324,8 +324,8 @@ Places:
       Type: rare
       Reward:
         Item:
-          - ANGLER_POTTERY_SHERD 1
-          - SHULKER_SHELL 1
+        - ANGLER_POTTERY_SHERD 1
+        - SHULKER_SHELL 1
   crafting_table:
     25:
       Goal: Place 25 crafting tables.
@@ -354,8 +354,8 @@ Places:
       Type: rare
       Reward:
         Item:
-          - honey_bottle 4
-          - BEE_SPAWN_EGG 1
+        - honey_bottle 4
+        - BEE_SPAWN_EGG 1
 Breaks:
   ice:
     10:
@@ -381,8 +381,8 @@ Breaks:
       Reward:
         Command:
           Execute:
-            - give PLAYER grass_block 10
-            - give PLAYER oak_wood 15
+          - give PLAYER grass_block 10
+          - give PLAYER oak_wood 15
   mossy_cobblestone:
     15:
       Goal: Break 15 mossy cobblestone blocks.
@@ -393,7 +393,7 @@ Breaks:
       Reward:
         Command:
           Execute:
-            - give PLAYER deepslate_diamond_ore 3
+          - give PLAYER deepslate_diamond_ore 3
   dripstone_block:
     15:
       Goal: Break 12 dripstone blocks.
@@ -404,7 +404,7 @@ Breaks:
       Reward:
         Command:
           Execute:
-            - give PLAYER deepslate_emerald_ore 3
+          - give PLAYER deepslate_emerald_ore 3
   deepslate:
     500:
       Goal: Break 500 deepslate blocks.
@@ -415,8 +415,8 @@ Breaks:
       Reward:
         Experience: 250
         Item:
-          - deepslate_bricks 32
-          - DEEPSLATE_COAL_ORE 16
+        - deepslate_bricks 32
+        - DEEPSLATE_COAL_ORE 16
   ancient_debris:
     5:
       Goal: Break 5 ancient debris.
@@ -426,9 +426,9 @@ Breaks:
       Type: rare
       Reward:
         Item:
-          - gold_ingot 8
-          - NETHERITE_SWORD 1
-          - NETHER_QUARTZ_ORE 8
+        - gold_ingot 8
+        - NETHERITE_SWORD 1
+        - NETHER_QUARTZ_ORE 8
   glass:
     100:
       Goal: Break 100 glass blocks.
@@ -574,8 +574,8 @@ Crafts:
       Type: normal
       Reward:
         Item:
-          - white_banner 4
-          - glow_ink_sac 2
+        - white_banner 4
+        - glow_ink_sac 2
 PlayerCommands:
   aach stats:
     10:
@@ -1133,7 +1133,7 @@ AdvancementsCompleted:
     Type: normal
     Reward:
       Item:
-        - cake 1
+      - cake 1
 
 # Display a boss bar showing progress a few seconds after an achievement is received. Minimum Minecraft version: 1.9.
 BossBarProgress: true
@@ -1160,151 +1160,151 @@ BooksEdited:
 
 # Used for the Breaks achievement category. You may need to expand this list when new Minecraft versions are released.
 OreBlocks:
-  - coal_ore
-  - diamond_ore
-  - emerald_ore
-  - lapis_ore
-  - nether_gold_ore
-  - nether_quartz_ore
-  - redstone_ore
+- coal_ore
+- diamond_ore
+- emerald_ore
+- lapis_ore
+- nether_gold_ore
+- nether_quartz_ore
+- redstone_ore
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks cannot be launched on the following
 # blocks. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right clicking on the
 # block and not actually using any fireworks. You may need to expand this list when new Minecraft versions are released.
 ForbiddenFireworkBlocks:
-  - glow_item_frame
-  - painting
-  - item_frame
-  - minecart
-  - hopper_minecart
-  - tnt_minecart
-  - command_block_minecart
-  - furnace_minecart
-  - chest_minecart
+- glow_item_frame
+- painting
+- item_frame
+- minecart
+- hopper_minecart
+- tnt_minecart
+- command_block_minecart
+- furnace_minecart
+- chest_minecart
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks can only be launched on the following
 # blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right
 # clicking on the block and not actually using any fireworks. You may need to expand this list when new Minecraft
 # versions are released.
 ForbiddenFireworkBlocksWhenNotSneaking:
-  - polished_blackstone_button
-  - furnace
-  - dispenser
-  - chest
-  - note_block
-  - lever
-  - stone_button
-  - ender_chest
-  - beacon
-  - anvil
-  - trapped_chest
-  - hopper
-  - dropper
-  - brewing_stand
-  - crafting_table
-  - acacia_button
-  - birch_button
-  - dark_oak_button
-  - jungle_button
-  - oak_button
-  - spruce_button
-  - acacia_door
-  - birch_door
-  - dark_oak_door
-  - jungle_door
-  - oak_door
-  - spruce_door
-  - acacia_fence_gate
-  - birch_fence_gate
-  - dark_oak_fence_gate
-  - jungle_fence_gate
-  - oak_fence_gate
-  - spruce_fence_gate
-  - enchanting_table
-  - acacia_trapdoor
-  - birch_trapdoor
-  - dark_oak_trapdoor
-  - jungle_trapdoor
-  - oak_trapdoor
-  - spruce_trapdoor
-  - acacia_boat
-  - birch_boat
-  - dark_oak_boat
-  - jungle_boat
-  - oak_boat
-  - spruce_boat
-  - black_bed
-  - blue_bed
-  - brown_bed
-  - cyan_bed
-  - gray_bed
-  - green_bed
-  - light_blue_bed
-  - light_gray_bed
-  - lime_bed
-  - magenta_bed
-  - orange_bed
-  - pink_bed
-  - purple_bed
-  - red_bed
-  - white_bed
-  - yellow_bed
-  - cake
-  - comparator
-  - repeater
-  - command_block
-  - armor_stand
-  - chain_command_block
-  - repeating_command_block
-  - black_shulker_box
-  - blue_shulker_box
-  - brown_shulker_box
-  - cyan_shulker_box
-  - gray_shulker_box
-  - green_shulker_box
-  - light_blue_shulker_box
-  - lime_shulker_box
-  - magenta_shulker_box
-  - orange_shulker_box
-  - pink_shulker_box
-  - purple_shulker_box
-  - red_shulker_box
-  - white_shulker_box
-  - yellow_shulker_box
-  - shulker_box
-  - barrel
-  - bell
-  - blast_furnace
-  - cartography_table
-  - grindstone
-  - loom
-  - smoker
-  - stonecutter
-  - acacia_sign
-  - acacia_wall_sign
-  - birch_sign
-  - birch_wall_sign
-  - dark_oak_sign
-  - dark_oak_wall_sign
-  - jungle_sign
-  - jungle_wall_sign
-  - oak_sign
-  - oak_wall_sign
-  - spruce_sign
-  - spruce_wall_sign
+- polished_blackstone_button
+- furnace
+- dispenser
+- chest
+- note_block
+- lever
+- stone_button
+- ender_chest
+- beacon
+- anvil
+- trapped_chest
+- hopper
+- dropper
+- brewing_stand
+- crafting_table
+- acacia_button
+- birch_button
+- dark_oak_button
+- jungle_button
+- oak_button
+- spruce_button
+- acacia_door
+- birch_door
+- dark_oak_door
+- jungle_door
+- oak_door
+- spruce_door
+- acacia_fence_gate
+- birch_fence_gate
+- dark_oak_fence_gate
+- jungle_fence_gate
+- oak_fence_gate
+- spruce_fence_gate
+- enchanting_table
+- acacia_trapdoor
+- birch_trapdoor
+- dark_oak_trapdoor
+- jungle_trapdoor
+- oak_trapdoor
+- spruce_trapdoor
+- acacia_boat
+- birch_boat
+- dark_oak_boat
+- jungle_boat
+- oak_boat
+- spruce_boat
+- black_bed
+- blue_bed
+- brown_bed
+- cyan_bed
+- gray_bed
+- green_bed
+- light_blue_bed
+- light_gray_bed
+- lime_bed
+- magenta_bed
+- orange_bed
+- pink_bed
+- purple_bed
+- red_bed
+- white_bed
+- yellow_bed
+- cake
+- comparator
+- repeater
+- command_block
+- armor_stand
+- chain_command_block
+- repeating_command_block
+- black_shulker_box
+- blue_shulker_box
+- brown_shulker_box
+- cyan_shulker_box
+- gray_shulker_box
+- green_shulker_box
+- light_blue_shulker_box
+- lime_shulker_box
+- magenta_shulker_box
+- orange_shulker_box
+- pink_shulker_box
+- purple_shulker_box
+- red_shulker_box
+- white_shulker_box
+- yellow_shulker_box
+- shulker_box
+- barrel
+- bell
+- blast_furnace
+- cartography_table
+- grindstone
+- loom
+- smoker
+- stonecutter
+- acacia_sign
+- acacia_wall_sign
+- birch_sign
+- birch_wall_sign
+- dark_oak_sign
+- dark_oak_wall_sign
+- jungle_sign
+- jungle_wall_sign
+- oak_sign
+- oak_wall_sign
+- spruce_sign
+- spruce_wall_sign
 
 # Used for the HoePlowings achievement category. You may need to expand this list when new Minecraft versions are
 # released.
 HoePlowableBlocks:
-  - dirt
-  - grass_block
+- dirt
+- grass_block
 
 # Used for the Fish achievement category. You may need to expand this list when new Minecraft versions are released.
 FishableFish:
-  - cod
-  - salmon
-  - pufferfish
-  - tropical_fish
+- cod
+- salmon
+- pufferfish
+- tropical_fish
 
 # Statistics for this category can be increased using commands such as '/aach add 1 Custom.votes PLAYER'.
 # Custom:
