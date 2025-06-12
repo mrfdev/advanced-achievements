@@ -1316,14 +1316,3 @@ FishableFish:
 #       Type: normal
 #       Reward:
 #         Money: 5
-
-# Statistics for this category can be increased using commands such as '/aach add 1 Custom.votes PLAYER'.
-Custom:
-  votes:
-    10:
-      Message: Voted 10 times for the server!
-      Name: customs_votes_10
-      DisplayName: Server fan
-      Type: normal
-      Reward:
-        Money: 5
