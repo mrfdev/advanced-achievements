@@ -36,7 +36,6 @@ import com.hm.achievement.listener.statistics.JobsRebornListener;
 import com.hm.achievement.listener.statistics.KillsListener;
 import com.hm.achievement.listener.statistics.LavaBucketsListener;
 import com.hm.achievement.listener.statistics.LevelsListener;
-import com.hm.achievement.listener.statistics.McMMOListener;
 import com.hm.achievement.listener.statistics.MilksListener;
 import com.hm.achievement.listener.statistics.MusicDiscsListener;
 import com.hm.achievement.listener.statistics.PetMasterGiveListener;
@@ -286,8 +285,4 @@ public interface ReloadableModule {
     @Binds
     @IntoSet
     Reloadable bindEffectsHeldListener(EffectsHeldListener effectsHeldListener);
-
-    @Binds
-    @IntoSet
-    Reloadable bindMcMMOListener(McMMOListener mcMMOListener);
 }

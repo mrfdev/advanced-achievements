@@ -383,6 +383,28 @@ Breaks:
           Execute:
             - give PLAYER grass_block 10
             - give PLAYER oak_wood 15
+  mossy_cobblestone:
+    15:
+      Goal: Break 15 mossy cobblestone blocks.
+      Message: §1Taiga biome master!
+      Name: break_15_mossy_cobblestone
+      DisplayName: Taiga Biome Master!
+      Type: normal
+      Reward:
+        Command:
+          Execute:
+            - give PLAYER deepslate_diamond_ore 3
+  dripstone_block:
+    15:
+      Goal: Break 12 dripstone blocks.
+      Message: §1Cave Apprentice!
+      Name: break_12_dripstone_block
+      DisplayName: Keep exploring!
+      Type: normal
+      Reward:
+        Command:
+          Execute:
+            - give PLAYER deepslate_emerald_ore 3
   deepslate:
     500:
       Goal: Break 500 deepslate blocks.
@@ -566,16 +588,15 @@ PlayerCommands:
         Command:
           Execute: say §7PLAYER is now a statistician
           Display: Broadcast
-  tpa:
+  mcstats:
     30:
-      Goal: Use /tpa 30 times.
+      Goal: Use /mcstats 30 times without spamming
       Message: So social!
-      Name: playercommand_tpa_30
-      DisplayName: Teleport Junkie
+      Name: playercommand_mcstats_30
+      DisplayName: mcMMO level grinder
       Type: normal
       Reward:
-        Item: cooked_beef 16
-        Item2: golden_carrot 8
+        Item: golden_carrot 8
 Breeding:
   sheep:
     1:
@@ -584,6 +605,8 @@ Breeding:
       Name: breeding_1_sheep
       DisplayName: Breeder
       Type: normal
+      Reward:
+        Item: SHEEP_SPAWN_EGG 1
   cat:
     3:
       Goal: Breed 3 cats.
@@ -1063,16 +1086,6 @@ Riptides:
     Name: riptides_1
     DisplayName: Poseidon
     Type: normal
-mcMMO:
-  mining:
-    5:
-      Goal: Reach mining level 5
-      Message: LVL 5 Mining
-      Name: mcmmo_test
-      DisplayName: Mining LVL 5
-      Type: normal
-      Reward:
-        Item: iron_pickaxe 1 unbreaking:3
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
