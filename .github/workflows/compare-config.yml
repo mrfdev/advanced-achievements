@@ -1,43 +1,75 @@
-name: Compare Config Files and Create PR
+name: Sync config.yml with 1MB
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
-    branches: [ "*" ]
+    branches: ["*"]
   workflow_dispatch:
 
 jobs:
-  compare-and-create-pr:
+  sync-config:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
-      - name: Download and compare with 1MB config
-        id: compare
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install ruamel.yaml requests
+
+      - name: Download and merge config.yml from 1MB
         run: |
-          TMP_FILE="advanced-achievements-plugin/src/main/resources/config-remote.yml"
-          TARGET_FILE="advanced-achievements-plugin/src/main/resources/config.yml"
+          cat <<EOF > patch_config.py
+          from ruamel.yaml import YAML
+          import requests
+          import os
 
-          curl -sSL -o "$TMP_FILE" https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml
+          yaml = YAML()
+          yaml.preserve_quotes = True
 
-          if ! diff -q "$TMP_FILE" "$TARGET_FILE" > /dev/null; then
-            echo "files_changed=true" >> $GITHUB_OUTPUT
-            mv "$TMP_FILE" "$TARGET_FILE"
-          else
-            echo "files_changed=false" >> $GITHUB_OUTPUT
-            rm "$TMP_FILE"
-          fi
+          # Paths
+          local_path = "advanced-achievements-plugin/src/main/resources/config.yml"
+          remote_url = "https://raw.githubusercontent.com/mrfdev/1MB/master/Resources/AdvancedAchievements/config.yml"
 
-      - name: Create Pull Request if files differ
-        if: steps.compare.outputs.files_changed == 'true'
-        uses: peter-evans/create-pull-request@v7.0.8
+          # Load local config
+          with open(local_path, "r") as f:
+              local_config = yaml.load(f)
+
+          # Load remote config
+          remote_text = requests.get(remote_url).text
+          remote_config = yaml.load(remote_text)
+
+          # Deep merge remote into local
+          def deep_merge(dest, src):
+              for key, value in src.items():
+                  if isinstance(value, dict) and key in dest and isinstance(dest[key], dict):
+                      deep_merge(dest[key], value)
+                  else:
+                      dest[key] = value
+
+          deep_merge(local_config, remote_config)
+
+          # Save updated local config
+          with open(local_path, "w") as f:
+              yaml.dump(local_config, f)
+          EOF
+
+          python patch_config.py
+          rm patch_config.py
+
+      - name: Commit and create PR if there are changes
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Sync config.yml with 1MB repository'
-          body: 'This PR updates `config.yml` to match the latest version from the 1MB repository.'
-          commit-message: 'Update config.yml to match 1MB repository'
+          commit-message: "Sync config.yml with 1MB repository"
+          title: "Sync config.yml with 1MB repository"
+          body: "Sync config.yml with 1MB repository"
           base: master
-          branch: sync-config
+          branch: config-change
+          delete-branch: true
