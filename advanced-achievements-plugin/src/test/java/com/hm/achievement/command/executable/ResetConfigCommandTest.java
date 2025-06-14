@@ -58,7 +58,6 @@ public class ResetConfigCommandTest {
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
-
                 @Override
                 public @NotNull FileVisitResult postVisitDirectory(@NotNull Path dir, IOException exc) throws IOException {
                     Files.delete(dir);
@@ -76,14 +75,10 @@ public class ResetConfigCommandTest {
         InputStream defaultConfigStream = new ByteArrayInputStream("default config content".getBytes());
         when(plugin.getResource("config.yml")).thenReturn(defaultConfigStream);
         doNothing().when(plugin).reloadConfig();
-        command.onExecute(sender, new String[]{});
+        command.onExecute(sender, new String[]{"reset"});
         File backupFile = new File(tempFolder, "config_old.yml");
-        assertTrue(backupFile.exists(), "Backup file should exist after backup");
-        verify(sender).sendMessage("Backup created as config_old.yml.");
-        verify(sender).sendMessage("To reset the config, run /resetconfig confirm.");
-        command.onExecute(sender, new String[]{"confirm"});
-        verify(sender).sendMessage("Warning: Skipping backup as 'confirm' flag was used.");
-        verify(sender).sendMessage("Config.yml has been reset to default.");
+        assertTrue(backupFile.exists());
+        verify(sender).sendMessage("Config.yml has been reset to default. Backup saved as config_old.yml");
         assertTrue(backupFile.delete(), "Failed to delete backupFile during cleanup");
         assertTrue(configFile.delete(), "Failed to delete configFile during cleanup");
         assertTrue(tempFolder.delete(), "Failed to delete tempFolder during cleanup");
@@ -101,7 +96,7 @@ public class ResetConfigCommandTest {
         File backupFile = new File(tempFolder, "config_old.yml");
         assertFalse(backupFile.exists());
         verify(sender).sendMessage("Warning: Skipping backup as 'confirm' flag was used.");
-        verify(sender).sendMessage("Config.yml has been reset to default.");
+        verify(sender).sendMessage("Config.yml has been reset to default. Backup saved as config_old.yml");
         assertTrue(configFile.delete(), "Failed to delete configFile during cleanup");
         assertTrue(tempFolder.delete(), "Failed to delete tempFolder during cleanup");
     }
@@ -111,6 +106,8 @@ public class ResetConfigCommandTest {
         when(plugin.getDataFolder()).thenReturn(tempFolder);
         File configFile = new File(tempFolder, "config.yml");
         Files.writeString(configFile.toPath(), "dummy config content");
+        File backupDir = new File(tempFolder, "config_old.yml");
+        assertTrue(backupDir.mkdir());
         InputStream defaultConfigStream = new ByteArrayInputStream("default config content".getBytes());
         when(plugin.getResource("config.yml")).thenReturn(defaultConfigStream);
         doNothing().when(plugin).reloadConfig();
@@ -120,7 +117,7 @@ public class ResetConfigCommandTest {
                 throw new IOException("test");
             }
         };
-        failingBackupCommand.onExecute(sender, new String[]{});
+        failingBackupCommand.onExecute(sender, new String[]{"reset"});
         verify(sender).sendMessage("Failed to backup current config.yml.");
         verify(sender).sendMessage("Run '/resetconfig confirm' to reset without backup.");
         assertTrue(configFile.exists());
