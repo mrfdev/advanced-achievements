@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestInstanceLauncher {
 
+    public static final Map<String, String> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
+        put("mcMMO.jar", "https://ci.mcmmo.org/job/mcMMO/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar");
+    }};
     private static final Logger LOGGER = Logger.getLogger("");
     private static final HttpClient HTTP = HttpClient.newHttpClient();
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -64,7 +67,7 @@ public class TestInstanceLauncher {
         }
         Path eulaFile = tempServerDir.resolve("eula.txt");
         Files.writeString(eulaFile, "eula=true\n", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        ProcessBuilder serverBuilder = new ProcessBuilder("java", "-jar", paperJar.toString(), "nogui");
+        ProcessBuilder serverBuilder = new ProcessBuilder("java", "-Xmx2G", "-jar", paperJar.toString(), "nogui");
         serverBuilder.directory(tempServerDir.toFile());
         serverBuilder.redirectErrorStream(true);
         Process serverProcess = serverBuilder.start();
@@ -79,6 +82,23 @@ public class TestInstanceLauncher {
                         writer.write("op Greymagic27\n");
                         writer.flush();
                         launched = true;
+                    }
+                    if (line.contains("left the game")) {
+                        try {
+                            writer.write("stop\n");
+                            writer.flush();
+                        } catch (IOException e) {
+                            LOGGER.log(Level.SEVERE, "Failed to send stop command to server", e);
+                        }
+                        break;
+                    }
+                    if (line.contains("joined the game")) {
+                        try {
+                            writer.write("gamemode creative Greymagic27\n");
+                            writer.flush();
+                        } catch (IOException e) {
+                            LOGGER.log(Level.SEVERE, "Failed to send gamemode command to server", e);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -210,10 +230,6 @@ public class TestInstanceLauncher {
             LOGGER.info(pluginFileName + "already exists in plugins folder");
         }
     }
-
-    public static final Map<String, String> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
-        put("mcMMO.jar", "https://ci.mcmmo.org/job/mcMMO/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar");
-    }};
 
     public static void deleteDirectoryRecursive(Path path) throws IOException {
         if (!Files.exists(path)) return;
