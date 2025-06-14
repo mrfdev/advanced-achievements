@@ -37,11 +37,9 @@ public final class FancyMessageSender {
      * @param hover   The text to display in the hover.
      * @param color   The color of the hover text.
      */
-    @SuppressWarnings("deprecation")
-    public void sendHoverableMessage(@NotNull Player player, String message, String hover, String color) {
-        String hexColor = chatColorToHex(ChatColor.valueOf(color));
-        net.kyori.adventure.text.TextComponent textComponent = Component.text(message)
-                .color(TextColor.fromHexString(hexColor));
+    public void sendHoverableMessage(@NotNull Player player, String message, String hover, @NotNull String color) {
+        String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
+        net.kyori.adventure.text.TextComponent textComponent = Component.text(message).color(TextColor.fromHexString(hexColor));
         net.kyori.adventure.text.event.HoverEvent<Component> hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
         textComponent = textComponent.hoverEvent(hoverEvent);
         player.sendMessage(textComponent);
@@ -57,12 +55,9 @@ public final class FancyMessageSender {
      * @param color   The color of the hover text.
      */
 
-    public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover,
-                                            @NotNull String color) {
+    public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover, @NotNull String color) {
         String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
-        TextComponent textComponent = Component.text(message)
-                .color(TextColor.fromHexString(hexColor))
-                .clickEvent(ClickEvent.runCommand(command));
+        TextComponent textComponent = Component.text(message).color(TextColor.fromHexString(hexColor)).clickEvent(ClickEvent.runCommand(command));
         HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(hover));
         textComponent = textComponent.hoverEvent(hoverEvent);
         player.sendMessage(textComponent);
