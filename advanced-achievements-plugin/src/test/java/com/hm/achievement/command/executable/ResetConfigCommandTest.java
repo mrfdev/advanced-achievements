@@ -58,7 +58,6 @@ public class ResetConfigCommandTest {
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
-
                 @Override
                 public @NotNull FileVisitResult postVisitDirectory(@NotNull Path dir, IOException exc) throws IOException {
                     Files.delete(dir);
@@ -76,11 +75,11 @@ public class ResetConfigCommandTest {
         InputStream defaultConfigStream = new ByteArrayInputStream("default config content".getBytes());
         when(plugin.getResource("config.yml")).thenReturn(defaultConfigStream);
         doNothing().when(plugin).reloadConfig();
-        command.onExecute(sender, new String[]{});
+        command.onExecute(sender, new String[]{}); // empty args = backup
         File backupFile = new File(tempFolder, "config_old.yml");
         assertTrue(backupFile.exists(), "Backup file should exist after backup");
-        verify(sender).sendMessage("Backup created as config_old.yml.");
-        verify(sender).sendMessage("To reset the config, run /resetconfig confirm.");
+        verify(sender).sendMessageSevere("Backup created as config_old.yml.");
+        verify(sender).sendMessageSevere("To reset the config, run /resetconfig confirm.");
         command.onExecute(sender, new String[]{"confirm"});
         verify(sender).sendMessage("Warning: Skipping backup as 'confirm' flag was used.");
         verify(sender).sendMessage("Config.yml has been reset to default.");
@@ -121,7 +120,7 @@ public class ResetConfigCommandTest {
             }
         };
         failingBackupCommand.onExecute(sender, new String[]{});
-        verify(sender).sendMessage("Failed to backup current config.yml.");
+        verify(sender).sendMessageSevere("Failed to backup current config.yml.");
         verify(sender).sendMessage("Run '/resetconfig confirm' to reset without backup.");
         assertTrue(configFile.exists());
     }
