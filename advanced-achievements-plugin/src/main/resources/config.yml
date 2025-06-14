@@ -324,8 +324,8 @@ Places:
       Type: rare
       Reward:
         Item:
-        - ANGLER_POTTERY_SHERD 1
-        - SHULKER_SHELL 1
+          - ANGLER_POTTERY_SHERD 1
+          - SHULKER_SHELL 1
   crafting_table:
     25:
       Goal: Place 25 crafting tables.
@@ -383,6 +383,28 @@ Breaks:
           Execute:
             - give PLAYER grass_block 10
             - give PLAYER oak_wood 15
+  mossy_cobblestone:
+    15:
+      Goal: Break 15 mossy cobblestone blocks.
+      Message: §1Taiga biome master!
+      Name: break_15_mossy_cobblestone
+      DisplayName: Taiga Biome Master!
+      Type: normal
+      Reward:
+        Command:
+          Execute:
+            - give PLAYER deepslate_diamond_ore 3
+  dripstone_block:
+    15:
+      Goal: Break 12 dripstone blocks.
+      Message: §1Cave Apprentice!
+      Name: break_12_dripstone_block
+      DisplayName: Keep exploring!
+      Type: normal
+      Reward:
+        Command:
+          Execute:
+            - give PLAYER deepslate_emerald_ore 3
   deepslate:
     500:
       Goal: Break 500 deepslate blocks.
@@ -393,8 +415,8 @@ Breaks:
       Reward:
         Experience: 250
         Item:
-        - deepslate_bricks 32
-        - DEEPSLATE_COAL_ORE 16
+          - deepslate_bricks 32
+          - DEEPSLATE_COAL_ORE 16
   ancient_debris:
     5:
       Goal: Break 5 ancient debris.
@@ -404,9 +426,9 @@ Breaks:
       Type: rare
       Reward:
         Item:
-        - gold_ingot 8
-        - NETHERITE_SWORD 1
-        - NETHER_QUARTZ_ORE 8
+          - gold_ingot 8
+          - NETHERITE_SWORD 1
+          - NETHER_QUARTZ_ORE 8
   glass:
     100:
       Goal: Break 100 glass blocks.
@@ -552,8 +574,8 @@ Crafts:
       Type: normal
       Reward:
         Item:
-        - white_banner 4
-        - glow_ink_sac 2
+          - white_banner 4
+          - glow_ink_sac 2
 PlayerCommands:
   aach stats:
     10:
@@ -566,16 +588,15 @@ PlayerCommands:
         Command:
           Execute: say §7PLAYER is now a statistician
           Display: Broadcast
-  tpa:
+  mcstats:
     30:
-      Goal: Use /tpa 30 times.
+      Goal: Use /mcstats 30 times without spamming
       Message: So social!
-      Name: playercommand_tpa_30
-      DisplayName: Teleport Junkie
+      Name: playercommand_mcstats_30
+      DisplayName: mcMMO level grinder
       Type: normal
       Reward:
-        Item: cooked_beef 16
-        Item2: golden_carrot 8
+        Item: golden_carrot 8
 Breeding:
   sheep:
     1:
@@ -584,6 +605,8 @@ Breeding:
       Name: breeding_1_sheep
       DisplayName: Breeder
       Type: normal
+      Reward:
+        Item: SHEEP_SPAWN_EGG 1
   cat:
     3:
       Goal: Breed 3 cats.

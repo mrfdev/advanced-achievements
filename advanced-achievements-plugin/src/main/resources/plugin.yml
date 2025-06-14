@@ -9,12 +9,8 @@ api-version: 1.21.5
 commands:
   aach:
     description: Main Advanced Achievements command, use it to list sub-commands.
-    aliases: [ advancedachievements,aachievements,aa ]
     usage: /<command>
 permissions:
-  achievement.resetconfig:
-    description: Resets config to default.
-    default: false
   achievement.book:
     description: Allows to receive achievements books.
     default: true
