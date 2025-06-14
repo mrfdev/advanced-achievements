@@ -98,7 +98,7 @@ RestrictAdventure: false
 
 # 停止玩家在指定世界中一切数据的统计，包括游玩时间。（在加入有效值之前请删除[]
 # 连接相关成就也只会在玩家进入非例外世界时才会被计算
-ExcludedWorlds: []
+ExcludedWorlds: [ ]
 #  - yourWorld1
 #  - yourWorld2
 
@@ -108,7 +108,7 @@ IgnoreVerticalDistance: false
 # 在GUI或其他统计输出中不展示成就种类
 # 同时也阻止玩家获得该类成就/该类成就统计数据增加
 DisabledCategories:
-- AdvancementsCompleted
+  - AdvancementsCompleted
 
 # 不将使用精准采集工具破坏的物品计入Breaks相关成就
 DisableSilkTouchBreaks: false
@@ -344,7 +344,7 @@ Breaks:
       Type: normal
       Reward:
         Command:
-          Execute: 
+          Execute:
             - give PLAYER dispenser 10
             - give PLAYER lever 5
 
@@ -378,7 +378,7 @@ Kills:
       Goal: 杀死邪恶的插件作者！
       Message: 哇哦！你杀死了插件的作者！
       Name: kills_1_darkpyves
-      DisplayName:  作 者 不 再
+      DisplayName: 作 者 不 再
       Type: rare
       Reward:
         IncreaseMaxHealth: 1
@@ -481,8 +481,8 @@ Deaths:
     DisplayName: 永远安息
     Type: normal
     Reward:
-        # 在材料名称和数量后的文字为材料的自定义名称，会显示在/aach list和真正受到奖励时
-        Item: stone 5 垫脚石
+      # 在材料名称和数量后的文字为材料的自定义名称，会显示在/aach list和真正受到奖励时
+      Item: stone 5 垫脚石
 
 # 当射出箭矢
 Arrows:
@@ -502,8 +502,8 @@ Snowballs:
     DisplayName: PVP 带佬
     Type: normal
     Reward:
-        # 30代表氧气条中的1个气泡
-        IncreaseMaxOxygen: 30
+      # 30代表氧气条中的1个气泡
+      IncreaseMaxOxygen: 30
 
 # 当鸡蛋被丢出时
 Eggs:
@@ -750,7 +750,7 @@ HoePlowings:
     DisplayName: 农民
     Type: normal
     Reward:
-        Item: cookie 15
+      Item: cookie 15
 
 # 使用骨粉催熟植物
 Fertilising:
@@ -872,7 +872,7 @@ AdvancementsCompleted:
     Type: normal
     DisplayName: 高阶玩家
     Reward:
-      Item: 
+      Item:
         - diamond 8
         - cake 1
 
