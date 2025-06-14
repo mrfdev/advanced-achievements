@@ -49,7 +49,7 @@ public class CraftsListener extends AbstractListener {
             return;
         }
 
-        ItemStack item = event.getCurrentItem();
+        ItemStack item = event.getRecipe().getResult();
         String craftName = Objects.requireNonNull(item).getType().name().toLowerCase();
         if (!player.hasPermission(category.toChildPermName(craftName))) {
             return;
@@ -57,6 +57,10 @@ public class CraftsListener extends AbstractListener {
 
         Set<String> subcategories = new HashSet<>();
         addMatchingSubcategories(subcategories, craftName);
+
+        if (craftName.endsWith("_banner")) {
+            addMatchingSubcategories(subcategories, "banner");
+        }
 
         int eventAmount = item.getAmount();
         if (event.isShiftClick()) {
