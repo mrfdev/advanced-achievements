@@ -7,7 +7,7 @@
 #                                                                                                                      #
 #======================================================================================================================#
 
-# Possible items: https://github.com/PyvesB/advanced-achievements/wiki/Material-names
+# Possible items: https://jd.papermc.io/paper/1.21.5/org/bukkit/Material.html
 # Do not use the same Item twice.
 # The order of the categories in the GUI will match the same order as in this file.
 
@@ -153,6 +153,8 @@ Custom:
   Item: feather
 Commands:
   Item: bookshelf
+mcMMO:
+  Item: iron_pickaxe
 
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #
