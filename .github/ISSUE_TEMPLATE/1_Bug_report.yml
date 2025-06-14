@@ -1,12 +1,12 @@
 name: '🐛 Bug Report'
 description: Report errors and problems
-labels: [bug]
+labels: [ bug ]
 body:
   - type: input
     id: plugin-version
     attributes:
       label: '🎆 Advanced Achievements version'
-      description: 'What version of the plugin are you running?' 
+      description: 'What version of the plugin are you running?'
     validations:
       required: true
 
@@ -14,7 +14,7 @@ body:
     id: server-version
     attributes:
       label: '🖥 Server version'
-      description: 'What server version are you running?' 
+      description: 'What server version are you running?'
     validations:
       required: true
 

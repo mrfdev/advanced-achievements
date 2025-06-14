@@ -1,6 +1,6 @@
 Reward:
   Commands:
-    Display: 
+    Display:
       - 'display 1'
       - 'display 2'
     Execute:
