@@ -32,10 +32,8 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <finalName>advanced-achievements-plugin-${project.version}</finalName>
+                            <finalName>${project.build.finalName}</finalName>
                             <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
                             <filters>
                                 <filter>
                                     <artifact>com.hm.achievement:advanced-achievements-api</artifact>
@@ -62,6 +60,7 @@
                                     <shadedPattern>com.hm.dagger</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                         <phase>package</phase>
                         <goals>
@@ -137,7 +136,7 @@
             <artifactId>CMILib</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/CMILib1.5.4.4.jar</systemPath>
+            <systemPath>${basedir}/libs/CMILib1.5.3.5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
@@ -151,7 +150,7 @@
             <artifactId>Jobs</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.6.0.jar</systemPath>
+            <systemPath>${basedir}/libs/Jobs5.2.4.6.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>

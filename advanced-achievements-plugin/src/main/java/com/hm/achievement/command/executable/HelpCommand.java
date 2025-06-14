@@ -58,8 +58,6 @@ public class HelpCommand extends AbstractCommand {
     private String langCommandDelete;
     private String langCommandDeleteHover;
     private String langTip;
-    private String langCommandResetConfig;
-    private String langCommandResetConfigHover;
 
     @Inject
     public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
@@ -107,8 +105,6 @@ public class HelpCommand extends AbstractCommand {
         langCommandCheckHover = langConfig.getString("aach-command-check-hover");
         langCommandDelete = header("/aach delete cat player") + langConfig.getString("aach-command-delete");
         langCommandDeleteHover = langConfig.getString("aach-command-delete-hover");
-        langCommandResetConfig = header("/aach resetconfig") + langConfig.getString("reset-config");
-        langCommandResetConfigHover = langConfig.getString("reset-config");
         langTip = ChatColor.GRAY + translateColorCodes(langConfig.getString("aach-tip"));
     }
 
@@ -182,10 +178,6 @@ public class HelpCommand extends AbstractCommand {
 
         if (sender.hasPermission("achievement.delete")) {
             sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
-        }
-
-        if (sender.hasPermission("achievement.resetconfig")) {
-            sendJsonClickableHoverableMessage(sender, langCommandResetConfig, "/aach resetconfig", langCommandResetConfigHover);
         }
 
         // Empty line.

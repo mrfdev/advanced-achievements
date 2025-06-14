@@ -15,7 +15,6 @@ import com.hm.achievement.command.executable.ListCommand;
 import com.hm.achievement.command.executable.MonthCommand;
 import com.hm.achievement.command.executable.ReloadCommand;
 import com.hm.achievement.command.executable.ResetCommand;
-import com.hm.achievement.command.executable.ResetConfigCommand;
 import com.hm.achievement.command.executable.StatsCommand;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.command.executable.TopCommand;
@@ -98,8 +97,4 @@ public interface CommandModule {
     @Binds
     @IntoSet
     AbstractCommand bindInspectCommand(InspectCommand inspectCommand);
-
-    @Binds
-    @IntoSet
-    AbstractCommand bindResetConfigCommand(ResetConfigCommand resetConfigCommand);
 }
