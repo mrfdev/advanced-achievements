@@ -419,7 +419,7 @@ BungeeMode: false
 #======================================================================================================================#
 
 # Count blocks placed. You can use any of the following:
-# - block names (available names: https://github.com/PyvesB/advanced-achievements/wiki/Material-names).
+# - block names (available names: https://jd.papermc.io/paper/1.21.5/org/bukkit/Material.html).
 # - custom display name of items (e.g. the name of a player's head).
 Places:
   chest:

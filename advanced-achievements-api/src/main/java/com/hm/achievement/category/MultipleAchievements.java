@@ -2,6 +2,7 @@ package com.hm.achievement.category;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * List of multiple achievements, ie. with sub-categories
@@ -19,7 +20,8 @@ public enum MultipleAchievements implements Category {
     PLAYERCOMMANDS("PlayerCommands", "command"),
     CUSTOM("Custom", "customname"),
     JOBSREBORN("JobsReborn", "jobname"),
-    EFFECTSHELD("EffectsHeld", "effect");
+    EFFECTSHELD("EffectsHeld", "effect"),
+    MCMMO("mcMMO", "skill");
 
     private static final Map<String, MultipleAchievements> CATEGORY_NAMES_TO_ENUM = new HashMap<>();
 
@@ -35,7 +37,7 @@ public enum MultipleAchievements implements Category {
     private final String permNamePrefix;
     private final String permName;
 
-    MultipleAchievements(String categoryName, String subcategoryDBName) {
+    MultipleAchievements(@NotNull String categoryName, String subcategoryDBName) {
         this.categoryName = categoryName;
         this.subcategoryDBName = subcategoryDBName;
         this.dbName = name().toLowerCase();
@@ -78,7 +80,7 @@ public enum MultipleAchievements implements Category {
      * {@inheritDoc}
      */
     @Override
-    public String toChildPermName(String child) {
+    public @NotNull String toChildPermName(String child) {
         return permNamePrefix + child;
     }
 
