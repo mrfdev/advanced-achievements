@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestInstanceLauncher {
     public static final Map<String, PluginInfo> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
+        put("mcMMO.jar", new PluginInfo("https://ci.mcmmo.org/job/mcMMO/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar", null));
     }};
     private static final Logger LOGGER = Logger.getLogger("");
     private static final HttpClient HTTP = HttpClient.newHttpClient();
