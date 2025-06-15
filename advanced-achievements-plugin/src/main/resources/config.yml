@@ -799,7 +799,7 @@ Fish:
     Reward:
       Item:
         - cooked_cod 32
-        - bucket_of_salmon 1
+        - salmon_bucket 1
 Treasures:
   1:
     Goal: Get a treasure from the sea.
