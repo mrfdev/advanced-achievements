@@ -8,6 +8,7 @@ import com.hm.achievement.command.executable.DeleteCommand;
 import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.GiveCommand;
+import com.hm.achievement.command.executable.GrantCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.InfoCommand;
 import com.hm.achievement.command.executable.InspectCommand;
@@ -97,4 +98,8 @@ public interface CommandModule {
     @Binds
     @IntoSet
     AbstractCommand bindInspectCommand(InspectCommand inspectCommand);
+
+    @Binds
+    @IntoSet
+    AbstractCommand bindGrantCommand(GrantCommand grantCommand);
 }

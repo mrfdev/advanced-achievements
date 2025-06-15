@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of displaying the plugin's help (/aach help).
@@ -57,11 +58,12 @@ public class HelpCommand extends AbstractCommand {
     private String langCommandCheckHover;
     private String langCommandDelete;
     private String langCommandDeleteHover;
+    private String langCommandGrant;
+    private String langCommandGrantHover;
     private String langTip;
 
     @Inject
-    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                       StringBuilder pluginHeader, FancyMessageSender fancyMessageSender) {
+    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, FancyMessageSender fancyMessageSender) {
         super(mainConfig, langConfig, pluginHeader);
         this.fancyMessageSender = fancyMessageSender;
     }
@@ -105,18 +107,20 @@ public class HelpCommand extends AbstractCommand {
         langCommandCheckHover = langConfig.getString("aach-command-check-hover");
         langCommandDelete = header("/aach delete cat player") + langConfig.getString("aach-command-delete");
         langCommandDeleteHover = langConfig.getString("aach-command-delete-hover");
+        langCommandGrant = header("/aach grant cat player") + langConfig.getString("aach-command-grant");
+        langCommandGrantHover = langConfig.getString("aach-command-grant-hover");
+
         langTip = ChatColor.GRAY + translateColorCodes(langConfig.getString("aach-tip"));
     }
 
-    private String header(String command) {
+    private @NotNull String header(String command) {
         return pluginHeader.toString() + configColor + command + ChatColor.GRAY + " > ";
     }
 
     @Override
-    void onExecute(CommandSender sender, String[] args) {
+    void onExecute(@NotNull CommandSender sender, String[] args) {
         // Header.
-        sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ")
-                + configColor + configIcon + configColor + " ------------");
+        sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon + configColor + " ------------");
 
         if (sender.hasPermission("achievement.list")) {
             sendJsonClickableHoverableMessage(sender, langCommandList, "/aach list", langCommandListHover);
@@ -180,6 +184,10 @@ public class HelpCommand extends AbstractCommand {
             sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
         }
 
+        if (sender.hasPermission("achievement.grant")) {
+            sendJsonClickableHoverableMessage(sender, langCommandGrant, "/aach grant ach name", langCommandGrantHover);
+        }
+
         // Empty line.
         sender.sendMessage(configColor + " ");
 
@@ -198,8 +206,7 @@ public class HelpCommand extends AbstractCommand {
     private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
         // Send clickable and hoverable message if sender is a player.
         if (sender instanceof Player) {
-            fancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover,
-                    configColor.name().toLowerCase());
+            fancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover, configColor.name().toLowerCase());
         } else {
             sender.sendMessage(message);
         }

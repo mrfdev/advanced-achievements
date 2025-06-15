@@ -63,6 +63,10 @@ check-achievements-false: "PLAYER has not received the achievement ACH!"
 delete-achievements: "The achievement ACH was deleted from PLAYER."
 delete-all-achievements: "All achievements were deleted from PLAYER."
 
+#Used in /aach grant.
+achievement-granted: "Achievement granted"
+achievement-granted-all: "All achievements were given to PLAYER"
+
 # Used in achievement rewards.
 item-reward-received: "You received an item reward: AMOUNT ITEM"
 money-reward-received: "You received: AMOUNT!"
@@ -104,6 +108,8 @@ aach-command-generate: "Generate advancements."
 aach-command-generate-hover: "Potentially slow command; use with care!"
 aach-command-inspect: "Inspect recipients of ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
+aach-command-grant: "Grant ACH to NAME."
+aach-command-grant-hover: "Player must be online. Grants achivement to player"
 aach-tip: "&lHINT &8You can &7&n&ohover&8 or &7&n&oclick&8 on the commands!"
 
 # Used in /aach info.
