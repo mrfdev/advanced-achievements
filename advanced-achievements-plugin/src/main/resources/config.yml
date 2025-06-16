@@ -1121,6 +1121,16 @@ Riptides:
     Name: riptides_1
     DisplayName: Poseidon
     Type: normal
+mcMMO:
+  mining:
+    5:
+      Goal: Reach mining level 5
+      Message: LVL 5 Mining
+      Name: mcmmo_test
+      DisplayName: Mining LVL 5
+      Type: normal
+      Reward:
+        Item: iron_pickaxe 1 unbreaking:3
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
