@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of handling auto-completion for achievements and categories when using /aach check, /aach reset,
@@ -31,16 +32,13 @@ public class CommandTabCompleter implements TabCompleter {
     private final Set<CommandSpec> commandSpecs;
 
     @Inject
-    public CommandTabCompleter(AchievementMap achievementMap, Set<AbstractCommand> commands) {
+    public CommandTabCompleter(AchievementMap achievementMap, @NotNull Set<AbstractCommand> commands) {
         this.achievementMap = achievementMap;
-        this.commandSpecs = commands.stream()
-                .filter(c -> !(c instanceof EasterEggCommand))
-                .map(c -> c.getClass().getAnnotation(CommandSpec.class))
-                .collect(Collectors.toSet());
+        this.commandSpecs = commands.stream().filter(c -> !(c instanceof EasterEggCommand)).map(c -> c.getClass().getAnnotation(CommandSpec.class)).collect(Collectors.toSet());
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
         if (shouldReturnPlayerList(command, args)) {
             return null; // Complete with players.
         }
@@ -63,10 +61,12 @@ public class CommandTabCompleter implements TabCompleter {
             options = Collections.singleton("1");
         } else if (args.length == 3 && "add".equalsIgnoreCase(aachCommand)) {
             options = achievementMap.getCategorySubcategories();
+        } else if (args.length == 2 && "grant".equalsIgnoreCase(aachCommand)) {
+            options = achievementMap.getAllNames();
+        } else if (args.length == 3 && "grant".equalsIgnoreCase(aachCommand)) {
+            return null;
         } else if (args.length == 1) {
-            options = commandSpecs.stream()
-                    .filter(cs -> cs.permission().isEmpty() || sender.hasPermission("achievement." + cs.permission()))
-                    .map(CommandSpec::name).collect(Collectors.toSet());
+            options = commandSpecs.stream().filter(cs -> cs.permission().isEmpty() || sender.hasPermission("achievement." + cs.permission())).map(CommandSpec::name).collect(Collectors.toSet());
         }
         return getPartialList(options, args[args.length - 1]);
     }
@@ -79,21 +79,15 @@ public class CommandTabCompleter implements TabCompleter {
      * @param prefix
      * @return a list containing elements matching the prefix.
      */
-    private List<String> getPartialList(Collection<String> options, String prefix) {
+    private List<String> getPartialList(@NotNull Collection<String> options, String prefix) {
         // Find matching options
         // Replace spaces with an Open Box character to prevent completing wrong word. Prevented Behaviour:
         // T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
         // Sort matching elements by alphabetical order.
-        return options.stream()
-                .filter(s1 -> s1.toLowerCase().startsWith(prefix.toLowerCase()))
-                .map(s -> s.replace(' ', '\u2423'))
-                .sorted()
-                .collect(Collectors.toList());
+        return options.stream().filter(s1 -> s1.toLowerCase().startsWith(prefix.toLowerCase())).map(s -> s.replace(' ', '␣')).sorted().collect(Collectors.toList());
     }
 
-    private boolean shouldReturnPlayerList(Command command, String[] args) {
-        return !"aach".equals(command.getName())
-                || args.length == 3 && StringUtils.equalsAnyIgnoreCase(args[0], "give", "reset", "check", "delete")
-                || args.length == 4 && "add".equalsIgnoreCase(args[0]);
+    private boolean shouldReturnPlayerList(@NotNull Command command, String[] args) {
+        return !"aach".equals(command.getName()) || args.length == 3 && StringUtils.equalsAnyIgnoreCase(args[0], "give", "reset", "check", "delete", "grant") || args.length == 4 && "add".equalsIgnoreCase(args[0]);
     }
 }
