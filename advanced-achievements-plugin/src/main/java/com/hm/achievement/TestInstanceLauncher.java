@@ -176,7 +176,7 @@ public class TestInstanceLauncher {
             }
         }));
         int exitCode = serverProcess.waitFor();
-        LOGGER.info("Server excited with code: " + exitCode);
+        LOGGER.info("Server exited with code: " + exitCode);
         System.exit(exitCode);
     }
 
