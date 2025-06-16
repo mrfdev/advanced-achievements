@@ -19,6 +19,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,15 +46,29 @@ public class TestInstanceLauncher {
         Path pluginDir = tempServerDir.resolve("plugins");
         Files.createDirectories(pluginDir);
         setRestrictCreative(CONFIG_YML, false);
-        packagePlugin();
-        Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
-        if (pluginJar == null) {
-            throw new RuntimeException("Could not find plugin JAR");
-        }
-        LOGGER.info("Found plugin JAR: " + pluginJar);
         String mcVersion = fetchLatestVersion();
         int build = fetchLatestStableBuild(mcVersion);
-        Path paperJar = downloadPaper(mcVersion, build, tempServerDir);
+        CompletableFuture<Void> packageFuture = CompletableFuture.runAsync(() -> {
+            try {
+                packagePlugin();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to package plugin", e);
+            }
+        });
+        CompletableFuture<Path> paperDownloadFuture = CompletableFuture.supplyAsync(() -> {
+           try {
+               return downloadPaper(mcVersion, build, tempServerDir);
+           } catch (IOException | InterruptedException e) {
+               throw new RuntimeException("Failed to download paper", e);
+           }
+        });
+        packageFuture.get();
+        Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
+        if (pluginJar == null) {
+            throw new RuntimeException("Could not find plugin JAR after packaging");
+        }
+        LOGGER.info("Found plugin JAR: " + pluginJar);
+        Path paperJar = paperDownloadFuture.get();
         LOGGER.info("Copying plugin jar to server plugins folder " + pluginDir.toAbsolutePath());
         Files.copy(pluginJar, pluginDir.resolve(pluginJar.getFileName()), StandardCopyOption.REPLACE_EXISTING);
         for (Map.Entry<String, PluginInfo> entry : PLUGINS_TO_DOWNLOAD.entrySet()) {
