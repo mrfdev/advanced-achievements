@@ -16,9 +16,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -46,6 +50,7 @@ public class TestInstanceLauncher {
         Path pluginDir = tempServerDir.resolve("plugins");
         Files.createDirectories(pluginDir);
         setRestrictCreative(CONFIG_YML, false);
+        addDisabledCategories(CONFIG_YML, List.of("JobsReborn"));
         String mcVersion = fetchLatestVersion();
         int build = fetchLatestStableBuild(mcVersion);
         CompletableFuture<Void> packageFuture = CompletableFuture.runAsync(() -> {
@@ -56,11 +61,11 @@ public class TestInstanceLauncher {
             }
         });
         CompletableFuture<Path> paperDownloadFuture = CompletableFuture.supplyAsync(() -> {
-           try {
-               return downloadPaper(mcVersion, build, tempServerDir);
-           } catch (IOException | InterruptedException e) {
-               throw new RuntimeException("Failed to download paper", e);
-           }
+            try {
+                return downloadPaper(mcVersion, build, tempServerDir);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Failed to download paper", e);
+            }
         });
         packageFuture.get();
         Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
@@ -345,6 +350,42 @@ public class TestInstanceLauncher {
         }
         Files.writeString(configFile, String.join("\n", lines));
         LOGGER.info("Set RestrictCreative to " + value + " in " + configFile);
+    }
+
+    public static void addDisabledCategories(Path configFile, List<String> categoriesToAdd) throws IOException {
+        if (!Files.exists(configFile)) {
+            throw new IOException("Config file not found: " + configFile);
+        }
+        var lines = Files.readAllLines(configFile);
+        if (originalConfigSettings == null) {
+            originalConfigSettings = Files.readString(configFile);
+        }
+        boolean inDisabledCategories = false;
+        int insertIndex = -1;
+        Set<String> existingCategories = new HashSet<>();
+        String indent = "  ";
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).trim();
+            if (line.startsWith("DisabledCategories:")) {
+                inDisabledCategories = true;
+                insertIndex = i + 1;
+                continue;
+            }
+            if (inDisabledCategories) {
+                if (line.startsWith("- ")) {
+                    String item = line.substring(2).trim();
+                    existingCategories.add(item);
+                } else if (line.startsWith(indent)) break;
+            }
+        }
+        List<String> newLines = new ArrayList<>(lines);
+        for (String category : categoriesToAdd) {
+            if (!existingCategories.contains(category)) {
+                newLines.add(insertIndex++, indent + "- " + category);
+            }
+        }
+        Files.writeString(configFile, String.join("\n", newLines));
+        LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
     }
 
     public record PluginInfo(String url, String config) {
