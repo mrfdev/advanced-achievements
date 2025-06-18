@@ -16,9 +16,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,17 +31,17 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 public class TestInstanceLauncher {
-
-    public static final Map<String, String> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
-        put("mcMMO.jar", "https://ci.mcmmo.org/job/mcMMO/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar");
+    public static final Map<String, PluginInfo> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
     }};
     private static final Logger LOGGER = Logger.getLogger("");
     private static final HttpClient HTTP = HttpClient.newHttpClient();
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Path PLUGIN_PROJECT_DIR = Paths.get("").toAbsolutePath();
     private static final Path PLUGIN_TARGET_JAR = PLUGIN_PROJECT_DIR.resolve("advanced-achievements-plugin").resolve("target");
+    private static final Path CONFIG_YML = PLUGIN_PROJECT_DIR.resolve("advanced-achievements-plugin").resolve("src").resolve("main").resolve("resources").resolve("config.yml");
     private static final String PROJECT = "paper";
     private static final Long UNIX_TIME = System.currentTimeMillis() / 1000L;
+    private static String originalConfigSettings = null;
 
     public static void main(String[] args) throws Exception {
         LOGGER.setLevel(Level.ALL);
@@ -44,24 +49,40 @@ public class TestInstanceLauncher {
         LOGGER.info("Temp server directory: " + tempServerDir);
         Path pluginDir = tempServerDir.resolve("plugins");
         Files.createDirectories(pluginDir);
-        buildPlugin();
-        Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
-        if (pluginJar == null) {
-            throw new RuntimeException("Could not find plugin JAR");
-        }
-        LOGGER.info("Found plugin JAR: " + pluginJar);
+        setRestrictCreative(CONFIG_YML, false);
+        addDisabledCategories(CONFIG_YML, List.of("JobsReborn"));
         String mcVersion = fetchLatestVersion();
         int build = fetchLatestStableBuild(mcVersion);
-        Path paperJar = downloadPaper(mcVersion, build, tempServerDir);
+        CompletableFuture<Void> packageFuture = CompletableFuture.runAsync(() -> {
+            try {
+                packagePlugin();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to package plugin", e);
+            }
+        });
+        CompletableFuture<Path> paperDownloadFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                return downloadPaper(mcVersion, build, tempServerDir);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Failed to download paper", e);
+            }
+        });
+        packageFuture.get();
+        Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
+        if (pluginJar == null) {
+            throw new RuntimeException("Could not find plugin JAR after packaging");
+        }
+        LOGGER.info("Found plugin JAR: " + pluginJar);
+        Path paperJar = paperDownloadFuture.get();
         LOGGER.info("Copying plugin jar to server plugins folder " + pluginDir.toAbsolutePath());
         Files.copy(pluginJar, pluginDir.resolve(pluginJar.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-        for (Map.Entry<String, String> entry : PLUGINS_TO_DOWNLOAD.entrySet()) {
+        for (Map.Entry<String, PluginInfo> entry : PLUGINS_TO_DOWNLOAD.entrySet()) {
             String pluginFileName = entry.getKey();
-            String pluginUrl = entry.getValue();
+            PluginInfo pluginInfo = entry.getValue();
             try {
-                downloadAndAddPlugin(pluginUrl, pluginFileName, pluginDir);
+                downloadAndAddPlugin(pluginInfo, pluginFileName, pluginDir);
             } catch (IOException | InterruptedException e) {
-                LOGGER.log(Level.SEVERE, "Failed to download plugin " + pluginFileName + " from " + pluginUrl, e);
+                LOGGER.log(Level.SEVERE, "Failed to download plugin " + pluginFileName + " from " + pluginInfo.url(), e);
                 throw new RuntimeException(e);
             }
         }
@@ -142,6 +163,15 @@ public class TestInstanceLauncher {
                 LOGGER.log(Level.SEVERE, "Error stopping server", e);
             }
 
+            if (originalConfigSettings != null) {
+                try {
+                    Files.writeString(CONFIG_YML, originalConfigSettings);
+                    LOGGER.info("Restored original config.yml settings");
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Failed to restore original config.yml", e);
+                }
+            }
+
             try {
                 LOGGER.info("Cleaning up temporary server files...");
                 deleteDirectoryRecursive(tempServerDir);
@@ -151,11 +181,11 @@ public class TestInstanceLauncher {
             }
         }));
         int exitCode = serverProcess.waitFor();
-        LOGGER.info("Server excited with code: " + exitCode);
+        LOGGER.info("Server exited with code: " + exitCode);
         System.exit(exitCode);
     }
 
-    public static void buildPlugin() throws Exception {
+    public static void packagePlugin() throws Exception {
         LOGGER.info("Running mvn clean package");
         String mvnCommand = System.getProperty("os.name").toLowerCase().contains("win") ? "mvn.cmd" : "mvn";
         ProcessBuilder mvnBuilder = new ProcessBuilder(mvnCommand, "clean", "package");
@@ -219,15 +249,61 @@ public class TestInstanceLauncher {
         return jarPath;
     }
 
-    public static void downloadAndAddPlugin(String pluginUrl, String pluginFileName, @NotNull Path pluginDir) throws IOException, InterruptedException {
+    public static void copyFolderRecursive(Path source, Path target) throws IOException {
+        if (!Files.exists(source)) return;
+        try (Stream<Path> stream = Files.walk(source)) {
+            stream.forEach(sourcePath -> {
+                try {
+                    Path targetPath = target.resolve(source.relativize(sourcePath));
+                    if (Files.isDirectory(sourcePath)) {
+                        if (!Files.exists(targetPath)) {
+                            Files.createDirectories(targetPath);
+                        }
+                    } else {
+                        Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Failed to copy file " + sourcePath + " to " + target, e);
+                }
+            });
+        }
+    }
+
+    public static void downloadAndAddPlugin(@NotNull PluginInfo pluginInfo, String pluginFileName, @NotNull Path pluginDir) throws IOException, InterruptedException {
+        String pluginUrl = pluginInfo.url();
+        String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
-        if (!Files.exists(pluginPath)) {
-            LOGGER.info("Downloading plugin " + pluginFileName + " from " + pluginUrl);
-            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(pluginUrl)).build();
-            HTTP.send(req, HttpResponse.BodyHandlers.ofFile(pluginPath));
-            LOGGER.info("Downloaded " + pluginFileName + " to " + pluginPath);
+        if (pluginUrl.startsWith("http://") || pluginUrl.startsWith("https://")) {
+            if (!Files.exists(pluginPath)) {
+                LOGGER.info("Downloading plugin " + pluginFileName + " from " + pluginUrl);
+                HttpRequest req = HttpRequest.newBuilder().uri(URI.create(pluginUrl)).build();
+                HTTP.send(req, HttpResponse.BodyHandlers.ofFile(pluginPath));
+                LOGGER.info("Downloaded " + pluginFileName + " to " + pluginPath);
+            } else {
+                LOGGER.info(pluginFileName + "already exists in plugins folder");
+            }
         } else {
-            LOGGER.info(pluginFileName + "already exists in plugins folder");
+            Path localFile = Paths.get(pluginUrl);
+            if (!Files.exists(localFile)) {
+                LOGGER.warning("Local plugin file does not exist: " + localFile);
+                return;
+            }
+            if (!Files.exists(pluginPath) || Files.size(pluginPath) != Files.size(localFile)) {
+                LOGGER.info("Copying local plugin" + pluginFileName + " from " + localFile);
+                Files.copy(localFile, pluginPath, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                LOGGER.info(pluginFileName + "already exists and matches local file");
+            }
+            if (configFolderPath != null && !configFolderPath.isEmpty()) {
+                Path localPluginConfigFolder = Paths.get(configFolderPath);
+                Path serverPluginConfigFolder = pluginDir.resolve(pluginFileName.replaceFirst("\\.jar$", ""));
+                if (Files.exists(localPluginConfigFolder) && Files.isDirectory(localPluginConfigFolder)) {
+                    LOGGER.info("Copying plugin config folder for " + pluginFileName);
+                    copyFolderRecursive(localPluginConfigFolder, serverPluginConfigFolder);
+                } else {
+                    LOGGER.info("Config folder specified but does not exist " + localPluginConfigFolder);
+                }
+            }
         }
     }
 
@@ -255,5 +331,63 @@ public class TestInstanceLauncher {
         } else {
             throw new UnsupportedOperationException("Opening folder not supported on this OS");
         }
+    }
+
+    public static void setRestrictCreative(Path configFile, boolean value) throws IOException {
+        if (!Files.exists(configFile)) {
+            throw new IOException("Config file not found: " + configFile);
+        }
+        var lines = Files.readAllLines(configFile);
+        if (originalConfigSettings == null) {
+            originalConfigSettings = Files.readString(configFile);
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).trim();
+            if (line.startsWith("RestrictCreative:")) {
+                lines.set(i, "RestrictCreative: " + value);
+                break;
+            }
+        }
+        Files.writeString(configFile, String.join("\n", lines));
+        LOGGER.info("Set RestrictCreative to " + value + " in " + configFile);
+    }
+
+    public static void addDisabledCategories(Path configFile, List<String> categoriesToAdd) throws IOException {
+        if (!Files.exists(configFile)) {
+            throw new IOException("Config file not found: " + configFile);
+        }
+        var lines = Files.readAllLines(configFile);
+        if (originalConfigSettings == null) {
+            originalConfigSettings = Files.readString(configFile);
+        }
+        boolean inDisabledCategories = false;
+        int insertIndex = -1;
+        Set<String> existingCategories = new HashSet<>();
+        String indent = "  ";
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).trim();
+            if (line.startsWith("DisabledCategories:")) {
+                inDisabledCategories = true;
+                insertIndex = i + 1;
+                continue;
+            }
+            if (inDisabledCategories) {
+                if (line.startsWith("- ")) {
+                    String item = line.substring(2).trim();
+                    existingCategories.add(item);
+                } else if (line.startsWith(indent)) break;
+            }
+        }
+        List<String> newLines = new ArrayList<>(lines);
+        for (String category : categoriesToAdd) {
+            if (!existingCategories.contains(category)) {
+                newLines.add(insertIndex++, indent + "- " + category);
+            }
+        }
+        Files.writeString(configFile, String.join("\n", newLines));
+        LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
+    }
+
+    public record PluginInfo(String url, String config) {
     }
 }
