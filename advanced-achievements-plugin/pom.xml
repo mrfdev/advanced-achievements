@@ -142,7 +142,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMI-API</artifactId>
-            <version>latest</version>
+            <version>9.7.14.3</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
         </dependency>
