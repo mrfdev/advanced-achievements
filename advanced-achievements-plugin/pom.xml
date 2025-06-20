@@ -81,11 +81,16 @@
             </resource>
         </resources>
     </build>
+
     <repositories>
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+            <repository>
+                <id>jitpack.io</id>
+                <url>https://jitpack.io</url>
+            </repository>
     </repositories>
 
     <dependencies>
@@ -135,23 +140,19 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMILib</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/CMILib1.5.3.5.jar</systemPath>
+            <version>1.5.4.6</version>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMI-API</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
+            <version>9.7.14.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>Jobs</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.4.6.jar</systemPath>
+            <systemPath>${basedir}/libs/Jobs5.2.6.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
@@ -179,6 +180,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.19.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.2.2.Final</version>
         </dependency>
 
         <dependency>
