@@ -891,9 +891,9 @@ Beds:
     Type: normal
   50:
     Goal: Sleep in a bed 50 times.
-    Message: Wheee! Bounce house champion!
+    Message: Wheee! Master of dreams
     Name: bedbounce_50
-    DisplayName: Mattress Acrobat
+    DisplayName: God of Slumber
     Type: fun
     Reward:
       Item:

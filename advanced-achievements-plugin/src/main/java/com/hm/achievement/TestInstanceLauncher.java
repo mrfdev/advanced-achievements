@@ -39,7 +39,6 @@ public class TestInstanceLauncher {
     private static final Path PLUGIN_PROJECT_DIR = Paths.get("").toAbsolutePath();
     private static final Path PLUGIN_TARGET_JAR = PLUGIN_PROJECT_DIR.resolve("advanced-achievements-plugin").resolve("target");
     private static final Path CONFIG_YML = PLUGIN_PROJECT_DIR.resolve("advanced-achievements-plugin").resolve("src").resolve("main").resolve("resources").resolve("config.yml");
-    private static final String PROJECT = "paper";
     private static final Long UNIX_TIME = System.currentTimeMillis() / 1000L;
     private static String originalConfigSettings = null;
 
@@ -206,45 +205,57 @@ public class TestInstanceLauncher {
     }
 
     public static String fetchLatestVersion() throws IOException, InterruptedException {
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://api.papermc.io/v2/projects/" + PROJECT)).build();
+        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/" + "paper")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode root = MAPPER.readTree(res.body());
         JsonNode versions = root.get("versions");
-        String latestVersion = versions.get(versions.size() - 1).asText();
+        if (versions == null || !versions.isObject())
+            throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
+        List<String> majorVersions = new ArrayList<>();
+        versions.fieldNames().forEachRemaining(majorVersions::add);
+        if (majorVersions.isEmpty()) throw new RuntimeException("No major versions found");
+        majorVersions.sort((v1, v2) -> compareVersions(v2, v1));
+        JsonNode patchVersions = versions.get(majorVersions.getFirst());
+        if (patchVersions == null || !patchVersions.isArray() || patchVersions.isEmpty())
+            throw new RuntimeException("No patch versions found for latest major version " + majorVersions.getFirst());
+        String latestVersion = patchVersions.get(0).asText();
         LOGGER.info("Latest Version " + latestVersion);
         return latestVersion;
     }
 
     public static int fetchLatestStableBuild(String version) throws IOException, InterruptedException {
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://api.papermc.io/v2/projects/" + PROJECT + "/versions/" + version + "/builds")).build();
+        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/" + "paper" + "/versions/" + version + "/builds")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
-        JsonNode builds = MAPPER.readTree(res.body()).get("builds");
-        if (builds == null || !builds.isArray() || builds.isEmpty()) {
+        JsonNode builds = MAPPER.readTree(res.body());
+        if (builds == null || !builds.isArray() || builds.isEmpty())
             throw new RuntimeException("No builds found for version " + version);
-        }
         int maxBuild = -1;
         for (JsonNode build : builds) {
-            int buildNum = build.get("build").asInt();
+            int buildNum = build.get("id").asInt();
             if (buildNum > maxBuild) maxBuild = buildNum;
         }
-        if (maxBuild < 0) {
-            throw new RuntimeException("No valid builds found for version " + version);
-        }
+        if (maxBuild < 0) throw new RuntimeException("No valid builds found for version " + version);
         LOGGER.info("Highest build for version " + version + " is " + maxBuild);
         return maxBuild;
     }
 
     public static @NotNull Path downloadPaper(String version, int build, @NotNull Path dir) throws IOException, InterruptedException {
-        String fileName = PROJECT + "-" + version + "-" + build + ".jar";
+        String fileName = "paper" + "-" + version + "-" + build + ".jar";
         Path jarPath = dir.resolve(fileName);
         if (!Files.exists(jarPath)) {
-            String url = "https://api.papermc.io/v2/projects/" + PROJECT + "/versions/" + version + "/builds/" + build + "/downloads/" + fileName;
-            LOGGER.info("Download paper .jar from " + url);
+            String url = "https://fill.papermc.io/v3/projects/paper/versions/" + version + "/builds/" + build;
+            LOGGER.info("Fetching download metadata from " + url);
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
-            HTTP.send(req, HttpResponse.BodyHandlers.ofFile(jarPath));
-            LOGGER.info("Downloaded paper .jar to " + jarPath);
+            HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+            JsonNode root = MAPPER.readTree(res.body());
+            JsonNode downloads = root.get("downloads");
+            if (downloads == null || downloads.get("server:default") == null) throw new IOException("No download URL found for build " + build);
+            String downloadUrl = downloads.get("server:default").get("url").asText();
+            HttpRequest downloadReq = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).build();
+            HTTP.send(downloadReq, HttpResponse.BodyHandlers.ofFile(jarPath));
+            LOGGER.info("Downloaded paper.jar to " + jarPath);
         } else {
-            LOGGER.info("Paper .jar already exists " + jarPath);
+            LOGGER.severe("Paper .jar already exists " + jarPath);
         }
         return jarPath;
     }
@@ -386,6 +397,21 @@ public class TestInstanceLauncher {
         }
         Files.writeString(configFile, String.join("\n", newLines));
         LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
+    }
+
+    public static int compareVersions(@NotNull String v1, @NotNull String v2) {
+        String[] parts1 = v1.split("\\.");
+        String[] parts2 = v2.split("\\.");
+
+        int length = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < length; i++) {
+            int p1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
+            int p2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
+            if (p1 != p2) {
+                return Integer.compare(p1, p2);
+            }
+        }
+        return 0;
     }
 
     public record PluginInfo(String url, String config) {
