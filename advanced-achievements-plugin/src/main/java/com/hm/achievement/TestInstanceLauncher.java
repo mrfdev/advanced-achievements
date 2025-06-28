@@ -66,7 +66,7 @@ public class TestInstanceLauncher {
                 throw new RuntimeException("Failed to download paper", e);
             }
         });
-        packageFuture.get();
+        CompletableFuture.allOf(packageFuture, paperDownloadFuture).join();
         Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
         if (pluginJar == null) {
             throw new RuntimeException("Could not find plugin JAR after packaging");
@@ -137,7 +137,7 @@ public class TestInstanceLauncher {
                             LOGGER.log(Level.SEVERE, "Failed to open server directory", e);
                         }
                     } else {
-                        serverWriter.write(inputLine + "\n");
+                        serverWriter.write(inputLine + System.lineSeparator());
                         serverWriter.flush();
                     }
                 }
@@ -249,7 +249,8 @@ public class TestInstanceLauncher {
             HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
             JsonNode root = MAPPER.readTree(res.body());
             JsonNode downloads = root.get("downloads");
-            if (downloads == null || downloads.get("server:default") == null) throw new IOException("No download URL found for build " + build);
+            if (downloads == null || downloads.get("server:default") == null)
+                throw new IOException("No download URL found for build " + build);
             String downloadUrl = downloads.get("server:default").get("url").asText();
             HttpRequest downloadReq = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).build();
             HTTP.send(downloadReq, HttpResponse.BodyHandlers.ofFile(jarPath));
@@ -291,7 +292,7 @@ public class TestInstanceLauncher {
                 HTTP.send(req, HttpResponse.BodyHandlers.ofFile(pluginPath));
                 LOGGER.info("Downloaded " + pluginFileName + " to " + pluginPath);
             } else {
-                LOGGER.info(pluginFileName + "already exists in plugins folder");
+                LOGGER.info(pluginFileName + " already exists in plugins folder");
             }
         } else {
             Path localFile = Paths.get(pluginUrl);
@@ -303,7 +304,7 @@ public class TestInstanceLauncher {
                 LOGGER.info("Copying local plugin" + pluginFileName + " from " + localFile);
                 Files.copy(localFile, pluginPath, StandardCopyOption.REPLACE_EXISTING);
             } else {
-                LOGGER.info(pluginFileName + "already exists and matches local file");
+                LOGGER.info(pluginFileName + " already exists and matches local file");
             }
             if (configFolderPath != null && !configFolderPath.isEmpty()) {
                 Path localPluginConfigFolder = Paths.get(configFolderPath);
@@ -359,7 +360,7 @@ public class TestInstanceLauncher {
                 break;
             }
         }
-        Files.writeString(configFile, String.join("\n", lines));
+        Files.writeString(configFile, String.join(System.lineSeparator(), lines));
         LOGGER.info("Set RestrictCreative to " + value + " in " + configFile);
     }
 
@@ -395,14 +396,13 @@ public class TestInstanceLauncher {
                 newLines.add(insertIndex++, indent + "- " + category);
             }
         }
-        Files.writeString(configFile, String.join("\n", newLines));
+        Files.writeString(configFile, String.join(System.lineSeparator(), newLines));
         LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
     }
 
     public static int compareVersions(@NotNull String v1, @NotNull String v2) {
         String[] parts1 = v1.split("\\.");
         String[] parts2 = v2.split("\\.");
-
         int length = Math.max(parts1.length, parts2.length);
         for (int i = 0; i < length; i++) {
             int p1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
