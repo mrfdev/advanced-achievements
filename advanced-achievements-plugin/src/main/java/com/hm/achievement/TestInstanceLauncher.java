@@ -205,7 +205,7 @@ public class TestInstanceLauncher {
     }
 
     public static String fetchLatestVersion() throws IOException, InterruptedException {
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/" + "paper")).build();
+        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode root = MAPPER.readTree(res.body());
         JsonNode versions = root.get("versions");
@@ -224,7 +224,7 @@ public class TestInstanceLauncher {
     }
 
     public static int fetchLatestStableBuild(String version) throws IOException, InterruptedException {
-        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/" + "paper" + "/versions/" + version + "/builds")).build();
+        HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper/versions/" + version + "/builds")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode builds = MAPPER.readTree(res.body());
         if (builds == null || !builds.isArray() || builds.isEmpty())
@@ -285,7 +285,7 @@ public class TestInstanceLauncher {
         String pluginUrl = pluginInfo.url();
         String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
-        if (pluginUrl.startsWith("http://") || pluginUrl.startsWith("https://")) {
+        if (pluginUrl.startsWith("https://")) {
             if (!Files.exists(pluginPath)) {
                 LOGGER.info("Downloading plugin " + pluginFileName + " from " + pluginUrl);
                 HttpRequest req = HttpRequest.newBuilder().uri(URI.create(pluginUrl)).build();
