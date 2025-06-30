@@ -88,13 +88,11 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
         return "aach";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public @NotNull String getAuthor() {
         return String.join(", ", advancedAchievements.getPluginMeta().getAuthors());
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public @NotNull String getVersion() {
         return advancedAchievements.getPluginMeta().getVersion();
