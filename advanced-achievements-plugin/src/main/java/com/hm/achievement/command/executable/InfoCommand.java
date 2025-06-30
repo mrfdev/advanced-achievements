@@ -45,7 +45,6 @@ public class InfoCommand extends AbstractCommand {
         this.rewardParser = rewardParser;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
