@@ -285,6 +285,7 @@ public class TestInstanceLauncher {
         String pluginUrl = pluginInfo.url();
         String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
+        if (pluginUrl.startsWith("http://")) LOGGER.severe("Plugin URL must be secure (https)");
         if (pluginUrl.startsWith("https://")) {
             if (!Files.exists(pluginPath)) {
                 LOGGER.info("Downloading plugin " + pluginFileName + " from " + pluginUrl);
