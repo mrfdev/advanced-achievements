@@ -1,6 +1,6 @@
 package com.hm.achievement.listener.statistics;
 
-import com.gmail.nossr50.events.skills.McMMOPlayerSkillEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
@@ -30,7 +30,7 @@ public class McMMOListener extends AbstractListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSkillLevelUp(@NotNull McMMOPlayerSkillEvent event) {
+    public void onSkillLevelUp(@NotNull McMMOPlayerLevelUpEvent event) {
         Player player = event.getPlayer();
         String skillName = event.getSkill().name().toLowerCase(Locale.ENGLISH);
         if (!player.hasPermission(category.toChildPermName(skillName))) {
@@ -42,10 +42,7 @@ public class McMMOListener extends AbstractListener implements Listener {
         subcategories.forEach(key -> {
             int prevSkillLevel = (int) cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.MCMMO, key, player.getUniqueId(), 0);
             int levelDiff = event.getSkillLevel() - prevSkillLevel;
-            LOGGER.info("Skill: " + skillName + ", key: " + key + ", prevSkillLevel from cache: " + prevSkillLevel + ", event level: " + event.getSkillLevel());
             if (levelDiff > 0) {
-                long newLevel = cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.MCMMO, key, player.getUniqueId(), levelDiff);
-                LOGGER.info("Updated skill level in cache to: " + newLevel);
                 updateStatisticAndAwardAchievementsIfAvailable(player, Collections.singleton(key), levelDiff);
             }
         });
