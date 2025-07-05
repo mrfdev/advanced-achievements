@@ -26,6 +26,7 @@ import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of displaying recipients of an achievement (/aach inspect).
@@ -47,9 +48,7 @@ public class InspectCommand extends AbstractCommand {
     private final Map<String, SupplierCommandPagination> cachedPaginations;
 
     @Inject
-    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                          StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager,
-                          AchievementMap achievementMap) {
+    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.databaseManager = databaseManager;
@@ -64,7 +63,7 @@ public class InspectCommand extends AbstractCommand {
         super.extractConfigurationParameters();
     }
 
-    private int getPage(String[] args) {
+    private int getPage(String @NotNull [] args) {
         boolean lastArgIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
         return lastArgIsNumber ? Integer.parseInt(args[args.length - 1]) : 1;
     }
@@ -75,9 +74,7 @@ public class InspectCommand extends AbstractCommand {
         String displayName = parseAchievementName(args);
         Achievement achievement = getAchievement(displayName);
         if (achievement == null) {
-            sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement_not_recognized"),
-                    new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper
-                            .getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())}));
+            sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement_not_recognized"), new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())}));
             return;
         }
         int page = getPage(args);
@@ -93,7 +90,7 @@ public class InspectCommand extends AbstractCommand {
         });
     }
 
-    private String parseAchievementName(String[] args) {
+    private @NotNull String parseAchievementName(String @NotNull [] args) {
         TextStringBuilder achName = new TextStringBuilder();
 
         boolean lastArgumentIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
@@ -134,15 +131,16 @@ public class InspectCommand extends AbstractCommand {
     private void checkAndCache(String achievementName) {
         if (System.currentTimeMillis() - CACHE_EXPIRATION_DELAY > lastCached.getOrDefault(achievementName, 0L)) {
             List<AwardedDBAchievement> recipientList = databaseManager.getAchievementsRecipientList(achievementName);
-            // Use Suppliers to avoid huge work on getting UUID - name relations.
-            List<Supplier<String>> messages = recipientList.stream()
-                    .map(achievement -> (Supplier<String>) () -> {
-                        UUID uuid = achievement.awardedTo();
-                        OfflinePlayer player = advancedAchievements.getServer().getOfflinePlayer(uuid);
-                        String identifier = player.hasPlayedBefore() ? player.getName() : uuid.toString();
-                        return "  " + identifier + " (" + achievement.formattedDate() + ")";
-                    }).collect(Collectors.toList());
-
+            List<Supplier<String>> messages;
+            if (recipientList.isEmpty()) messages = List.of(() -> "No one has this achievement yet");
+            else {
+                messages = recipientList.stream().map(achievement -> (Supplier<String>) () -> {
+                    UUID uuid = achievement.awardedTo();
+                    OfflinePlayer player = advancedAchievements.getServer().getOfflinePlayer(uuid);
+                    String identifier = player.hasPlayedBefore() ? player.getName() : uuid.toString();
+                    return "  " + identifier + " (" + achievement.formattedDate() + ")";
+                }).collect(Collectors.toList());
+            }
             SupplierCommandPagination pagination = new SupplierCommandPagination(messages, PER_PAGE, langConfig);
             cachedPaginations.put(achievementName, pagination);
             lastCached.put(achievementName, System.currentTimeMillis());
