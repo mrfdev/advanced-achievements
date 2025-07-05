@@ -103,7 +103,7 @@ public class TestInstanceLauncher {
                         writer.flush();
                         launched = true;
                     }
-                    if (line.contains("left the game")) {
+                    if (line.contains("Greymagic27 left the game")) {
                         try {
                             writer.write("stop\n");
                             writer.flush();
@@ -112,7 +112,7 @@ public class TestInstanceLauncher {
                         }
                         break;
                     }
-                    if (line.contains("joined the game")) {
+                    if (line.contains("Greymagic27 joined the game")) {
                         try {
                             writer.write("gamemode creative Greymagic27\n");
                             writer.write("effect give Greymagic27 minecraft:night_vision 999999 99 true\n");
