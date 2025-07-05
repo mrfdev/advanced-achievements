@@ -107,7 +107,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21.5-R0.1-SNAPSHOT</version>
+                <version>1.21.7-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -154,7 +154,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>5.13.1</version>
+                <version>5.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
