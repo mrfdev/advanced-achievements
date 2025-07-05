@@ -87,7 +87,7 @@ public class TestInstanceLauncher {
             }
         }
         Path eulaFile = tempServerDir.resolve("eula.txt");
-        Files.writeString(eulaFile, "eula=true\n", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(eulaFile, "eula=true", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         ProcessBuilder serverBuilder = new ProcessBuilder("java", "-Xmx2G", "-jar", paperJar.toString(), "nogui");
         serverBuilder.directory(tempServerDir.toFile());
         serverBuilder.redirectErrorStream(true);
@@ -99,7 +99,6 @@ public class TestInstanceLauncher {
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                     if (!launched && line.contains("Done (")) {
-                        System.out.println("Server ready");
                         writer.write("op Greymagic27\n");
                         writer.flush();
                         launched = true;
@@ -116,9 +115,11 @@ public class TestInstanceLauncher {
                     if (line.contains("joined the game")) {
                         try {
                             writer.write("gamemode creative Greymagic27\n");
+                            writer.write("effect give Greymagic27 minecraft:night_vision 999999 99 true\n");
+                            writer.write("difficulty peaceful\n");
                             writer.flush();
                         } catch (IOException e) {
-                            LOGGER.log(Level.SEVERE, "Failed to send gamemode command to server", e);
+                            LOGGER.log(Level.SEVERE, "Failed to send commands to server. Check syntax/spelling", e);
                         }
                     }
                 }

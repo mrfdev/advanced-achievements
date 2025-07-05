@@ -40,7 +40,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author Pyves
  */
 public class ConfigurationParser {
-
     private final YamlConfiguration mainConfig;
     private final YamlConfiguration langConfig;
     private final YamlConfiguration guiConfig;
@@ -169,6 +168,11 @@ public class ConfigurationParser {
             disabledCategories.add(NormalAchievements.RAIDSWON);
             logger.warning("Overriding configuration: disabling RaidsWon category.");
             logger.warning("Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
+        }
+        if (!disabledCategories.contains(MultipleAchievements.MCMMO) && !Bukkit.getPluginManager().isPluginEnabled("mcMMO")) {
+            disabledCategories.add(MultipleAchievements.MCMMO);
+            logger.warning("Overriding configuration: disabling mcMMO category.");
+            logger.warning("Ensure you have placed mcMMO in your plugins folder or add mcMMO to the DisabledCategories list in config.yml.");
         }
     }
 
