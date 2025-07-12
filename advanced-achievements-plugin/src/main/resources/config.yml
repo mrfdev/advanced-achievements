@@ -1123,14 +1123,131 @@ Riptides:
     Type: normal
 mcMMO:
   mining:
-    5:
-      Goal: Reach mining level 5
-      Message: LVL 5 Mining
-      Name: mcmmo_test
-      DisplayName: Mining LVL 5
+    25:
+      Goal: Reach mining level 25
+      Message: You've reached mining level 25!
+      Name: mining_lvl_25
+      DisplayName: Diggy diggy hole
       Type: normal
-      Reward:
-        Item: iron_pickaxe 1 unbreaking:3
+  excavation:
+    25:
+      Goal: Reach excavation level 25
+      Message: You've reached excavation level 25!
+      Name: excavation_lvl_25
+      DisplayName: Dirt, dirt and more dirt
+      Type: normal
+  fishing:
+    25:
+      Goal: Reach fishing level 25
+      Message: You've reached fishing level 25!
+      Name: fishing_lvl_25
+      DisplayName: Swimmy Swimmy little fishes
+      Type: normal
+  herbalism:
+    25:
+      Goal: Reach herbalism level 25
+      Message: You've reached herbalism level 25!
+      Name: herbalism_lvl_25
+      DisplayName: You can never have too many crops
+      Type: normal
+  woodcutting:
+    25:
+      Goal: Reach woodcutting level 25
+      Message: You've reached woodcutting level 25!
+      Name: woodcutting_lvl_25
+      DisplayName: The poor trees :(
+      Type: normal
+  archery:
+    25:
+      Goal: Reach archery level 25
+      Message: You've reached archery level 25!
+      Name: archery_lvl_25
+      DisplayName: Poing! (the noise of an arrow hitting a target)
+      Type: normal
+  axes:
+    25:
+      Goal: Reach axes level 25
+      Message: You've reached axes level 25!
+      Name: axes_lvl_25
+      DisplayName: You know these are made to cut wood, right?
+      Type: normal
+  crossbows:
+    25:
+      Goal: Reach crossbows level 25
+      Message: You've reached crossbows level 25!
+      Name: crossbows_lvl_25
+      DisplayName: Your bow must be enraged now...
+      Type: normal
+  maces:
+    25:
+      Goal: Reach maces level 25
+      Message: You've reached maces level 25!
+      Name: maces_lvl_25
+      DisplayName: Haha! Surprise attack!
+      Type: normal
+  swords:
+    25:
+      Goal: Reach swords level 25
+      Message: You've reached swords level 25!
+      Name: swords_lvl_25
+      DisplayName: This sword is surpisingly sharp
+      Type: normal
+  taming:
+    25:
+      Goal: Reach taming level 25
+      Message: You've reached taming level 25!
+      Name: taming_lvl_25
+      DisplayName: The birds, the bees, the sheep, the cows, the ark!
+      Type: normal
+  tridents:
+    25:
+      Goal: Reach tridents level 25
+      Message: You've reached tridents level 25!
+      Name: tridents_lvl_25
+      DisplayName: Neptune has asked for his trident back
+      Type: normal
+  unarmed:
+    25:
+      Goal: Reach unarmed level 25
+      Message: You've reached unarmed level 25!
+      Name: unarmed_lvl_25
+      DisplayName: You should really get some tools, you know?
+      Type: normal
+  acrobatics:
+    25:
+      Goal: Reach acrobatics level 25
+      Message: You've reached acrobatics level 25!
+      Name: acrobatics_lvl_25
+      DisplayName: Time for the olympics
+      Type: normal
+  repair:
+    25:
+      Goal: Reach repair level 25
+      Message: You've reached repair level 25!
+      Name: repair_lvl_25
+      DisplayName: Stop damaging your gear!
+      Type: normal
+  salvage:
+    25:
+      Goal: Reach salvage level 25
+      Message: You've reached salvage level 25!
+      Name: salvage_lvl_25
+      DisplayName: Taking in the old to create the new
+      Type: normal
+  alchemy:
+    25:
+      Goal: Reach alchemy level 25
+      Message: You've reached alchemy level 25!
+      Name: alchemy_lvl_25
+      DisplayName: Fire burn and cauldron bubble
+      Type: normal
+  smelting:
+    25:
+      Goal: Reach smelting level 25
+      Message: You've reached smelting level 25!
+      Name: smelting_lvl_25
+      DisplayName: Time for a blast furnace?
+      Type: normal
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
