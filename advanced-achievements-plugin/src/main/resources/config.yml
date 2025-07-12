@@ -1248,6 +1248,31 @@ mcMMO:
       Name: smelting_lvl_25
       DisplayName: Time for a blast furnace?
       Type: normal
+  power:
+    50:
+      Goal: Reach power level 50
+      Message: Reached power level 50!
+      Name: power_lvl_50
+      DisplayName: Slowly climbing the ranks
+      Type: normal
+    150:
+      Goal: Reach power level 150
+      Message: Reached power level 150!
+      Name: power_lvl_150
+      DisplayName: Powahhh!!!
+      Type: normal
+    300:
+      Goal: Reach power level 300
+      Message: Reached power level 300!
+      Name: power_lvl_300
+      DisplayName: You've been grinding ranks too much
+      Type: normal
+    500:
+      Goal: Reach power level 500
+      Message: Reached power level 500!
+      Name: power_lvl_500
+      DisplayName: Really, it is time to stop leveling up now.. this is getting ridiculous
+      Type: normal
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
