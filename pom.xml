@@ -19,7 +19,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <revision>7.3.3</revision>
+        <revision>7.3.4</revision>
         <!--<maven.test.skip>true</maven.test.skip>!-->
     </properties>
 

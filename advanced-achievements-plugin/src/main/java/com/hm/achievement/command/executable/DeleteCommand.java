@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -57,7 +58,7 @@ public class DeleteCommand extends AbstractParsableCommand {
         if (WILDCARD.equals(achievementName)) {
             cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(), achievementMap.getAllNames());
             databaseManager.deleteAllPlayerAchievements(player.getUniqueId());
-            sender.sendMessage(StringUtils.replace(langAllDeleteAchievements, "PLAYER", args[args.length - 1]));
+            sender.sendMessage(Strings.CS.replace(langAllDeleteAchievements, "PLAYER", args[args.length - 1]));
         } else if (cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
             cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(),
                     Collections.singletonList(achievementName));

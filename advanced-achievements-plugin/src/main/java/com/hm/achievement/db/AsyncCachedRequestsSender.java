@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Class used to write the modified cached statistics to the database.
@@ -86,7 +86,7 @@ public class AsyncCachedRequestsSender implements Runnable {
                 // Set flag before writing to database so that concurrent updates are not wrongly marked as consistent.
                 statistic.prepareDatabaseWrite();
                 UUID uuid = entry.getKey().getUUID();
-                String subcategory = StringUtils.replace(entry.getKey().getSubcategory(), "'", "''");
+                String subcategory = Strings.CS.replace(entry.getKey().getSubcategory(), "'", "''");
                 if (databaseManager instanceof PostgreSQLDatabaseManager) {
                     batchedRequests.add("INSERT INTO " + databaseManager.getPrefix() + category.toDBName() + " VALUES ('"
                             + uuid + "', '" + subcategory + "', " + statistic.getValue() + ") ON CONFLICT (playername, "

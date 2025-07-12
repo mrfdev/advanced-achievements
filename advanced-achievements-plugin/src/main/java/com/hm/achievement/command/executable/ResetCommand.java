@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class ResetCommand extends AbstractParsableCommand {
         Set<String> categorySubcategories = achievementMap.getCategorySubcategories();
         if (WILDCARD.equals(categoryWithSubcategory)) {
             cacheManager.resetPlayerStatistics(player.getUniqueId(), categorySubcategories);
-            sender.sendMessage(StringUtils.replace(langResetAllSuccessful, "PLAYER", player.getName()));
+            sender.sendMessage(Strings.CS.replace(langResetAllSuccessful, "PLAYER", player.getName()));
         } else if (categorySubcategories.contains(categoryWithSubcategory)) {
             cacheManager.resetPlayerStatistics(player.getUniqueId(), Collections.singletonList(categoryWithSubcategory));
             sender.sendMessage(StringUtils.replaceEach(langResetSuccessful, new String[]{"CAT", "PLAYER"},

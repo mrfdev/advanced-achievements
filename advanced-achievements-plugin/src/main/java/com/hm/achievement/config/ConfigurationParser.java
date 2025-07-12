@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -139,7 +140,7 @@ public class ConfigurationParser {
         String icon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
         if (StringUtils.isNotBlank(icon)) {
             String coloredIcon = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color"))) + icon;
-            pluginHeader.append(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))).append(" ");
+            pluginHeader.append(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Strings.CS.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))).append(" ");
         }
         pluginHeader.trimToSize();
     }

@@ -91,9 +91,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
-
-        langBookDelay = pluginHeader + StringUtils.replaceOnce(langConfig.getString("book-delay"), "TIME",
-                Integer.toString(configTimeBook / 1000));
+        langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[] { "TIME" }, new String[] { Integer.toString(configTimeBook / 1000) });
         langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
         langBookDate = translateColorCodes("&8" + langConfig.getString("book-date"));
         langBookName = langConfig.getString("book-name");
@@ -164,9 +162,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         setBookPages(bookPages, bookMeta);
         bookMeta.setAuthor(player.getName());
         bookMeta.setTitle(langBookName);
-        bookMeta.lore(
-                Collections.singletonList(
-                        Component.text(StringUtils.replaceOnce(langBookDate, "DATE", dateFormat.format(System.currentTimeMillis())))));
+        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(langBookDate, new String[] { "DATE" }, new String[] { dateFormat.format(System.currentTimeMillis())}))));
         book.setItemMeta(bookMeta);
 
         // Check whether player has room in his inventory, else drop book on the ground.
