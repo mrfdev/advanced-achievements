@@ -2,6 +2,7 @@ package com.hm.achievement.listener.statistics;
 
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.skills.abilities.McMMOPlayerAbilityActivateEvent;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
@@ -58,5 +59,12 @@ public class McMMOListener extends AbstractListener implements Listener {
         if (powerDiff > 0) {
             updateStatisticAndAwardAchievementsIfAvailable(player, Collections.singleton("power"), powerDiff);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAbilityActivation(@NotNull McMMOPlayerAbilityActivateEvent event) {
+        Player player = event.getPlayer();
+        cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.MCMMO, "ability", player.getUniqueId(), 0);
+        updateStatisticAndAwardAchievementsIfAvailable(player, Collections.singleton("ability"), 1);
     }
 }

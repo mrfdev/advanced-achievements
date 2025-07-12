@@ -1273,6 +1273,13 @@ mcMMO:
       Name: power_lvl_500
       DisplayName: Really, it is time to stop leveling up now.. this is getting ridiculous
       Type: normal
+  ability:
+    10:
+      Goal: Activate 10 mcMMO abilities
+      Message: Activated 10 mcMMO abilities!
+      Name: 10_abilities_activated
+      DisplayName: Superpowers! Let's go!
+      Type: normal
 
 #======================================================================================================================#
 #                                                 COMMAND ACHIEVEMENTS                                                 #
