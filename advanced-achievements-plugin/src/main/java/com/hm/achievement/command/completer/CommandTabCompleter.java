@@ -13,8 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -88,6 +89,6 @@ public class CommandTabCompleter implements TabCompleter {
     }
 
     private boolean shouldReturnPlayerList(@NotNull Command command, String[] args) {
-        return !"aach".equals(command.getName()) || args.length == 3 && StringUtils.equalsAnyIgnoreCase(args[0], "give", "reset", "check", "delete", "grant") || args.length == 4 && "add".equalsIgnoreCase(args[0]);
+        return !"aach".equals(command.getName()) || (args.length == 3 && Stream.of("give", "reset", "check", "delete", "grant").anyMatch(s -> Strings.CI.equals(args[0], s))) || (args.length == 4 && Strings.CI.equals(args[0], "add"));
     }
 }

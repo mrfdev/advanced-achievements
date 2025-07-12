@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -80,7 +81,7 @@ public class ListGUIListener implements Listener {
                 mainGUI.displayMainGUI(player);
             } else {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
-                        StringUtils.replace(command, "PLAYER", player.getName()));
+                        Strings.CS.replace(command, "PLAYER", player.getName()));
             }
         } else if (event.getRawSlot() == inventory.getSize() - ROW_SIZE) {
             categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage - 1);

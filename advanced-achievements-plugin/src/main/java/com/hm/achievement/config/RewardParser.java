@@ -4,6 +4,8 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.StringHelper;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,14 +23,16 @@ import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.text.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Server;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,8 +59,7 @@ public class RewardParser {
     private Economy economy;
 
     @Inject
-    public RewardParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        @NotNull AdvancedAchievements advancedAchievements, MaterialHelper materialHelper) {
+    public RewardParser(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, @NotNull AdvancedAchievements advancedAchievements, MaterialHelper materialHelper) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.materialHelper = materialHelper;
@@ -103,11 +106,8 @@ public class RewardParser {
     private @NotNull Reward parseMoneyReward(@NotNull ConfigurationSection configSection) {
         int amount = configSection.getInt("Money");
         String currencyName = amount > 1 ? economy.currencyNamePlural() : economy.currencyNameSingular();
-        String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-money"), "AMOUNT",
-                amount + " " + currencyName);
-        String chatText = ChatColor.translateAlternateColorCodes('&',
-                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("money-reward-received"), "AMOUNT",
-                        amount + " " + currencyName)));
+        String listText = StringUtils.replaceEach(langConfig.getString("list-reward-money"), new String[]{"AMOUNT"}, new String[]{amount + " " + currencyName});
+        String chatText = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("money-reward-received"), new String[]{"AMOUNT"}, new String[]{amount + " " + currencyName})));
         Consumer<Player> rewarder = player -> economy.depositPlayer(player, amount);
         return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
     }
@@ -117,34 +117,45 @@ public class RewardParser {
         List<String> listTexts = new ArrayList<>();
         List<String> chatTexts = new ArrayList<>();
         List<ItemStack> itemStacks = new ArrayList<>();
-
         String itemPath = configSection.contains("Item") ? "Item" : "Items";
         for (String item : getOneOrManyConfigStrings(configSection, itemPath)) {
             if (!item.contains(" ")) {
                 continue;
             }
             String[] parts = StringUtils.split(item);
-            Optional<Material> rewardMaterial = materialHelper.matchMaterial(parts[0],
-                    "config.yml (" + (configSection.getCurrentPath() + ".Item") + ")");
+            Optional<Material> rewardMaterial = materialHelper.matchMaterial(parts[0], "config.yml (" + (configSection.getCurrentPath() + ".Item") + ")");
             if (rewardMaterial.isPresent()) {
                 int amount = NumberUtils.toInt(parts[1], 1);
                 ItemStack itemStack = new ItemStack(rewardMaterial.get(), amount);
-                String name = StringUtils.join(parts, " ", 2, parts.length);
-                if (name.isEmpty()) {
-                    // Convert the item stack material to an item name in a readable format.
-                    name = WordUtils.capitalizeFully(itemStack.getType().toString().replace('_', ' '));
-                } else {
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    if (itemMeta != null) {
-                        Component displayName = Component.text(name);
-                        itemMeta.displayName(displayName);
-                        itemStack.setItemMeta(itemMeta);
+                ItemMeta itemMeta = itemStack.getItemMeta();
+                StringBuilder nameBuilder = new StringBuilder();
+                for (int i = 2; i < parts.length; i++) {
+                    String part = parts[i];
+                    if (part.contains(":")) {
+                        String[] enchantParts = part.split(":", 2);
+                        if (enchantParts.length == 2) {
+                            String enchantName = enchantParts[0];
+                            int enchantLevel = NumberUtils.toInt(enchantParts[1], 1);
+                            try {
+                                Registry<@NotNull Enchantment> enchantmentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
+                                Enchantment enchantment = enchantmentRegistry.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
+                                if (enchantment != null && itemMeta != null) {
+                                    itemMeta.addEnchant(enchantment, enchantLevel, true);
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else nameBuilder.append(part).append(" ");
                     }
                 }
-                listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"),
-                        new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
-                chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received"),
-                        new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
+                String name = nameBuilder.toString().trim();
+                if (!name.isEmpty() && itemMeta != null) {
+                    Component displayName = Component.text(name);
+                    itemMeta.displayName(displayName);
+                }
+                if (itemMeta != null) itemStack.setItemMeta(itemMeta);
+                listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"), new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
+                chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received"), new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
                 itemStacks.add(itemStack);
             }
         }
@@ -167,22 +178,16 @@ public class RewardParser {
 
     private @NotNull Reward parseExperienceReward(@NotNull ConfigurationSection configSection) {
         int amount = configSection.getInt("Experience");
-        String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-experience"), "AMOUNT",
-                Integer.toString(amount));
-        String chatText = ChatColor.translateAlternateColorCodes('&',
-                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("experience-reward-received"), "AMOUNT",
-                        Integer.toString(amount))));
+        String listText = StringUtils.replaceEach(langConfig.getString("list-reward-experience"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)});
+        String chatText = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("experience-reward-received"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)})));
         Consumer<Player> rewarder = player -> player.giveExp(amount);
         return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
     }
 
     private @NotNull Reward parseIncreaseMaxHealthReward(@NotNull ConfigurationSection configSection) {
         int amount = configSection.getInt("IncreaseMaxHealth");
-        String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-increase-max-health"), "AMOUNT",
-                Integer.toString(amount));
-        String chatText = ChatColor.translateAlternateColorCodes('&',
-                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("increase-max-health-reward-received"), "AMOUNT",
-                        Integer.toString(amount))));
+        String listText = StringUtils.replaceEach(langConfig.getString("list-reward-increase-max-health"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)});
+        String chatText = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("increase-max-health-reward-received"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)})));
         Consumer<Player> rewarder = player -> {
             AttributeInstance playerAttribute = player.getAttribute(Attribute.MAX_HEALTH);
             Objects.requireNonNull(playerAttribute).setBaseValue(playerAttribute.getBaseValue() + amount);
@@ -192,11 +197,8 @@ public class RewardParser {
 
     private @NotNull Reward parseIncreaseMaxOxygenReward(@NotNull ConfigurationSection configSection) {
         int amount = configSection.getInt("IncreaseMaxOxygen");
-        String listText = StringUtils.replaceOnce(langConfig.getString("list-reward-increase-max-oxygen"), "AMOUNT",
-                Integer.toString(amount));
-        String chatText = ChatColor.translateAlternateColorCodes('&',
-                Objects.requireNonNull(StringUtils.replaceOnce(langConfig.getString("increase-max-oxygen-reward-received"), "AMOUNT",
-                        Integer.toString(amount))));
+        String listText = StringUtils.replaceEach(langConfig.getString("list-reward-increase-max-oxygen"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)});
+        String chatText = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("increase-max-oxygen-reward-received"), new String[]{"AMOUNT"}, new String[]{Integer.toString(amount)})));
         Consumer<Player> rewarder = player -> player.setMaximumAir(player.getMaximumAir() + amount);
         return new Reward(Collections.singletonList(listText), Collections.singletonList(chatText), rewarder);
     }
@@ -204,13 +206,9 @@ public class RewardParser {
     private @NotNull Reward parseCommandReward(@NotNull ConfigurationSection configSection) {
         String displayPath = configSection.contains("Command") ? "Command.Display" : "Commands.Display";
         List<String> listTexts = getOneOrManyConfigStrings(configSection, displayPath);
-        List<String> chatTexts = listTexts.stream()
-                .map(message -> StringUtils.replace(langConfig.getString("custom-command-reward"), "MESSAGE", message))
-                .collect(Collectors.toList());
+        List<String> chatTexts = listTexts.stream().map(message -> StringUtils.replaceEach(langConfig.getString("custom-command-reward"), new String[]{"MESSAGE"}, new String[]{message})).collect(Collectors.toList());
         String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
-        Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream()
-                .map(command -> StringHelper.replacePlayerPlaceholders(command, player))
-                .forEach(command -> server.dispatchCommand(server.getConsoleSender(), String.valueOf(command)));
+        Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream().map(command -> StringHelper.replacePlayerPlaceholders(command, player)).forEach(command -> server.dispatchCommand(server.getConsoleSender(), String.valueOf(command)));
         return new Reward(listTexts, chatTexts, rewarder);
     }
 

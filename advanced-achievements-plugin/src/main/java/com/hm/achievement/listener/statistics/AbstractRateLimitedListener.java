@@ -123,7 +123,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
      */
     private void displayActionBarMessage(@NotNull Player player, long timeToWait) {
         String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
-        String message = TextDecoration.ITALIC + StringUtils.replaceOnce(langStatisticCooldown, "TIME", timeWithOneDecimal);
+        String message = TextDecoration.ITALIC + StringUtils.replaceEach(langStatisticCooldown, new String[] { "TIME" }, new String[] { timeWithOneDecimal });
         try (BukkitAudiences audiences = BukkitAudiences.create(advancedAchievements)) {
             audiences.player(player).sendActionBar(Component.text(message));
         }

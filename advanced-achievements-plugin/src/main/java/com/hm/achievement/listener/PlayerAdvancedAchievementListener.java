@@ -245,7 +245,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
             int totalAmount = achievementMap.getAll().size();
             double progress = ((double) receivedAmount) / totalAmount;
-            String message = StringUtils.replaceOnce(langBossBarProgress, "AMOUNT", receivedAmount + "/" + totalAmount);
+            String message = StringUtils.replaceEach(langBossBarProgress, new String[] { "AMOUNT" }, new String[] { receivedAmount + "/" + totalAmount });
             BossBar bossBar = Bukkit.getServer().createBossBar(message, barColor, BarStyle.SOLID);
             bossBar.setProgress(progress);
             Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
@@ -273,7 +273,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
                 .map(m -> PlainTextComponentSerializer.plainText().serialize(m))
                 .toList();
         String message = langAchievementNew.contains("ACH")
-                ? StringUtils.replaceOnce(langAchievementNew, "ACH", nameToShowUser)
+                ? StringUtils.replaceEach(langAchievementNew, new String[] { "ACH" }, new String[] { nameToShowUser })
                 : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
             StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
@@ -295,9 +295,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      */
     private void displayNotification(Player receiver, String nameToShowUser, Player otherPlayer) {
         String message = langAchievementReceived.contains("ACH")
-                ? StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER", "ACH"},
-                new String[]{receiver.getName(), nameToShowUser})
-                : StringUtils.replaceOnce(langAchievementReceived, "PLAYER", receiver.getName()) + nameToShowUser;
+                ? StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER", "ACH"}, new String[]{receiver.getName(), nameToShowUser})
+                : StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER"}, new String[]{receiver.getName()}) + nameToShowUser;
         if (configActionBarNotify) {
             Component actionBarMessage = Component.text(message).decorate(TextDecoration.ITALIC);
             otherPlayer.sendActionBar(actionBarMessage);
