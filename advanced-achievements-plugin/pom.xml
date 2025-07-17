@@ -150,9 +150,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>Jobs</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.6.0.jar</systemPath>
+            <version>v5.2.6.2</version>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
