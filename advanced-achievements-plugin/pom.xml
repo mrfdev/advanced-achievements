@@ -126,7 +126,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.7-R0.1-SNAPSHOT</version>
+            <version>1.21.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -154,9 +154,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>Jobs</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/Jobs5.2.6.0.jar</systemPath>
+            <version>v5.2.6.2</version>
         </dependency>
         <dependency>
             <groupId>net.essentialsx</groupId>
@@ -194,7 +192,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>4.2.2.Final</version>
+            <version>4.2.3.Final</version>
         </dependency>
 
         <dependency>
