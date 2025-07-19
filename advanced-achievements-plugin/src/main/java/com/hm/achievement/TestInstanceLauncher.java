@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class TestInstanceLauncher {
     private static final Long UNIX_TIME = System.currentTimeMillis() / 1000L;
     private static String originalConfigSettings = null;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         LOGGER.setLevel(Level.ALL);
         Path tempServerDir = Files.createTempDirectory("mc-server-" + UNIX_TIME);
         LOGGER.info("Temp server directory: " + tempServerDir);
