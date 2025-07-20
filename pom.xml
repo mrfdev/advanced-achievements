@@ -165,7 +165,6 @@
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-platform-bukkit</artifactId>
                 <version>4.4.0</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
