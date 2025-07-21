@@ -166,6 +166,11 @@
                 <artifactId>adventure-platform-bukkit</artifactId>
                 <version>4.4.0</version>
             </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>4.2.3.Final</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
