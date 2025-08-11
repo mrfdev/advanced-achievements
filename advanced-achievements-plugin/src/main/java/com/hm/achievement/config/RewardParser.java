@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -208,7 +209,11 @@ public class RewardParser {
         List<String> listTexts = getOneOrManyConfigStrings(configSection, displayPath);
         List<String> chatTexts = listTexts.stream().map(message -> StringUtils.replaceEach(langConfig.getString("custom-command-reward"), new String[]{"MESSAGE"}, new String[]{message})).collect(Collectors.toList());
         String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
-        Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).stream().map(command -> StringHelper.replacePlayerPlaceholders(command, player)).forEach(command -> server.dispatchCommand(server.getConsoleSender(), String.valueOf(command)));
+        Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).forEach(command -> {
+            Component component = StringHelper.replacePlayerPlaceholders(command, player);
+            String rawCommand = PlainTextComponentSerializer.plainText().serialize(component);
+            server.dispatchCommand(server.getConsoleSender(), rawCommand);
+        });
         return new Reward(listTexts, chatTexts, rewarder);
     }
 

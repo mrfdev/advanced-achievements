@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -105,7 +106,8 @@ class RewardParserTest {
         assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
         reward.rewarder().accept(player);
         TextComponent expectedCommand = Component.text("teleport Pyves");
-        verify(server).dispatchCommand(any(), eq(expectedCommand.toString()));
+        String expectedRaw = PlainTextComponentSerializer.plainText().serialize(expectedCommand);
+        verify(server).dispatchCommand(any(), eq(expectedRaw));
     }
 
     @Test
@@ -127,8 +129,10 @@ class RewardParserTest {
         reward.rewarder().accept(player);
         TextComponent exec1 = Component.text("execute 1");
         TextComponent exec2 = Component.text("execute 2");
-        verify(server).dispatchCommand(any(), eq(exec1.toString()));
-        verify(server).dispatchCommand(any(), eq(exec2.toString()));
+        String exec1Raw = PlainTextComponentSerializer.plainText().serialize(exec1);
+        String exec2Raw = PlainTextComponentSerializer.plainText().serialize(exec2);
+        verify(server).dispatchCommand(any(), eq(exec1Raw));
+        verify(server).dispatchCommand(any(), eq(exec2Raw));
     }
 
     @Test
