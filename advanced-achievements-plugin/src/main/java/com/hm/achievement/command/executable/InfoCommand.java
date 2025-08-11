@@ -2,15 +2,19 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.config.RewardParser;
+import com.hm.achievement.utils.ColorHelper;
 import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
@@ -25,21 +29,20 @@ public class InfoCommand extends AbstractCommand {
     private final RewardParser rewardParser;
 
     private String configDatabaseType;
-    private String header;
+    private Component header;
 
-    private String langVersionCommandDescription;
-    private String langVersionCommandAuthor;
-    private String langVersionCommandVersion;
-    private String langVersionCommandWebsite;
-    private String langVersionCommandVault;
-    private String langVersionCommandPetmaster;
-    private String langVersionCommandEssentials;
-    private String langVersionCommandPlaceholderAPI;
-    private String langVersionCommandDatabase;
+    private Component langVersionCommandDescription;
+    private Component langVersionCommandAuthor;
+    private Component langVersionCommandVersion;
+    private Component langVersionCommandWebsite;
+    private Component langVersionCommandVault;
+    private Component langVersionCommandPetmaster;
+    private Component langVersionCommandEssentials;
+    private Component langVersionCommandPlaceholderAPI;
+    private Component langVersionCommandDatabase;
 
     @Inject
-    public InfoCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                       StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
+    public InfoCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.rewardParser = rewardParser;
@@ -49,55 +52,40 @@ public class InfoCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        ChatColor configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+        NamedTextColor configColor = ColorHelper.parseColor(Objects.requireNonNull(mainConfig.getString("Color")));
         String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
         configDatabaseType = mainConfig.getString("DatabaseType");
 
-        header = configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor
-                + configIcon + configColor + " ------------";
+        header = Component.text("------------ ", configColor).append(Component.text(Objects.requireNonNull(configIcon))).append(Component.text(" Advanced Achievements ", NamedTextColor.WHITE)).append(Component.text(configIcon)).append(Component.text(" ------------", configColor));
 
-        langVersionCommandDescription = pluginHeader.toString() + configColor
-                + langConfig.getString("version-command-description") + " " + ChatColor.GRAY
-                + langConfig.getString("version-command-description-details");
+        langVersionCommandDescription = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-description")), configColor)).append(Component.text(" ")).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-description-details")), NamedTextColor.GRAY));
 
-        langVersionCommandVersion = pluginHeader.toString() + configColor + langConfig.getString("version-command-version")
-                + " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getVersion();
+        langVersionCommandVersion = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-version")), configColor)).append(Component.text(" ")).append(Component.text(advancedAchievements.getPluginMeta().getVersion(), NamedTextColor.GRAY));
 
-        langVersionCommandAuthor = pluginHeader.toString() + configColor + langConfig.getString("version-command-author")
-                + " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getAuthors().getFirst();
+        langVersionCommandAuthor = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-author")), configColor)).append(Component.text(" ")).append(Component.text(advancedAchievements.getPluginMeta().getAuthors().getFirst(), NamedTextColor.GRAY));
 
-        langVersionCommandWebsite = pluginHeader.toString() + configColor + langConfig.getString("version-command-website")
-                + " " + ChatColor.GRAY + advancedAchievements.getPluginMeta().getWebsite();
+        langVersionCommandWebsite = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-website")), configColor)).append(Component.text(" ")).append(Component.text(Objects.requireNonNull(advancedAchievements.getPluginMeta().getWebsite()), NamedTextColor.GRAY));
 
         // Display whether Advanced Achievements is linked to Vault.
         String vaultState = rewardParser.getEconomy() != null ? "&a✔" : "&4✘";
-        langVersionCommandVault = pluginHeader.toString() + configColor + langConfig.getString("version-command-vault")
-                + " " + ChatColor.GRAY + translateColorCodes(StringEscapeUtils.unescapeJava(vaultState));
+        langVersionCommandVault = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-vault")), configColor)).append(Component.text(" ")).append(fromLegacy(vaultState).color(NamedTextColor.GRAY));
 
         // Display whether Advanced Achievements is linked to Pet Master.
         String petMasterState = Bukkit.getPluginManager().isPluginEnabled("PetMaster") ? "&a✔" : "&4✘";
-        langVersionCommandPetmaster = pluginHeader.toString() + configColor
-                + langConfig.getString("version-command-petmaster") + " " + ChatColor.GRAY
-                + translateColorCodes(StringEscapeUtils.unescapeJava(petMasterState));
+        langVersionCommandPetmaster = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-petmaster")), configColor)).append(Component.text(" ")).append(fromLegacy(petMasterState).color(NamedTextColor.GRAY));
 
         // Display whether Advanced Achievements is linked to Essentials.
-        boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials")
-                && mainConfig.getBoolean("IgnoreAFKPlayedTime");
+        boolean essentialsUsed = Bukkit.getPluginManager().isPluginEnabled("Essentials") && mainConfig.getBoolean("IgnoreAFKPlayedTime");
         String essentialsState = essentialsUsed ? "&a✔" : "&4✘";
-        langVersionCommandEssentials = pluginHeader.toString() + configColor
-                + langConfig.getString("version-command-essentials") + " " + ChatColor.GRAY
-                + translateColorCodes(StringEscapeUtils.unescapeJava(essentialsState));
+        langVersionCommandEssentials = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-essentials")), configColor)).append(Component.text(" ")).append(fromLegacy(essentialsState).color(NamedTextColor.GRAY));
 
         // Display whether Advanced Achievements is linked to PlaceholderAPI.
         String placeholderAPIState = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "&a✔" : "&4✘";
-        langVersionCommandPlaceholderAPI = pluginHeader.toString() + configColor
-                + langConfig.getString("version-command-placeholderapi") + " " + ChatColor.GRAY
-                + translateColorCodes(StringEscapeUtils.unescapeJava(placeholderAPIState));
+        langVersionCommandPlaceholderAPI = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-placeholderapi")), configColor)).append(Component.text(" ")).append(fromLegacy(placeholderAPIState).color(NamedTextColor.GRAY));
 
         // Display database type.
         String databaseType = getDatabaseType();
-        langVersionCommandDatabase = pluginHeader.toString() + configColor + langConfig.getString("version-command-database")
-                + " " + ChatColor.GRAY + databaseType;
+        langVersionCommandDatabase = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-database")), configColor)).append(Component.text(" ")).append(Component.text(databaseType, NamedTextColor.GRAY));
     }
 
     private String getDatabaseType() {
@@ -113,7 +101,7 @@ public class InfoCommand extends AbstractCommand {
     }
 
     @Override
-    void onExecute(CommandSender sender, String[] args) {
+    void onExecute(@NotNull CommandSender sender, String[] args) {
         sender.sendMessage(header);
         sender.sendMessage(langVersionCommandDescription);
         sender.sendMessage(langVersionCommandVersion);
@@ -126,5 +114,9 @@ public class InfoCommand extends AbstractCommand {
             sender.sendMessage(langVersionCommandPlaceholderAPI);
             sender.sendMessage(langVersionCommandDatabase);
         }
+    }
+
+    private @NotNull Component fromLegacy(String legacy) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(legacy);
     }
 }
