@@ -30,9 +30,9 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class ColorHelper {
 
+    protected static final List<NamedTextColor> ALL_NAMED_COLORS = List.of(BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY, BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW, WHITE);
     private static final Map<NamedTextColor, Color> COLOR_MAP = Map.ofEntries(Map.entry(AQUA, Color.fromRGB(0x55, 0xFF, 0xFF)), Map.entry(BLACK, Color.BLACK), Map.entry(BLUE, Color.fromRGB(0x55, 0x55, 0xFF)), Map.entry(GRAY, Color.fromRGB(0xAA, 0xAA, 0xAA)), Map.entry(DARK_AQUA, Color.fromRGB(0x00, 0xAA, 0xAA)), Map.entry(DARK_BLUE, Color.fromRGB(0x00, 0x00, 0xAA)), Map.entry(DARK_GRAY, Color.fromRGB(0x55, 0x55, 0x55)), Map.entry(DARK_GREEN, Color.fromRGB(0x00, 0xAA, 0x00)), Map.entry(DARK_PURPLE, Color.fromRGB(0xAA, 0x00, 0xAA)), Map.entry(DARK_RED, Color.fromRGB(0xAA, 0x00, 0x00)), Map.entry(GOLD, Color.fromRGB(0xFF, 0xAA, 0x00)), Map.entry(GREEN, Color.fromRGB(0x55, 0xFF, 0x55)), Map.entry(LIGHT_PURPLE, Color.fromRGB(0xFF, 0x55, 0xFF)), Map.entry(RED, Color.fromRGB(0xFF, 0x55, 0x55)), Map.entry(WHITE, Color.WHITE), Map.entry(YELLOW, Color.fromRGB(0xFF, 0xFF, 0x55)));
     private static final Map<NamedTextColor, BarColor> BAR_COLOR_MAP = Map.ofEntries(Map.entry(AQUA, BarColor.GREEN), Map.entry(BLACK, BarColor.PURPLE), Map.entry(BLUE, BarColor.BLUE), Map.entry(GRAY, BarColor.WHITE), Map.entry(DARK_AQUA, BarColor.BLUE), Map.entry(DARK_BLUE, BarColor.BLUE), Map.entry(DARK_GRAY, BarColor.PURPLE), Map.entry(DARK_GREEN, BarColor.GREEN), Map.entry(DARK_PURPLE, BarColor.PURPLE), Map.entry(DARK_RED, BarColor.RED), Map.entry(GOLD, BarColor.YELLOW), Map.entry(GREEN, BarColor.GREEN), Map.entry(LIGHT_PURPLE, BarColor.PURPLE), Map.entry(RED, BarColor.RED), Map.entry(WHITE, BarColor.WHITE), Map.entry(YELLOW, BarColor.YELLOW));
-    protected static final List<NamedTextColor> ALL_NAMED_COLORS = List.of(NamedTextColor.BLACK, NamedTextColor.DARK_BLUE, NamedTextColor.DARK_GREEN, NamedTextColor.DARK_AQUA, NamedTextColor.DARK_RED, NamedTextColor.DARK_PURPLE, NamedTextColor.GOLD, NamedTextColor.GRAY, NamedTextColor.DARK_GRAY, NamedTextColor.BLUE, NamedTextColor.GREEN, NamedTextColor.AQUA, NamedTextColor.RED, NamedTextColor.LIGHT_PURPLE, NamedTextColor.YELLOW, NamedTextColor.WHITE);
     private static final Map<Integer, NamedTextColor> EXACT_RGB_MAP = ALL_NAMED_COLORS.stream().collect(Collectors.toMap(c -> (c.red() << 16) | (c.green() << 8) | c.blue(), c -> c));
 
     private ColorHelper() {
@@ -49,6 +49,13 @@ public class ColorHelper {
 
     public static NamedTextColor parseColor(String nameorHex) {
         if (nameorHex == null) return WHITE;
+        try { // TODO: Forcing 5 to be dark_purple for config as that uses numbers. Remove at some point
+            int index = Integer.parseInt(nameorHex);
+            if (index == 5) {
+                return DARK_PURPLE;
+            }
+        } catch (NumberFormatException ignored) {
+        }
         NamedTextColor named = NAMES.value(nameorHex.toLowerCase(Locale.ROOT));
         if (named != null) return named;
         try {
