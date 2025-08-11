@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
@@ -69,25 +70,25 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
     private static final Random RANDOM = new Random();
     private static final String ADVANCED_ACHIEVEMENTS_FIREWORK = "advanced_achievements_firework";
-    private static final Map<ChatColor, ChatColor> FIREWORK_COLOR_MIX = new HashMap<>();
+    private static final Map<NamedTextColor, NamedTextColor> FIREWORK_COLOR_MIX = new HashMap<>();
 
     static {
-        FIREWORK_COLOR_MIX.put(ChatColor.AQUA, ChatColor.DARK_AQUA);
-        FIREWORK_COLOR_MIX.put(ChatColor.BLACK, ChatColor.GRAY);
-        FIREWORK_COLOR_MIX.put(ChatColor.BLUE, ChatColor.DARK_BLUE);
-        FIREWORK_COLOR_MIX.put(ChatColor.GRAY, ChatColor.DARK_GRAY);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_AQUA, ChatColor.AQUA);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_BLUE, ChatColor.BLUE);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_GRAY, ChatColor.GRAY);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_GREEN, ChatColor.GREEN);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
-        FIREWORK_COLOR_MIX.put(ChatColor.DARK_RED, ChatColor.RED);
-        FIREWORK_COLOR_MIX.put(ChatColor.GOLD, ChatColor.YELLOW);
-        FIREWORK_COLOR_MIX.put(ChatColor.GREEN, ChatColor.DARK_GREEN);
-        FIREWORK_COLOR_MIX.put(ChatColor.LIGHT_PURPLE, ChatColor.DARK_PURPLE);
-        FIREWORK_COLOR_MIX.put(ChatColor.RED, ChatColor.DARK_RED);
-        FIREWORK_COLOR_MIX.put(ChatColor.WHITE, ChatColor.GRAY);
-        FIREWORK_COLOR_MIX.put(ChatColor.YELLOW, ChatColor.GOLD);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.AQUA, NamedTextColor.DARK_AQUA);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.BLACK, NamedTextColor.GRAY);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.BLUE, NamedTextColor.DARK_BLUE);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.GRAY, NamedTextColor.DARK_GRAY);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_AQUA, NamedTextColor.AQUA);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_BLUE, NamedTextColor.BLUE);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_GRAY, NamedTextColor.GRAY);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_GREEN, NamedTextColor.GREEN);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_PURPLE, NamedTextColor.LIGHT_PURPLE);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_RED, NamedTextColor.RED);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.GOLD, NamedTextColor.YELLOW);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.GREEN, NamedTextColor.DARK_GREEN);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.LIGHT_PURPLE, NamedTextColor.DARK_PURPLE);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.RED, NamedTextColor.DARK_RED);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.WHITE, NamedTextColor.GRAY);
+        FIREWORK_COLOR_MIX.put(NamedTextColor.YELLOW, NamedTextColor.GOLD);
     }
 
     private final YamlConfiguration mainConfig;
@@ -155,7 +156,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
         configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
         configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
-        ChatColor chatColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+        NamedTextColor chatColor = ColorHelper.parseColor(Objects.requireNonNull(mainConfig.getString("Color")));
         configColor = ColorHelper.convertChatColorToColor(Objects.requireNonNull(chatColor));
         mixColor = Color.WHITE.mixColors(ColorHelper.convertChatColorToColor(FIREWORK_COLOR_MIX.get(chatColor)));
         barColor = ColorHelper.convertChatColorToBarColor(chatColor);
