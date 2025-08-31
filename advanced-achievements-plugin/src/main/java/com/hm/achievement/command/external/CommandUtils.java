@@ -353,7 +353,7 @@ public class CommandUtils {
                     mode = (short) ((arg.charAt(i) == '+') ? 0
                             : ((arg.charAt(i) == '-') ? 1
                             : ((arg.charAt(i) == '*') ? 2 : ((arg.charAt(i) == '/') ? 3 : -1))));
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     Bukkit.getLogger().severe("There has been an issue with a plugin using the CommandUtils class!");
                 }
 
@@ -366,7 +366,7 @@ public class CommandUtils {
                         case 3 -> total / Integer.parseInt(intString);
                         default -> total;
                     };
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     Bukkit.getLogger().severe("There has been an issue with a plugin using the CommandUtils class!");
                 }
                 break;
