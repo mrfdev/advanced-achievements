@@ -36,7 +36,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -178,7 +177,7 @@ public class CategoryGUI implements Reloadable {
         // The inventory must be big enough to contain all page achievements and an entire row for the navigation items.
         int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size()), MAX_ACHIEVEMENTS_PER_PAGE) + ROW_SIZE;
         AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex, clickedItem);
-        Inventory inventory = Bukkit.createInventory(inventoryHolder, InventoryType.CHEST, Component.text(langListGUITitle));
+        Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, Component.text(langListGUITitle));
         inventoryHolder.setInventory(inventory);
 
         String previousItemDate = null;
