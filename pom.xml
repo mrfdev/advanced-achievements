@@ -40,7 +40,7 @@
                         <compilerArgs>
                             <arg>-Xlint:deprecation</arg>
                             <arg>-Xlint:-options</arg>
-                            <args>-Xdiags:verbose</args>
+                            <arg>-Xdiags:verbose</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>

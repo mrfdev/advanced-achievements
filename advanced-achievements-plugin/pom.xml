@@ -24,6 +24,9 @@
                             <version>2.57.1</version>
                         </path>
                     </annotationProcessorPaths>
+                    <excludes>
+                        <exclude>com/hm/achievement/TestInstanceLauncher.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
