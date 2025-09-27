@@ -12,7 +12,7 @@ commands:
     aliases: [ advancedachievements,aachievements,aa ]
     usage: /<command>
 permissions:
-  achivement.grant:
+  achievement.grant:
     description: Grants achievement based on name property
     default: op
   achievement.book:
