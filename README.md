@@ -15,7 +15,7 @@ extensive statistics system, handles YAML configuration files and features fancy
 
 ## Spigot release!
 
-We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachivements.121486/) now (which links to the
+We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachievements.121486/) now (which links to the
 releases page here on GitHub by the way, but here it is.)
 
 <p>
