@@ -21,7 +21,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+
 import static com.hm.achievement.gui.AchievementInventoryHolder.MAIN_GUI_PAGE;
 import static com.hm.achievement.gui.CategoryGUI.ROW_SIZE;
 
@@ -59,31 +63,39 @@ public class ListGUIListener implements Listener {
         event.setCancelled(true);
 
         ItemStack clickedItem = event.getCurrentItem();
-        // Clicking empty slots should do nothing
-        if (clickedItem == null) {
+        Player player = (Player) event.getWhoClicked();
+        if (clickedItem == null || !clickedItem.hasItemMeta()) {
             return;
         }
 
         int currentPage = holder.getPageIndex();
-        Player player = (Player) event.getWhoClicked();
+
+        // Handle back button via PersistentDataContainer
+        ItemMeta meta = clickedItem.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        if (pdc.has(CategoryGUI.BACK_BUTTON_KEY, PersistentDataType.BYTE)) {
+            String command = mainConfig.getString("OverrideBackButtonBehaviour");
+            if (StringUtils.isBlank(command)) {
+                mainGUI.displayMainGUI(player);
+            } else {
+                Bukkit.getServer().dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        Strings.CS.replace(command, "PLAYER", player.getName())
+                );
+            }
+            return;
+        }
+
+        // Handle main GUI clicks
         if (currentPage == MAIN_GUI_PAGE) {
-            // Main GUI, check whether player can interact with the selected item.
             if (!clickedItem.isSimilar(guiItems.getCategoryLock()) && event.getRawSlot() < getMainGUIItemCount()) {
                 categoryGUI.displayCategoryGUI(clickedItem, player, 0);
             }
             return;
         }
 
-        // Check whether a navigation button was clicked in a category GUI.
-        if (event.getRawSlot() == inventory.getSize() - (ROW_SIZE + 19) / 2) {
-            String command = mainConfig.getString("OverrideBackButtonBehaviour");
-            if (StringUtils.isBlank(command)) {
-                mainGUI.displayMainGUI(player);
-            } else {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
-                        Strings.CS.replace(command, "PLAYER", player.getName()));
-            }
-        } else if (event.getRawSlot() == inventory.getSize() - ROW_SIZE) {
+        // Handle prev/next navigation in category GUIs
+        if (event.getRawSlot() == inventory.getSize() - ROW_SIZE) {
             categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage - 1);
         } else if (event.getRawSlot() == inventory.getSize() - 1) {
             categoryGUI.displayCategoryGUI(holder.getCategoryItem(), player, currentPage + 1);

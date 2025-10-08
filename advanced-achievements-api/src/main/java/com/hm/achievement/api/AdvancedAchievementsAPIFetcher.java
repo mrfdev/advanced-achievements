@@ -1,5 +1,6 @@
 package com.hm.achievement.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -36,7 +37,8 @@ public class AdvancedAchievementsAPIFetcher {
                 Object advancedAchievements = mainClass.cast(plugin);
                 Object apiInstance = mainClass.getMethod(API_GETTER).invoke(advancedAchievements);
                 return Optional.ofNullable((AdvancedAchievementsAPI) apiInstance);
-            } catch (Exception e) {
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | SecurityException |
+                     InvocationTargetException e) {
                 PluginLogger logger = new PluginLogger(plugin);
                 logger.warning("Error whilst trying to fetch an Advanced Achievements API instance: " + e.getMessage());
             }

@@ -7,7 +7,7 @@
 
 Custom fork for Minecraft server 1MoreBlock.com
 
-Recent changes include java 21+, 1.21.8, and legacy color code fixes.
+Recent changes include java 21+, 1.21.10, and legacy color code fixes.
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can,
 earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an
@@ -15,7 +15,7 @@ extensive statistics system, handles YAML configuration files and features fancy
 
 ## Spigot release!
 
-We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachivements.121486/) now (which links to the
+We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachievements.121486/) now (which links to the
 releases page here on GitHub by the way, but here it is.)
 
 <p>

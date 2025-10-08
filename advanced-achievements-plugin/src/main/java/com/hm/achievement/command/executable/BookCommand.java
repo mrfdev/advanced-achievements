@@ -6,6 +6,7 @@ import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
 import com.hm.achievement.utils.SoundPlayer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -71,9 +72,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     private DateFormat dateFormat;
 
     @Inject
-    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                       StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager,
-                       SoundPlayer soundPlayer, AchievementMap achievementMap) {
+    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.logger = logger;
         this.serverVersion = serverVersion;
@@ -91,7 +90,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
-        langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[] { "TIME" }, new String[] { Integer.toString(configTimeBook / 1000) });
+        langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[]{"TIME"}, new String[]{Integer.toString(configTimeBook / 1000)});
         langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
         langBookDate = translateColorCodes("&8" + langConfig.getString("book-date"));
         langBookName = langConfig.getString("book-name");
@@ -114,8 +113,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         }
 
         if (!isInCooldownPeriod(player)) {
-            List<AwardedDBAchievement> playerAchievementsList = databaseManager
-                    .getPlayerAchievementsList(player.getUniqueId());
+            List<AwardedDBAchievement> playerAchievementsList = databaseManager.getPlayerAchievementsList(player.getUniqueId());
             if (playerAchievementsList.isEmpty()) {
                 player.sendMessage(langBookNotReceived);
                 return;
@@ -150,8 +148,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         for (AwardedDBAchievement awardedAchievement : achievements) {
             Achievement achievement = achievementMap.getForName(awardedAchievement.name());
             if (achievement != null) {
-                String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator
-                        + achievement.getMessage() + configBookSeparator + awardedAchievement.formattedDate();
+                String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator + achievement.getMessage() + configBookSeparator + awardedAchievement.formattedDate();
                 currentAchievement = translateColorCodes(currentAchievement);
                 bookPages.add(currentAchievement);
             }
@@ -162,7 +159,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         setBookPages(bookPages, bookMeta);
         bookMeta.setAuthor(player.getName());
         bookMeta.setTitle(langBookName);
-        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(langBookDate, new String[] { "DATE" }, new String[] { dateFormat.format(System.currentTimeMillis())}))));
+        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(langBookDate, new String[]{"DATE"}, new String[]{dateFormat.format(System.currentTimeMillis())}))));
         book.setItemMeta(bookMeta);
 
         // Check whether player has room in his inventory, else drop book on the ground.
@@ -216,19 +213,15 @@ public class BookCommand extends AbstractCommand implements Cleanable {
                 // this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
                 // CraftMetaBook.java.
                 String versionIdentifier = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-                Class<?> craftMetaBookClass = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "."
-                        + PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
-                List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES)
-                        .get(craftMetaBookClass.cast(bookMeta));
-                Method fromStringMethod = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "."
-                                + PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE)
-                        .getMethod(METHOD_FROM_STRING, String.class, boolean.class);
+                Class<?> craftMetaBookClass = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "." + PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
+                List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES).get(craftMetaBookClass.cast(bookMeta));
+                Method fromStringMethod = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "." + PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE).getMethod(METHOD_FROM_STRING, String.class, boolean.class);
                 for (String bookPage : bookPages) {
                     pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);
                 }
-            } catch (Exception e) {
-                logger.warning(
-                        "Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
+            } catch (ClassNotFoundException | InvocationTargetException | SecurityException | NoSuchMethodException |
+                     NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+                logger.warning("Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
                 bookMeta.setPages(bookPages);
             }
         } else {

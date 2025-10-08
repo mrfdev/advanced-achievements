@@ -2,12 +2,15 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.text.StringEscapeUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,18 +35,15 @@ public class StatsCommand extends AbstractCommand {
     private final AchievementMap achievementMap;
     private final SoundPlayer soundPlayer;
 
-    private ChatColor configColor;
-    private String configIcon;
+    private NamedTextColor configColor;
     private boolean configAdditionalEffects;
     private boolean configSound;
+    private String configIcon;
     private String configSoundStats;
-
-    private String langNumberAchievements;
+    private Component langNumberAchievements;
 
     @Inject
-    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap,
-                        SoundPlayer soundPlayer) {
+    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -55,13 +55,12 @@ public class StatsCommand extends AbstractCommand {
         super.extractConfigurationParameters();
 
         // Load configuration parameters.
-        configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+        configColor = ColorHelper.parseColor(mainConfig.getString("Color"));
         configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
-        configSoundStats = mainConfig.getString("SoundStats").toUpperCase();
-
-        langNumberAchievements = pluginHeader + langConfig.getString("number-achievements") + " " + configColor;
+        configSoundStats = Objects.requireNonNull(mainConfig.getString("SoundStats")).toUpperCase();
+        langNumberAchievements = Component.text(String.valueOf(pluginHeader)).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" "));
     }
 
     @Override
@@ -73,19 +72,19 @@ public class StatsCommand extends AbstractCommand {
         int playerAchievements = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
         int totalAchievements = achievementMap.getAll().size();
 
-        player.sendMessage(
-                langNumberAchievements + String.format("%.1f", 100 * (double) playerAchievements / totalAchievements)
-                        + "%");
+        Component percentMessage = langNumberAchievements.append(Component.text(String.format("%.1f", 100 * (double) playerAchievements / totalAchievements) + "%", configColor));
+
+        player.sendMessage(percentMessage);
 
         String middleText = " " + playerAchievements + "/" + totalAchievements + " ";
         int verticalBarsToDisplay = 150 - configIcon.length() - FONT.getWidth(middleText);
         boolean hasDisplayedMiddleText = false;
-        StringBuilder barDisplay = new StringBuilder();
+        Component barDisplay = Component.empty();
         int i = 1;
         while (i < verticalBarsToDisplay) {
             if (!hasDisplayedMiddleText && i >= verticalBarsToDisplay / 2) {
                 // Middle reached: append number of achievements information.
-                barDisplay.append(ChatColor.GRAY).append(middleText);
+                barDisplay = barDisplay.append(Component.text(middleText, NamedTextColor.GRAY));
                 // Do not display middleText again.
                 hasDisplayedMiddleText = true;
                 // Iterate a number of times equal to the number of iterations so far to have
@@ -94,16 +93,17 @@ public class StatsCommand extends AbstractCommand {
                 i = verticalBarsToDisplay - i;
             } else if (i < ((verticalBarsToDisplay - 1) * playerAchievements) / totalAchievements) {
                 // Color: progress by user.
-                barDisplay.append(configColor).append('|');
+                barDisplay = barDisplay.append(Component.text("|", configColor));
                 i++;
             } else {
                 // Grey: amount not yet reached by user.
-                barDisplay.append("&8|");
+                barDisplay = barDisplay.append(Component.text("|", NamedTextColor.DARK_GRAY));
                 i++;
             }
         }
         // Display enriched progress bar.
-        player.sendMessage(pluginHeader + "[" + translateColorCodes(barDisplay.toString()) + ChatColor.GRAY + "]");
+        Component message = Component.text(String.valueOf(pluginHeader)).append(Component.text("[")).append(barDisplay).append(Component.text("]", NamedTextColor.DARK_GRAY));
+        player.sendMessage(message);
 
         // Player has received all achievement; play special effect and sound.
         if (playerAchievements >= totalAchievements) {

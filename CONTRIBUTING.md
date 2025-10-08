@@ -3,7 +3,7 @@
 Found a problem or need some help? The following steps may help:
 
 1. Upgrade to the latest version of the plugin (
-   available [here](https://www.spigotmc.org/resources/advancedachivements.121486/history)) and a recent Paper build for
+   available [here](https://www.spigotmc.org/resources/advancedachievements.121486/history)) and a recent Paper build for
    your Minecraft version (see [here](https://docs.papermc.io/paper/getting-started).
 2. Check your server's logs (including when plugins are loaded!), there may be warnings/errors/stack straces to help you
    out with your issue.
