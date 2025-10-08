@@ -21,7 +21,6 @@
         <java.version>21</java.version>
         <revision>7.3.8</revision>
         <mockito.version>5.20.0</mockito.version>
-        <adventure.version>4.25.0-SNAPSHOT</adventure.version>
         <!--<maven.test.skip>true</maven.test.skip>!-->
     </properties>
 
@@ -162,7 +161,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.20.0</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
@@ -172,18 +170,18 @@
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-legacy</artifactId>
-                <version>${adventure.version}</version>
+                <version>4.25.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-api</artifactId>
-                <version>${adventure.version}</version>
+                <version>4.25.0</version>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-plain</artifactId>
-                <version>${adventure.version}</version>
+                <version>4.25.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -200,7 +198,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>6.0.0-RC3</version>
+                <version>6.0.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
