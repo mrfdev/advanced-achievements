@@ -19,7 +19,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <revision>7.3.8</revision>
+        <revision>MCMMO</revision>
         <mockito.version>5.20.0</mockito.version>
         <!--<maven.test.skip>true</maven.test.skip>!-->
     </properties>
@@ -72,6 +72,10 @@
         <repository>
             <id>placeholderapi-repo</id>
             <url>https://repo.extendedclip.com/releases</url>
+        </repository>
+        <repository>
+            <id>Codemc Public</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>jitpack-repo</id>
@@ -193,6 +197,12 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>26.0.2-1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gmail.nossr50.mcMMO</groupId>
+                <artifactId>mcMMO</artifactId>
+                <version>2.2.031</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
