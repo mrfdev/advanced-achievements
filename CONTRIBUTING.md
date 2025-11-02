@@ -25,5 +25,3 @@ and share your code! Here are a few pointers to help you out:
 3. If you are unsure about how to do something, simply ask by tagging @Greymagic27!
 4. Historically the plugin has had poor test coverage, so don't worry too much if you can't add any tests with your pull
    request. Nevertheless if you want improve maintainability and practice your unit testing skills, please do!
-5. Run `mvn formatter:format` to make sure that your code style is consistent with the rest of the project. Your pull
-   request should be ready for submission! :+1:
