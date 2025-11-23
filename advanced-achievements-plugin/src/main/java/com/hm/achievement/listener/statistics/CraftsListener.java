@@ -58,7 +58,7 @@ public class CraftsListener extends AbstractListener {
         Set<String> subcategories = new HashSet<>();
         addMatchingSubcategories(subcategories, craftName);
 
-        if (craftName.endsWith("_banner")) {
+        if (item.getType().name().endsWith("_BANNER")) {
             addMatchingSubcategories(subcategories, "banner");
         }
 
