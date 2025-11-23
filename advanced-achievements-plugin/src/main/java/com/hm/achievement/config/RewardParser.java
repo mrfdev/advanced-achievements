@@ -150,11 +150,12 @@ public class RewardParser {
                     }
                 }
                 String name = nameBuilder.toString().trim();
-                if (!name.isEmpty() && itemMeta != null) {
+                if (name.isEmpty()) name = StringHelper.toReadableName(rewardMaterial.get());
+                if (itemMeta != null) {
                     Component displayName = Component.text(name);
                     itemMeta.displayName(displayName);
+                    itemStack.setItemMeta(itemMeta);
                 }
-                if (itemMeta != null) itemStack.setItemMeta(itemMeta);
                 listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"), new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
                 chatTexts.add(StringUtils.replaceEach(langConfig.getString("item-reward-received"), new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
                 itemStacks.add(itemStack);
