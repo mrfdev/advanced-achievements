@@ -610,6 +610,18 @@ PlayerCommands:
       Reward:
         Item:
           - golden_carrot 8
+  aach list:
+    1:
+      Goal: test
+      Message: test
+      Name: greymagic27_test
+      DisplayName: test
+      Type: normal
+      Reward:
+        Item:
+          - iron_pickaxe 1 Unbreaking:2
+          - diamond_sword 1 sharpness:5 unbreaking:3
+          - wooden_hoe 1 null:1 bad:1 haste:5 unbreaking:2
 Breeding:
   sheep:
     1:
@@ -646,7 +658,7 @@ Breeding:
 JobsReborn:
   hunter:
     5:
-      Goal: Level up as a hunter!
+      Goal: Reach hunter level 5!
       Message: You have reached hunter level 5!
       Name: jobsreborn_5_hunter
       DisplayName: Hunter
@@ -717,11 +729,11 @@ JobsReborn:
         Item:
           - boat 1
           - emerald 4
-  lumberjack:
+  woodcutter:
     8:
-      Goal: Reach lumberjack level 8!
+      Goal: Reach woodcutter level 8!
       Message: Timber!
-      Name: jobsreborn_8_lumberjack
+      Name: jobsreborn_8_woodcutter
       DisplayName: Treehugger
       Type: normal
       Reward:
