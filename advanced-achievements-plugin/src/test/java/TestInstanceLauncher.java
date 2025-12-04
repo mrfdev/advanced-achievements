@@ -208,16 +208,22 @@ public class TestInstanceLauncher {
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode root = MAPPER.readTree(res.body());
         JsonNode versions = root.get("versions");
-        if (versions == null || !versions.isObject())
-            throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
+        if (versions == null || !versions.isObject()) throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
         List<String> majorVersions = new ArrayList<>();
-        versions.fieldNames().forEachRemaining(majorVersions::add);
+        versions.fieldNames().forEachRemaining(v -> {
+            if (isStableVersion(v)) majorVersions.add(v);
+        });
         if (majorVersions.isEmpty()) throw new RuntimeException("No major versions found");
         majorVersions.sort((v1, v2) -> compareVersions(v2, v1));
         JsonNode patchVersions = versions.get(majorVersions.getFirst());
-        if (patchVersions == null || !patchVersions.isArray() || patchVersions.isEmpty())
-            throw new RuntimeException("No patch versions found for latest major version " + majorVersions.getFirst());
-        String latestVersion = patchVersions.get(0).asText();
+        List<String> stablePatches = new ArrayList<>();
+        for (JsonNode n : patchVersions) {
+            String v = n.asText();
+            if (isStableVersion(v)) stablePatches.add(v);
+        }
+        if (stablePatches.isEmpty()) throw new RuntimeException("No stable patch versions found for " + majorVersions.getFirst());
+        stablePatches.sort((v1, v2) -> compareVersions(v2, v1));
+        String latestVersion = stablePatches.getFirst();
         LOGGER.info("Latest Version " + latestVersion);
         return latestVersion;
     }
@@ -226,8 +232,7 @@ public class TestInstanceLauncher {
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper/versions/" + version + "/builds")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode builds = MAPPER.readTree(res.body());
-        if (builds == null || !builds.isArray() || builds.isEmpty())
-            throw new RuntimeException("No builds found for version " + version);
+        if (builds == null || !builds.isArray() || builds.isEmpty()) throw new RuntimeException("No builds found for version " + version);
         int maxBuild = -1;
         for (JsonNode build : builds) {
             int buildNum = build.get("id").asInt();
@@ -248,8 +253,7 @@ public class TestInstanceLauncher {
             HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
             JsonNode root = MAPPER.readTree(res.body());
             JsonNode downloads = root.get("downloads");
-            if (downloads == null || downloads.get("server:default") == null)
-                throw new IOException("No download URL found for build " + build);
+            if (downloads == null || downloads.get("server:default") == null) throw new IOException("No download URL found for build " + build);
             String downloadUrl = downloads.get("server:default").get("url").asText();
             HttpRequest downloadReq = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).build();
             HTTP.send(downloadReq, HttpResponse.BodyHandlers.ofFile(jarPath));
@@ -412,6 +416,10 @@ public class TestInstanceLauncher {
             }
         }
         return 0;
+    }
+
+    public static boolean isStableVersion(String version) {
+        return !version.contains("-");
     }
 
     public record PluginInfo(String url, String config) {
