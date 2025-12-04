@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class TestInstanceLauncher {
@@ -418,7 +419,8 @@ public class TestInstanceLauncher {
         return 0;
     }
 
-    public static boolean isStableVersion(String version) {
+    @Contract(pure = true)
+    public static boolean isStableVersion(@NotNull String version) {
         return !version.contains("-");
     }
 

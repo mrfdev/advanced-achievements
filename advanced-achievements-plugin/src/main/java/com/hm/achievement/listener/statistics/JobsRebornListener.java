@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Listener class to deal with Jobs Reborn achievements.
@@ -22,29 +23,20 @@ import org.bukkit.event.EventPriority;
 public class JobsRebornListener extends AbstractListener {
 
     @Inject
-    public JobsRebornListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                              CacheManager cacheManager) {
+    public JobsRebornListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(MultipleAchievements.JOBSREBORN, mainConfig, achievementMap, cacheManager);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onJob(JobsLevelUpEvent event) {
-        // Get the Player from the JobsPlayer.
+    public void onJob(@NotNull JobsLevelUpEvent event) {
         Player player = event.getPlayer().getPlayer();
-        if (player == null) {
-            return;
-        }
-
+        if (player == null) return;
         String jobName = event.getJob().getJobFullName().toLowerCase();
-        if (!player.hasPermission(category.toChildPermName(jobName))) {
-            return;
-        }
-
+        if (!player.hasPermission(category.toChildPermName(jobName))) return;
         Set<String> subcategories = new HashSet<>();
         addMatchingSubcategories(subcategories, jobName);
         subcategories.forEach(key -> {
-            int previousJobLevel = (int) cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.JOBSREBORN, key,
-                    player.getUniqueId(), 0);
+            int previousJobLevel = (int) cacheManager.getAndIncrementStatisticAmount(MultipleAchievements.JOBSREBORN, key, player.getUniqueId(), 0);
             int levelDiff = event.getLevel() - previousJobLevel;
             if (levelDiff > 0) {
                 updateStatisticAndAwardAchievementsIfAvailable(player, Collections.singleton(key), levelDiff);

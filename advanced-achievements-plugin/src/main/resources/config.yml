@@ -645,12 +645,16 @@ Breeding:
           - beehive 1
 JobsReborn:
   hunter:
-    1:
+    5:
       Goal: Level up as a hunter!
-      Message: You have reached hunter level 2!
-      Name: jobsreborn_1_hunter
+      Message: You have reached hunter level 5!
+      Name: jobsreborn_5_hunter
       DisplayName: Hunter
       Type: normal
+      Reward:
+        Item:
+          - bow 1
+          - arrow 64
   fisherman:
     10:
       Goal: Reach fisherman level 10!
