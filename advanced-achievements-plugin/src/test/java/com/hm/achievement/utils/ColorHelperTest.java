@@ -61,6 +61,7 @@ class ColorHelperTest {
         Color actualColor = ColorHelper.convertChatColorToColor(namedTextColor);
         Assertions.assertEquals(expectedColor, actualColor);
     }
+
     @ParameterizedTest
     @MethodSource("invalidColorInputs")
     void shouldThrowOnInvalidColor(String input) {

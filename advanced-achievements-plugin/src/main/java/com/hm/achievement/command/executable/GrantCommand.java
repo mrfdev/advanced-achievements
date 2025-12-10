@@ -75,9 +75,9 @@ public class GrantCommand extends AbstractParsableCommand {
                 grantedAny = true;
             }
             if (grantedAny) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementGrantedAll, new String[] {"PLAYER"}, new String[] {playerName}));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementGrantedAll, new String[]{"PLAYER"}, new String[]{playerName}));
             } else {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[] {"PLAYER"}, new String[] {playerName}));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{playerName}));
             }
             return;
         }
@@ -86,18 +86,18 @@ public class GrantCommand extends AbstractParsableCommand {
         if (achievement.isPresent()) {
             Achievement ach = achievement.get();
             if (!configMultiCommand && cacheManager.hasPlayerAchievement(targetPlayer.getUniqueId(), ach.getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[] {"PLAYER"}, new String[] {playerName}));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{playerName}));
                 return;
             }
             if (!sender.hasPermission("achievement." + ach.getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[] {"PLAYER"}, new String[] {playerName}));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[]{"PLAYER"}, new String[]{playerName}));
                 return;
             }
             Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(targetPlayer, ach));
-            sender.sendMessage(StringUtils.replaceEach(langAchievementGranted, new String[] {"PLAYER"}, new String[] {playerName}));
+            sender.sendMessage(StringUtils.replaceEach(langAchievementGranted, new String[]{"PLAYER"}, new String[]{playerName}));
         } else {
             Set<String> names = achievementMap.getForCategory(CommandAchievements.COMMANDS).stream().map(Achievement::getName).collect(Collectors.toSet());
-            sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound, new String[] {"CLOSEST_MATCH"}, new String[] {StringHelper.getClosestMatch(achName, names)}));
+            sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound, new String[]{"CLOSEST_MATCH"}, new String[]{StringHelper.getClosestMatch(achName, names)}));
         }
     }
 }

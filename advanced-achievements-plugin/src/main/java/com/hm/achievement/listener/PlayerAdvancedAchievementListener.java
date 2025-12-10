@@ -246,7 +246,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
             int totalAmount = achievementMap.getAll().size();
             double progress = ((double) receivedAmount) / totalAmount;
-            String message = StringUtils.replaceEach(langBossBarProgress, new String[] { "AMOUNT" }, new String[] { receivedAmount + "/" + totalAmount });
+            String message = StringUtils.replaceEach(langBossBarProgress, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
             BossBar bossBar = Bukkit.getServer().createBossBar(message, barColor, BarStyle.SOLID);
             bossBar.setProgress(progress);
             Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
@@ -274,7 +274,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
                 .map(m -> PlainTextComponentSerializer.plainText().serialize(m))
                 .toList();
         String message = langAchievementNew.contains("ACH")
-                ? StringUtils.replaceEach(langAchievementNew, new String[] { "ACH" }, new String[] { nameToShowUser })
+                ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser})
                 : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
             StringBuilder hover = new StringBuilder(messageToShowUser + "\n");

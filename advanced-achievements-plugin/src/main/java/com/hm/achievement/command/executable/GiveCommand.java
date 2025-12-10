@@ -65,10 +65,10 @@ public class GiveCommand extends AbstractParsableCommand {
             // Check whether player has already received achievement and cannot receive it again.
             if (!configMultiCommand
                     && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.get().getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[] { "PLAYER" }, new String[] { args[2] }));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{args[2]}));
                 return;
             } else if (!player.hasPermission("achievement." + achievement.get().getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[] { "PLAYER" }, new String[] { args[2] }));
+                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[]{"PLAYER"}, new String[]{args[2]}));
                 return;
             }
 
@@ -78,8 +78,8 @@ public class GiveCommand extends AbstractParsableCommand {
         } else {
             Set<String> commandKeys = achievementMap.getSubcategoriesForCategory(CommandAchievements.COMMANDS);
             sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound,
-                    new String[] { "CLOSEST_MATCH" },
-                    new String[] { StringHelper.getClosestMatch(args[1], commandKeys) }));
+                    new String[]{"CLOSEST_MATCH"},
+                    new String[]{StringHelper.getClosestMatch(args[1], commandKeys)}));
         }
     }
 }

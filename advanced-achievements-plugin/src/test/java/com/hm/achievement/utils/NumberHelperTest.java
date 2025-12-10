@@ -1,6 +1,7 @@
 package com.hm.achievement.utils;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NumberHelperTest {

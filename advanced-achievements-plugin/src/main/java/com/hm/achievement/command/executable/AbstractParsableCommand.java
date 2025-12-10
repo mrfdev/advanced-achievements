@@ -49,13 +49,13 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
         }
         for (Entity entity : entities) {
             if (entity == null) {
-                sender.sendMessage(pluginHeader + StringUtils.replaceEach(langPlayerOffline, new String[] { "PLAYER" }, new String[] { searchedName }));
+                sender.sendMessage(pluginHeader + StringUtils.replaceEach(langPlayerOffline, new String[]{"PLAYER"}, new String[]{searchedName}));
                 break;
             }
             if (entity instanceof Player) {
                 onExecuteForPlayer(sender, args, (Player) entity);
             } else {
-                sender.sendMessage(pluginHeader + StringUtils.replaceEach(langEntityNotPlayer, new String[] { "ENTITY" }, new String[] { entity.getName() }));
+                sender.sendMessage(pluginHeader + StringUtils.replaceEach(langEntityNotPlayer, new String[]{"ENTITY"}, new String[]{entity.getName()}));
             }
         }
     }

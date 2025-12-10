@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class YamlUpdater {
