@@ -186,14 +186,14 @@ class H2DatabaseManagerTest {
     @Test
     void testGetPlayerConnectionDate() {
         ConnectionInformation connectionInformation1 = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.epoch(), connectionInformation1.getDate());
-        assertEquals(0, connectionInformation1.getCount());
+        assertEquals(ConnectionInformation.epoch(), connectionInformation1.date());
+        assertEquals(0, connectionInformation1.count());
 
         db.updateConnectionInformation(testUUID, 1);
 
         ConnectionInformation connectionInformation2 = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.today(), connectionInformation2.getDate());
-        assertEquals(1, connectionInformation2.getCount());
+        assertEquals(ConnectionInformation.today(), connectionInformation2.date());
+        assertEquals(1, connectionInformation2.count());
     }
 
     @Test
@@ -203,8 +203,8 @@ class H2DatabaseManagerTest {
         db.clearConnection(testUUID);
 
         ConnectionInformation connectionInformation = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.epoch(), connectionInformation.getDate());
-        assertEquals(0, connectionInformation.getCount());
+        assertEquals(ConnectionInformation.epoch(), connectionInformation.date());
+        assertEquals(0, connectionInformation.count());
     }
 
     @Test
