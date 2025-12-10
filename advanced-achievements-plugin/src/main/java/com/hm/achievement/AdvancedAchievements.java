@@ -42,6 +42,7 @@ interface AdvancedAchievementsComponent {
         @BindsInstance
         Builder logger(Logger logger);
 
+        @SuppressWarnings("ClassEscapesDefinedScope")
         AdvancedAchievementsComponent build();
     }
 }

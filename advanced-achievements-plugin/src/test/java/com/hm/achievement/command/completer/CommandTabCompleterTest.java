@@ -80,7 +80,7 @@ class CommandTabCompleterTest {
     void shouldReturnNullIfNotAachCommand() {
         when(command.getName()).thenReturn("someothercommand");
 
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, new String[0]);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", new String[0]);
 
         assertNull(completionResult);
     }
@@ -88,7 +88,7 @@ class CommandTabCompleterTest {
     @Test
     void shouldReturnNullForPlayerArgOfGiveCommand() {
         String[] args = {"give", "yourAch1", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertNull(completionResult);
     }
@@ -96,7 +96,7 @@ class CommandTabCompleterTest {
     @Test
     void shouldReturnNullForPlayerArgOfResetCommand() {
         String[] args = {"reset", "Beds", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertNull(completionResult);
     }
@@ -104,7 +104,7 @@ class CommandTabCompleterTest {
     @Test
     void shouldReturnNullForPlayerArgOfCheckCommand() {
         String[] args = {"check", "yourAch1", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertNull(completionResult);
     }
@@ -112,7 +112,7 @@ class CommandTabCompleterTest {
     @Test
     void shouldReturnNullForPlayerArgOfDeleteCommand() {
         String[] args = {"delete", "yourAch1", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertNull(completionResult);
     }
@@ -120,7 +120,7 @@ class CommandTabCompleterTest {
     @Test
     void shouldReturnNullForPlayerArgOfAddCommand() {
         String[] args = {"add", "1", "Breaks.sand", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertNull(completionResult);
     }
@@ -130,7 +130,7 @@ class CommandTabCompleterTest {
         when(commandSender.hasPermission(anyString())).thenReturn(true);
 
         String[] args = {""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(asList("book", "generate", "help"), completionResult);
     }
@@ -140,7 +140,7 @@ class CommandTabCompleterTest {
         when(commandSender.hasPermission(anyString())).thenReturn(false);
 
         String[] args = {""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(List.of("help"), completionResult);
     }
@@ -148,7 +148,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteForResetCommand() {
         String[] args = {"reset", "C"};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(List.of("Crafts.workbench"), completionResult);
     }
@@ -156,7 +156,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteWithNumberForAddCommand() {
         String[] args = {"add", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(List.of("1"), completionResult);
     }
@@ -164,7 +164,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteWithCategoryForAddCommand() {
         String[] args = {"add", "1", "Cra"};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(List.of("Crafts.workbench"), completionResult);
     }
@@ -172,7 +172,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteForGiveCommand() {
         String[] args = {"give", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(asList("yourAch1", "yourAch2"), completionResult);
     }
@@ -180,7 +180,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteForDeleteCommand() {
         String[] args = {"delete", "a"};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(asList("ach1", "ach2", "ach4"), completionResult);
     }
@@ -188,7 +188,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteForCheckCommand() {
         String[] args = {"check", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(asList("Spaced␣Name␣Achievement!", "ach1", "ach2", "ach4"), completionResult);
     }
@@ -196,7 +196,7 @@ class CommandTabCompleterTest {
     @Test
     void shoudCompleteForInspectCommand() {
         String[] args = {"inspect", "s"};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(asList("spaced␣name␣achievement!", "special␣event␣achievement!"), completionResult);
     }
@@ -204,17 +204,17 @@ class CommandTabCompleterTest {
     @Test
     void shoudReturnEmptyStringIfNoCompletionAvailable() {
         String[] args = {"list", ""};
-        List<String> completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        List<String> completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(emptyList(), completionResult);
 
         args = new String[]{"top", "1", ""};
-        completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(emptyList(), completionResult);
 
         args = new String[]{"delete", "yourAch1", "DarkPyves", ""};
-        completionResult = underTest.onTabComplete(commandSender, command, null, args);
+        completionResult = underTest.onTabComplete(commandSender, command, "", args);
 
         assertEquals(emptyList(), completionResult);
     }

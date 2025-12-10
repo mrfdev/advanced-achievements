@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -64,11 +65,11 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        configColor = ChatColor.getByChar(mainConfig.getString("Color"));
+        configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
         configTopList = mainConfig.getInt("TopList");
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
-        configSoundRanking = mainConfig.getString("SoundRanking").toUpperCase();
+        configSoundRanking = Objects.requireNonNull(mainConfig.getString("SoundRanking")).toUpperCase();
 
         langPeriodAchievement = pluginHeader + langConfig.getString(languageKey);
         langPlayerRank = pluginHeader + langConfig.getString("player-rank") + " " + configColor;
