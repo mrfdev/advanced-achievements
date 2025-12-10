@@ -1,5 +1,6 @@
 package com.hm.achievement.gui;
 
+import com.Zrips.CMI.commands.list.item;
 import com.hm.achievement.category.Category;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
@@ -142,7 +143,7 @@ public class CategoryGUI implements Reloadable {
      */
     public void displayCategoryGUI(ItemStack item, Player player, int requestedPage) {
         for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
-            if (Objects.requireNonNull(achievementItem.getValue().getItemMeta().customName()).equals(item.getItemMeta().customName())) {
+            if (Objects.requireNonNull(achievementItem.getValue().getItemMeta().customName()).equals(com.Zrips.CMI.commands.list.item.getItemMeta().customName())) {
                 Category category = achievementItem.getKey().category();
                 Map<String, Long> subcategoriesToStatistics;
                 List<Achievement> achievements = achievementMap.getForCategory(category);
@@ -195,7 +196,7 @@ public class CategoryGUI implements Reloadable {
                 }
             }
         }
-        // Populate the current GUI page with all of the achievements for the category.
+        // Populate the current GUI page with all the achievements for the category.
         for (int index = pageStart; index < pageEnd; ++index) {
             // Path can either be a threshold (eg '10', or a subcategory and threshold (eg 'skeleton.10').
             Achievement achievement = achievements.get(index);
@@ -388,7 +389,7 @@ public class CategoryGUI implements Reloadable {
         }
 
         List<Reward> rewards = achievement.getRewards();
-        // Add the rewards information.
+        // Add the rewards' information.
         if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
             lore.add("");
             if (rewards.size() == 1 && !langListReward.isEmpty()) {

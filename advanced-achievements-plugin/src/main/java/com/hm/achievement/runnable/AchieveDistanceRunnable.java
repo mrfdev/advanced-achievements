@@ -117,7 +117,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
     /**
      * Calculates the difference between the player's last location and his current one. May ignore the vertical axis or
-     * not depending on configuration..
+     * not depending on configuration.
      *
      * @param previousLocation
      * @param currentLocation

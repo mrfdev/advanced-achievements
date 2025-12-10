@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
 /**
- * Class providing a few logging helper methods to retrieve Material instances
+ * Class providing logging helper methods to retrieve Material instances
  * via their names.
  *
  * @author Pyves
@@ -63,7 +63,7 @@ public class MaterialHelper {
     }
 
     /**
-     * Determines whether an item is any Material.POTION apart from water.
+     * Determines whether an item is any potion apart from water.
      *
      * @param itemStack
      * @return true if the item is a non-water potion, false otherwise

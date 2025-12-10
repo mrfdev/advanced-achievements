@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Class for testing PlayerAdvancedAchievementListener. Currently covers AllAchievementsReceivedRewards usage.
+ * Class for testing PlayerAdvancedAchievementListener. Currently, covers AllAchievementsReceivedRewards usage.
  *
  * @author Pyves
  */

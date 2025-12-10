@@ -241,7 +241,7 @@ DatabaseBackup: true
 DatabaseType: sqlite
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix), the plugin does
-# an automatic renaming. Otherwise you must rename tables manually. Do a full server restart for this to take effect.
+# an automatic renaming. Otherwise, you must rename tables manually. Do a full server restart for this to take effect.
 TablePrefix: ""
 
 # When using groups of subcategories for Multiple action achievements (e.g. snow|snow_block|ice), you must ensure that
@@ -1204,7 +1204,7 @@ OreBlocks:
   - redstone_ore
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks cannot be launched on the following
-# blocks. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right clicking on the
+# blocks. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right-clicking on the
 # block and not actually using any fireworks. You may need to expand this list when new Minecraft versions are released.
 ForbiddenFireworkBlocks:
   - glow_item_frame
@@ -1218,8 +1218,7 @@ ForbiddenFireworkBlocks:
   - chest_minecart
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks can only be launched on the following
-# blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right
-# clicking on the block and not actually using any fireworks. You may need to expand this list when new Minecraft
+# blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right-clicking on the block and not actually using any fireworks. You may need to expand this list when new Minecraft
 # versions are released.
 ForbiddenFireworkBlocksWhenNotSneaking:
   - polished_blackstone_button

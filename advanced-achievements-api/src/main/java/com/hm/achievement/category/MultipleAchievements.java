@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * List of multiple achievements, ie. with sub-categories
+ * List of multiple achievements, i.e. with sub-categories
  *
  * @author Pyves
  */

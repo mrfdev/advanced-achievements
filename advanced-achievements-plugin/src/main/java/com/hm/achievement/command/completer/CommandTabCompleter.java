@@ -1,5 +1,6 @@
 package com.hm.achievement.command.completer;
 
+import com.Zrips.CMI.commands.list.options;
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
@@ -48,14 +49,14 @@ public class CommandTabCompleter implements TabCompleter {
         Collection<String> options = Collections.emptyList();
         if (args.length == 2 && "reset".equalsIgnoreCase(aachCommand)) {
             options = new HashSet<>(achievementMap.getCategorySubcategories());
-            options.add(ResetCommand.WILDCARD);
+            com.Zrips.CMI.commands.list.options.add(ResetCommand.WILDCARD);
         } else if (args.length == 2 && "give".equalsIgnoreCase(aachCommand)) {
             options = achievementMap.getSubcategoriesForCategory(CommandAchievements.COMMANDS);
         } else if (args.length == 2 && "check".equalsIgnoreCase(aachCommand)) {
             options = achievementMap.getAllNames();
         } else if (args.length == 2 && "delete".equalsIgnoreCase(aachCommand)) {
             options = new HashSet<>(achievementMap.getAllNames());
-            options.add(DeleteCommand.WILDCARD);
+            com.Zrips.CMI.commands.list.options.add(DeleteCommand.WILDCARD);
         } else if (args.length == 2 && "inspect".equalsIgnoreCase(aachCommand)) {
             options = achievementMap.getAllSanitisedDisplayNames();
         } else if (args.length == 2 && "add".equalsIgnoreCase(aachCommand)) {
@@ -83,7 +84,7 @@ public class CommandTabCompleter implements TabCompleter {
     private List<String> getPartialList(@NotNull Collection<String> options, String prefix) {
         // Find matching options
         // Replace spaces with an Open Box character to prevent completing wrong word. Prevented Behaviour:
-        // T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The The Smelter
+        // T -> Tamer -> Teleport Man -> Teleport The Avener -> Teleport The Smelter
         // Sort matching elements by alphabetical order.
         return options.stream().filter(s1 -> s1.toLowerCase().startsWith(prefix.toLowerCase())).map(s -> s.replace(' ', '␣')).sorted().collect(Collectors.toList());
     }

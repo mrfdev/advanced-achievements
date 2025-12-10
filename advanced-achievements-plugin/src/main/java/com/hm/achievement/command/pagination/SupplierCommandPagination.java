@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * box.
  * <p>
  * Wrapping in the chat box is difficult to calculate since the Minecraft font is not monospaced so 'w' and 'i' are
- * different width, as well as unicode characters which are their own special category.
+ * different width, as well as Unicode characters which are their own special category.
  *
  * @author Rsl1122
  */

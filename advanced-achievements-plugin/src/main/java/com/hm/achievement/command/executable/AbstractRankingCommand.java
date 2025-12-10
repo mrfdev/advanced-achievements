@@ -142,7 +142,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     }
 
     /**
-     * Returns an UTF-8 circled number based on the player's rank.
+     * Returns a UTF-8 circled number based on the player's rank.
      *
      * @param rank
      * @return an UTF-8 string corresponding to the rank

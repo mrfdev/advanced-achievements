@@ -34,7 +34,7 @@ public interface SQLWriteOperation {
     }
 
     /**
-     * Calls {@code performWrite} repeatedly until the write succeeds or {@code MAX_ATTEMPTS} is reached.
+     * Calls {@code performWrite} repeatedly until to write succeeds or {@code MAX_ATTEMPTS} is reached.
      *
      * @param logger
      * @param operationMessage

@@ -4,7 +4,7 @@ import com.hm.achievement.category.Category;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Small wrapper to define a ordering between the categories.
+ * Small wrapper to define an ordering between the categories.
  *
  * @author Pyves
  */

@@ -38,7 +38,7 @@ public class DatabaseUpdater {
         // If a prefix is set in the config, check whether the tables with the default names exist. If so do renaming.
         if (StringUtils.isNotBlank(databaseManager.getPrefix())) {
             try (ResultSet rs = databaseManager.getConnection().getMetaData().getTables(null, null, "achievements", null)) {
-                // If the achievements table still has its default name (ie. no prefix), but a prefix is set in the
+                // If the achievements table still has its default name (i.e. no prefix), but a prefix is set in the
                 // configuration, do a renaming of all tables.
                 if (rs.next()) {
                     logger.info("Adding " + databaseManager.getPrefix() + " prefix to database table names, please wait...");
@@ -62,7 +62,7 @@ public class DatabaseUpdater {
     }
 
     /**
-     * Initialises database tables by creating non existing ones. We batch the requests to send a unique batch to the
+     * Initialises database tables by creating non-existing ones. We batch the requests to send a unique batch to the
      * database.
      *
      * @param databaseManager
