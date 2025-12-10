@@ -23,15 +23,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommandUtils {
 
-    /**
-     * The CommandUtils class is used for selector support in commands (@p, @a etc.) Originally made by ZombieStriker
-     * https://github.com/ZombieStriker/PsudoCommands/blob/master/src/me/zombie_striker/psudocommands/CommandUtils.java
+    /*
+      The CommandUtils class is used for selector support in commands (@p, @a etc.) Originally made by ZombieStriker
+      https://github.com/ZombieStriker/PsudoCommands/blob/master/src/me/zombie_striker/psudocommands/CommandUtils.java
      */
 
     /**
      * Use this if you are unsure if a player provided the "@a" tag. This will allow multiple entities to be retrieved.
      * <p>
-     * This can return a null variable if no tags are included, or if a value for a tag does not exist (I.e if the tag
+     * This can return a null variable if no tags are included, or if a value for a tag does not exist (I.e. if the tag
      * [type=___] contains an entity that does not exist in the specified world)
      * <p>
      * The may also be empty or null values at the end of the array. Once a null value has been reached, you do not need
@@ -130,7 +130,7 @@ public class CommandUtils {
                 }
             }
 
-            ents = listOfValidEntities.toArray(new Entity[listOfValidEntities.size()]);
+            ents = listOfValidEntities.toArray(new Entity[0]);
 
         } else if (arg.startsWith("@p")) {
             ents = new Entity[1];
@@ -182,7 +182,7 @@ public class CommandUtils {
                     }
                 }
             }
-            ents = entities.toArray(new Entity[entities.size()]);
+            ents = entities.toArray(new Entity[0]);
         } else if (arg.startsWith("@r")) {
             Random r = ThreadLocalRandom.current();
             ents = new Entity[1];
@@ -220,57 +220,6 @@ public class CommandUtils {
             ents = new Entity[]{Bukkit.getPlayer(arg)};
         }
         return ents;
-    }
-
-    /**
-     * Returns one entity. Use this if you know the player will not provide the '@a' tag.
-     * <p>
-     * This can return a null variable if no tags are included, or if a value for a tag does not exist (I.e if the tag
-     * [type=___] contains an entity that does not exist in the specified world)
-     *
-     * @param sender the command sender
-     * @param arg    the argument of the target
-     * @return The first entity retrieved.
-     */
-    public static Entity getTarget(CommandSender sender, String arg) {
-        Entity[] e = getTargets(sender, arg);
-        if (e.length == 0)
-            return null;
-        return e[0];
-    }
-
-    /**
-     * Returns an integer. Use this to support "~" by providing what it will mean.
-     * <p>
-     * E.g. rel="x" when ~ should be turn into the entity's X coord.
-     * <p>
-     * Currently supports "x", "y" and "z".
-     *
-     * @param arg The target
-     * @param rel relative to the X,Y, or Z
-     * @param e   The entity to check relative to.
-     * @return the int
-     */
-    public static int getIntRelative(String arg, String rel, Entity e) {
-        int relInt = 0;
-        if (arg.startsWith("~")) {
-            relInt = switch (rel.toLowerCase()) {
-                case "x" -> e.getLocation().getBlockX();
-                case "y" -> e.getLocation().getBlockY();
-                case "z" -> e.getLocation().getBlockZ();
-                default -> relInt;
-            };
-            return mathIt(arg, relInt);
-        } else if (arg.startsWith("^")) {
-            relInt = switch (rel.toLowerCase()) {
-                case "x" -> e.getLocation().getBlockX();
-                case "y" -> e.getLocation().getBlockY();
-                case "z" -> e.getLocation().getBlockZ();
-                default -> relInt;
-            };
-            return mathIt(arg, relInt);
-        }
-        return 0;
     }
 
     private static boolean canBeAccepted(String arg, Entity e, Location loc) {
@@ -332,49 +281,6 @@ public class CommandUtils {
             return new String[0];
         String tags = arg.split("\\[")[1].split("]")[0];
         return tags.split(",");
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static int mathIt(String args, int relInt) {
-        int total = 0;
-        short mode = 0;
-        String arg = args.replace("~", String.valueOf(relInt));
-        String intString = "";
-        for (int i = 0; i < arg.length(); i++) {
-            if (arg.charAt(i) == '+' || arg.charAt(i) == '-' || arg.charAt(i) == '*' || arg.charAt(i) == '/') {
-                try {
-                    total = switch (mode) {
-                        case 0 -> total + Integer.parseInt(intString);
-                        case 1 -> total - Integer.parseInt(intString);
-                        case 2 -> total * Integer.parseInt(intString);
-                        case 3 -> total / Integer.parseInt(intString);
-                        default -> total;
-                    };
-                    mode = (short) ((arg.charAt(i) == '+') ? 0
-                            : ((arg.charAt(i) == '-') ? 1
-                            : ((arg.charAt(i) == '*') ? 2 : ((arg.charAt(i) == '/') ? 3 : -1))));
-                } catch (NumberFormatException e) {
-                    Bukkit.getLogger().severe("There has been an issue with a plugin using the CommandUtils class!");
-                }
-
-            } else if (args.length() == i || arg.charAt(i) == ' ' || arg.charAt(i) == ',' || arg.charAt(i) == ']') {
-                try {
-                    total = switch (mode) {
-                        case 0 -> total + Integer.parseInt(intString);
-                        case 1 -> total - Integer.parseInt(intString);
-                        case 2 -> total * Integer.parseInt(intString);
-                        case 3 -> total / Integer.parseInt(intString);
-                        default -> total;
-                    };
-                } catch (NumberFormatException e) {
-                    Bukkit.getLogger().severe("There has been an issue with a plugin using the CommandUtils class!");
-                }
-                break;
-            } else {
-                intString += arg.charAt(i);
-            }
-        }
-        return total;
     }
 
     private static int getLimit(String arg) {
