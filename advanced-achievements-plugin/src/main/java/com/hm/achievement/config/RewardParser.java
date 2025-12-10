@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
@@ -135,24 +137,22 @@ public class RewardParser {
                     if (part.contains(":")) {
                         String[] enchantParts = part.split(":", 2);
                         if (enchantParts.length == 2) {
-                            String enchantName = enchantParts[0];
+                            String enchantName = enchantParts[0].toLowerCase();
                             int enchantLevel = NumberUtils.toInt(enchantParts[1], 1);
-                            try {
-                                Registry<@NotNull Enchantment> enchantmentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
-                                Enchantment enchantment = enchantmentRegistry.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
-                                if (enchantment != null && itemMeta != null) {
-                                    itemMeta.addEnchant(enchantment, enchantLevel, true);
-                                }
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
+                            Registry<@NotNull Enchantment> enchantmentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
+                            Enchantment enchantment = enchantmentRegistry.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
+                            if (enchantment != null) {
+                                itemMeta.addEnchant(enchantment, enchantLevel, true);
+                                continue;
                             }
-                        } else nameBuilder.append(part).append(" ");
+                        }
                     }
+                    nameBuilder.append(part).append(" ");
                 }
                 String name = nameBuilder.toString().trim();
                 if (name.isEmpty()) name = StringHelper.toReadableName(rewardMaterial.get());
                 if (itemMeta != null) {
-                    Component displayName = Component.text(name);
+                    Component displayName = Component.text(name).style(Style.style().decoration(TextDecoration.ITALIC, false));
                     itemMeta.displayName(displayName);
                     itemStack.setItemMeta(itemMeta);
                 }
@@ -165,15 +165,13 @@ public class RewardParser {
             ItemStack playerItem = item.clone();
             ItemMeta itemMeta = playerItem.getItemMeta();
             if (itemMeta != null && itemMeta.hasDisplayName()) {
-                Component displayName = item.displayName();
-                Component newDisplayName = StringHelper.replacePlayerPlaceholders(displayName, player);
-                itemMeta.displayName(newDisplayName);
+                Component displayName = itemMeta.displayName();
+                String plainName = PlainTextComponentSerializer.plainText().serialize(displayName);
+                itemMeta.displayName(Component.text(plainName).style(Style.style().decoration(TextDecoration.ITALIC, false)));
                 playerItem.setItemMeta(itemMeta);
             }
             Map<Integer, ItemStack> leftoverItem = player.getInventory().addItem(playerItem);
-            for (ItemStack itemToDrop : leftoverItem.values()) {
-                player.getWorld().dropItem(player.getLocation(), itemToDrop);
-            }
+            leftoverItem.values().forEach(left -> player.getWorld().dropItem(player.getLocation(), left));
         });
         return new Reward(listTexts, chatTexts, rewarder);
     }

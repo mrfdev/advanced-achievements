@@ -53,7 +53,8 @@ public class StringHelper {
     }
 
     public static @NotNull String toReadableName(@NotNull Material material) {
-        String name = material.name().toLowerCase().replace('_', ' ');
-        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        String[] words = material.name().toLowerCase().split("_");
+        for (int i = 0; i < words.length; i++) words[i] = Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+        return String.join(" ", words);
     }
 }
