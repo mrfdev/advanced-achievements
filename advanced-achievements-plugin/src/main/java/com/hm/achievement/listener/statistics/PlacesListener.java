@@ -18,7 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to deal with Places achievements.
@@ -35,7 +35,7 @@ public class PlacesListener extends AbstractListener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+    public void onBlockPlace(@NonNull BlockPlaceEvent event) {
         Player player = event.getPlayer();
         ItemStack placedItem = event.getItemInHand();
 

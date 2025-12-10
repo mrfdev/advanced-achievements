@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +68,7 @@ class YamlUpdaterTest {
         assertEquals(lastModified, userFile.lastModified());
     }
 
-    private @NotNull File createFileFromTestResource(String testResourceName) throws Exception {
+    private @NonNull File createFileFromTestResource(String testResourceName) throws Exception {
         File userFile = new File(tempDir, testResourceName);
         try (FileOutputStream targetUserConfig = new FileOutputStream(userFile)) {
             Files.copy(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(testResourceName)).toURI()), targetUserConfig);

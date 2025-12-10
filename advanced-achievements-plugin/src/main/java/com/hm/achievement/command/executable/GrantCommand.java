@@ -17,7 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Singleton
 @CommandSpec(name = "grant", permission = "grant", minArgs = 3, maxArgs = 3)
@@ -52,7 +52,7 @@ public class GrantCommand extends AbstractParsableCommand {
     }
 
     @Override
-    public void onExecuteForPlayer(CommandSender sender, String @NotNull [] args, Player ignored) {
+    public void onExecuteForPlayer(CommandSender sender, String @NonNull [] args, Player ignored) {
         String achName = args[1];
         String playerName = args[2];
         Player targetPlayer = Bukkit.getPlayerExact(playerName);

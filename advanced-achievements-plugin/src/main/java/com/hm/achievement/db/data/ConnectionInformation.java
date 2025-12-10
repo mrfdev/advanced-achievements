@@ -2,7 +2,7 @@ package com.hm.achievement.db.data;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record ConnectionInformation(String date, long count) {
 
@@ -12,11 +12,11 @@ public record ConnectionInformation(String date, long count) {
         this(epoch(), 0L);
     }
 
-    public static @NotNull String epoch() {
+    public static @NonNull String epoch() {
         return LocalDate.ofEpochDay(0).format(DATE_TIME_FORMATTER);
     }
 
-    public static @NotNull String today() {
+    public static @NonNull String today() {
         return LocalDate.now().format(DATE_TIME_FORMATTER);
     }
 

@@ -27,7 +27,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of registering achievements as advancements.
@@ -66,7 +66,7 @@ public class AdvancementManager implements Reloadable {
         this.achievementMap = achievementMap;
     }
 
-    public static @NotNull String getKey(String achName) {
+    public static @NonNull String getKey(String achName) {
         return REGEX_PATTERN_KEYS.matcher(achName).replaceAll("").toLowerCase();
     }
 
@@ -170,7 +170,7 @@ public class AdvancementManager implements Reloadable {
      * @param lastAchievement
      * @return the key of the registered achievement
      */
-    private @NotNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
+    private @NonNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
         // Strip formatting codes as the advancements interface does not support them.
         String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
 

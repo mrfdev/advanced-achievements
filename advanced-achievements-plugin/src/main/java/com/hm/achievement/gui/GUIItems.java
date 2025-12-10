@@ -24,7 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 
 /**
@@ -56,8 +56,7 @@ public class GUIItems implements Reloadable {
     private String configIcon;
 
     @Inject
-    public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                    @Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper) {
+    public GUIItems(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, @Named("gui") YamlConfiguration guiConfig, MaterialHelper materialHelper) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.guiConfig = guiConfig;
@@ -92,8 +91,7 @@ public class GUIItems implements Reloadable {
         String categoryName = CommandAchievements.COMMANDS.toString();
         ItemStack itemStack = createItemStack(categoryName);
         buildItemLore(itemStack, categoryName);
-        orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName),
-                CommandAchievements.COMMANDS), itemStack);
+        orderedAchievementItems.put(new OrderedCategory(orderedCategories.indexOf(categoryName), CommandAchievements.COMMANDS), itemStack);
 
         achievementNotStartedDefault = new ItemStack(Material.RED_TERRACOTTA, 1);
         achievementStartedDefault = new ItemStack(Material.YELLOW_TERRACOTTA, 1);
@@ -122,8 +120,7 @@ public class GUIItems implements Reloadable {
      */
     private ItemStack createItemStack(String categoryName) {
         String path = categoryName + ".Item";
-        Material material = materialHelper.matchMaterial(guiConfig.getString(path, null), Material.BEDROCK,
-                "gui.yml (" + path + ")");
+        Material material = materialHelper.matchMaterial(guiConfig.getString(path, null), Material.BEDROCK, "gui.yml (" + path + ")");
         return new ItemStack(material, 1);
     }
 
@@ -135,7 +132,7 @@ public class GUIItems implements Reloadable {
      * @param lore
      * @return the item stack
      */
-    private @NotNull ItemStack createButton(String category, String msg, String lore) {
+    private @NonNull ItemStack createButton(String category, String msg, String lore) {
         ItemStack button = createItemStack(category);
         ItemMeta meta = button.getItemMeta();
         Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(msg))));
@@ -158,7 +155,7 @@ public class GUIItems implements Reloadable {
      * @param item
      * @param categoryName
      */
-    private void buildItemLore(@NotNull ItemStack item, @NotNull String categoryName) {
+    private void buildItemLore(@NonNull ItemStack item, @NonNull String categoryName) {
         ItemMeta itemMeta = item.getItemMeta();
         // Some lang.yml keys differ slightly for the category name (e.g. Treasure*s* -> list-treasure).
         String langKey = StringHelper.getClosestMatch("list-" + categoryName.toLowerCase(), langConfig.getKeys(false));
@@ -167,8 +164,7 @@ public class GUIItems implements Reloadable {
         if (StringUtils.isBlank(displayName)) {
             itemMeta.customName(null);
         } else {
-            String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat,
-                    new String[]{"%ICON%", "%NAME%"}, new String[]{configIcon, "&l" + displayName + "&8"});
+            String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat, new String[]{"%ICON%", "%NAME%"}, new String[]{configIcon, "&l" + displayName + "&8"});
             itemMeta.customName(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedDisplayName));
         }
         item.setItemMeta(itemMeta);

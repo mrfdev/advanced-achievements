@@ -10,7 +10,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class enabling usage of placeholder with PlaceholderAPI to get achievements stats in others plugins.
@@ -24,8 +24,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
     private final AchievementMap achievementMap;
 
     @Inject
-    public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements, CacheManager cacheManager,
-                                      AchievementMap achievementMap) {
+    public AchievementPlaceholderHook(AdvancedAchievements advancedAchievements, CacheManager cacheManager, AchievementMap achievementMap) {
         this.advancedAchievements = advancedAchievements;
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -37,7 +36,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(Player p, @NotNull String identifier) {
+    public String onPlaceholderRequest(Player p, @NonNull String identifier) {
         if ("total_achievements".equalsIgnoreCase(identifier)) {
             return Integer.toString(achievementMap.getAll().size());
         }
@@ -49,8 +48,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
             }
 
             if ("achievements_percentage".equalsIgnoreCase(identifier)) {
-                return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerAchievements(uuid).size()
-                        / achievementMap.getAll().size());
+                return String.format("%.1f%%", 100 * (double) cacheManager.getPlayerAchievements(uuid).size() / achievementMap.getAll().size());
             }
 
             if ("total_commands".equalsIgnoreCase(identifier)) {
@@ -61,8 +59,7 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
                 if (category.toString().equalsIgnoreCase(identifier)) {
                     long statistic = cacheManager.getAndIncrementStatisticAmount(category, uuid, 0);
                     // If played time, convert from millis to hours and display one decimal.
-                    return category == NormalAchievements.PLAYEDTIME ? String.format("%.1f", statistic / 3600000.0)
-                            : Long.toString(statistic);
+                    return category == NormalAchievements.PLAYEDTIME ? String.format("%.1f", statistic / 3600000.0) : Long.toString(statistic);
                 } else if (("total_" + category).equalsIgnoreCase(identifier)) {
                     return Integer.toString(achievementMap.getForCategory(category).size());
                 }
@@ -84,17 +81,17 @@ public class AchievementPlaceholderHook extends PlaceholderExpansion {
     }
 
     @Override
-    public @NotNull String getIdentifier() {
+    public @NonNull String getIdentifier() {
         return "aach";
     }
 
     @Override
-    public @NotNull String getAuthor() {
+    public @NonNull String getAuthor() {
         return String.join(", ", advancedAchievements.getPluginMeta().getAuthors());
     }
 
     @Override
-    public @NotNull String getVersion() {
+    public @NonNull String getVersion() {
         return advancedAchievements.getPluginMeta().getVersion();
     }
 }

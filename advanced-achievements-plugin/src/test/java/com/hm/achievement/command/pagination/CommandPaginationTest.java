@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -146,14 +146,14 @@ class CommandPaginationTest {
     }
 
     @Contract("_, _ -> new")
-    private @NotNull String getPaginationHeader(int page, int max) {
+    private @NonNull String getPaginationHeader(int page, int max) {
         return ChatColor.translateAlternateColorCodes('&',
                 Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[]{"PAGE", "MAX"},
                         new String[]{Integer.toString(page), Integer.toString(max)})));
     }
 
     @Contract(" -> new")
-    private @NotNull String getPaginationFooter() {
+    private @NonNull String getPaginationFooter() {
         return ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("pagination-footer")));
     }
 

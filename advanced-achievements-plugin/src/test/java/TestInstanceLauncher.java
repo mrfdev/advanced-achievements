@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
 
 public class TestInstanceLauncher {
     public static final Map<String, PluginInfo> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
@@ -243,7 +244,7 @@ public class TestInstanceLauncher {
         return maxBuild;
     }
 
-    public static @NotNull Path downloadPaper(String version, int build, @NotNull Path dir) throws IOException, InterruptedException {
+    public static @NonNull Path downloadPaper(String version, int build, @NonNull Path dir) throws IOException, InterruptedException {
         String fileName = "paper" + "-" + version + "-" + build + ".jar";
         Path jarPath = dir.resolve(fileName);
         if (!Files.exists(jarPath)) {
@@ -284,7 +285,7 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void downloadAndAddPlugin(@NotNull PluginInfo pluginInfo, String pluginFileName, @NotNull Path pluginDir) throws IOException, InterruptedException {
+    public static void downloadAndAddPlugin(@NonNull PluginInfo pluginInfo, String pluginFileName, @NonNull Path pluginDir) throws IOException, InterruptedException {
         String pluginUrl = pluginInfo.url();
         String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
@@ -404,7 +405,7 @@ public class TestInstanceLauncher {
         LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
     }
 
-    public static int compareVersions(@NotNull String v1, @NotNull String v2) {
+    public static int compareVersions(@NonNull String v1, @NonNull String v2) {
         String[] parts1 = v1.split("\\.");
         String[] parts2 = v2.split("\\.");
         int length = Math.max(parts1.length, parts2.length);
@@ -418,7 +419,8 @@ public class TestInstanceLauncher {
         return 0;
     }
 
-    public static boolean isStableVersion(String version) {
+    @Contract(pure = true)
+    public static boolean isStableVersion(@NonNull String version) {
         return !version.contains("-");
     }
 

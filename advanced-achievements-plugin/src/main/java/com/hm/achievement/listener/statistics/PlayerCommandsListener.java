@@ -18,19 +18,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Singleton
 public class PlayerCommandsListener extends AbstractListener {
 
     @Inject
-    public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                                  CacheManager cacheManager) {
+    public PlayerCommandsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(MultipleAchievements.PLAYERCOMMANDS, mainConfig, achievementMap, cacheManager);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerCommand(@NotNull PlayerCommandPreprocessEvent event) {
+    public void onPlayerCommand(@NonNull PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         List<String> equivalentCommands = getEquivalentCommands(event.getMessage());
         Set<String> matchingSubcategories = new HashSet<>();
@@ -55,7 +54,7 @@ public class PlayerCommandsListener extends AbstractListener {
      * @param command
      * @return the list of commands have the same effect as the input one
      */
-    private @NotNull List<String> getEquivalentCommands(@NotNull String command) {
+    private @NonNull List<String> getEquivalentCommands(@NonNull String command) {
         int firstSpaceIndex = command.indexOf(' ');
         String commandName;
         String commandParameters;

@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ class H2DatabaseManagerTest {
     private final UUID testUUID = UUID.randomUUID();
 
     @BeforeAll
-    static void setUpClass(@TempDir @NotNull Path tempDir) throws Exception {
+    static void setUpClass(@TempDir @NonNull Path tempDir) throws Exception {
         AdvancedAchievements plugin = mock(AdvancedAchievements.class);
         when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
         YamlConfiguration config = YamlConfiguration

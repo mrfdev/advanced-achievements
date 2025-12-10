@@ -1,7 +1,7 @@
 package com.hm.achievement.gui;
 
 import com.hm.achievement.category.Category;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Small wrapper to define an ordering between the categories.
@@ -12,7 +12,7 @@ public record OrderedCategory(int order, Category category) implements Comparabl
 
 
     @Override
-    public int compareTo(@NotNull OrderedCategory o) {
+    public int compareTo(@NonNull OrderedCategory o) {
         return Integer.compare(order(), o.order());
     }
 }

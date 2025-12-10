@@ -26,7 +26,7 @@ import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of displaying recipients of an achievement (/aach inspect).
@@ -63,7 +63,7 @@ public class InspectCommand extends AbstractCommand {
         super.extractConfigurationParameters();
     }
 
-    private int getPage(String @NotNull [] args) {
+    private int getPage(String @NonNull [] args) {
         boolean lastArgIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
         return lastArgIsNumber ? Integer.parseInt(args[args.length - 1]) : 1;
     }
@@ -90,7 +90,7 @@ public class InspectCommand extends AbstractCommand {
         });
     }
 
-    private @NotNull String parseAchievementName(String @NotNull [] args) {
+    private @NonNull String parseAchievementName(String @NonNull [] args) {
         TextStringBuilder achName = new TextStringBuilder();
 
         boolean lastArgumentIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);

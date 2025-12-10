@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for the
@@ -82,7 +82,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
      * @param slotNumber
      * @return true if the player is still in cooldown, false otherwise
      */
-    private boolean isInCooldownPeriod(@NotNull Player player, int slotNumber) {
+    private boolean isInCooldownPeriod(@NonNull Player player, int slotNumber) {
         UUID uuid = player.getUniqueId();
         long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, uuid, 0);
         // Ignore cooldown if player has received all achievements in the category.
@@ -115,7 +115,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
      * @param player
      * @param timeToWait
      */
-    private void displayActionBarMessage(@NotNull Player player, long timeToWait) {
+    private void displayActionBarMessage(@NonNull Player player, long timeToWait) {
         String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
         String message = StringUtils.replaceEach(langStatisticCooldown, new String[]{"TIME"}, new String[]{timeWithOneDecimal});
         try (BukkitAudiences audiences = BukkitAudiences.create(advancedAchievements)) {

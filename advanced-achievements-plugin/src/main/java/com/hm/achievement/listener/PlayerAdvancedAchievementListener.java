@@ -56,7 +56,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to deal with achievement receptions: rewards, display and
@@ -122,11 +122,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private String langBossBarProgress;
 
     @Inject
-    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig,
-                                             @Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader,
-                                             CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser,
-                                             AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand,
-                                             FancyMessageSender fancyMessageSender) {
+    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.logger = logger;
@@ -145,8 +141,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configFireworkStyle = Objects.requireNonNull(mainConfig.getString("FireworkStyle")).toUpperCase();
         if (!"RANDOM".equals(configFireworkStyle) && !EnumUtils.isValidEnum(Type.class, configFireworkStyle)) {
             configFireworkStyle = Type.BALL_LARGE.name();
-            logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: "
-                    + "ball_large, ball, burst, creeper, star or random.");
+            logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: " + "ball_large, ball, burst, creeper, star or random.");
         }
         configFirework = mainConfig.getBoolean("Firework");
         configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception");
@@ -168,13 +163,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
+    public void onEntityDamageByEntity(@NonNull EntityDamageByEntityEvent event) {
         // Cancel damage if the firework was launched by the plugin.
         event.setCancelled(event.getEntity().hasMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerAdvancedAchievementReception(@NotNull PlayerAdvancedAchievementEvent event) {
+    public void onPlayerAdvancedAchievementReception(@NonNull PlayerAdvancedAchievementEvent event) {
         Achievement achievement = event.getAchievement();
         Player player = event.getPlayer();
         // Achievement could have already been received if MultiCommand is set to true
@@ -182,8 +177,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())) {
             cacheManager.registerNewlyReceivedAchievement(player.getUniqueId(), achievement.getName());
 
-            Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements,
-                    AdvancementManager.getKey(achievement.getName())));
+            Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achievement.getName())));
             // Matching advancement might not exist if user has not called /aach generate.
             if (advancement != null) {
                 player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
@@ -206,7 +200,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param player
      * @param achievement
      */
-    private void displayAchievement(@NotNull Player player, @NotNull Achievement achievement) {
+    private void displayAchievement(@NonNull Player player, @NonNull Achievement achievement) {
         logger.info("Player " + player.getName() + " received the achievement: " + achievement.getDisplayName());
 
         String nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getDisplayName());
@@ -221,8 +215,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             // Notify other players only if NotifyOtherPlayers is enabled and player has not
             // used /aach toggle, or if
             // NotifyOtherPlayers is disabled and player has used /aach toggle.
-            if (!p.getName().equals(player.getName())
-                    && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p, achievement.getType()))) {
+            if (!p.getName().equals(player.getName()) && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p, achievement.getType()))) {
                 displayNotification(player, nameToShowUser, p);
             }
         }
@@ -234,11 +227,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         }
 
         if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
-            Title title = Title.title(
-                    Component.text(nameToShowUser),
-                    Component.text(messageToShowUser),
-                    Title.Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5))
-            );
+            Title title = Title.title(Component.text(nameToShowUser), Component.text(messageToShowUser), Title.Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5)));
             player.showTitle(title);
         }
 
@@ -250,8 +239,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             BossBar bossBar = Bukkit.getServer().createBossBar(message, barColor, BarStyle.SOLID);
             bossBar.setProgress(progress);
             Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player),
-                    240);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
         }
     }
 
@@ -265,17 +253,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param messageToShowUser
      * @param rewards
      */
-    private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser,
-                                         @NotNull List<Reward> rewards) {
-        List<String> chatMessages = rewards.stream()
-                .map(Reward::chatTexts)
-                .flatMap(List::stream)
-                .map(m -> StringHelper.replacePlayerPlaceholders(m, player))
-                .map(m -> PlainTextComponentSerializer.plainText().serialize(m))
-                .toList();
-        String message = langAchievementNew.contains("ACH")
-                ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser})
-                : langAchievementNew + nameToShowUser;
+    private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser, @NonNull List<Reward> rewards) {
+        List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
+        String message = langAchievementNew.contains("ACH") ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser}) : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
             StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
             chatMessages.forEach(t -> hover.append(ChatColor.translateAlternateColorCodes('&', t)).append("\n"));
@@ -295,9 +275,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param otherPlayer
      */
     private void displayNotification(Player receiver, String nameToShowUser, Player otherPlayer) {
-        String message = langAchievementReceived.contains("ACH")
-                ? StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER", "ACH"}, new String[]{receiver.getName(), nameToShowUser})
-                : StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER"}, new String[]{receiver.getName()}) + nameToShowUser;
+        String message = langAchievementReceived.contains("ACH") ? StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER", "ACH"}, new String[]{receiver.getName(), nameToShowUser}) : StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER"}, new String[]{receiver.getName()}) + nameToShowUser;
         if (configActionBarNotify) {
             Component actionBarMessage = Component.text(message).decorate(TextDecoration.ITALIC);
             otherPlayer.sendActionBar(actionBarMessage);
@@ -312,16 +290,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      *
      * @param player
      */
-    private void displayFirework(@NotNull Player player) {
+    private void displayFirework(@NonNull Player player) {
         // Set firework to launch beneath player.
         Location location = player.getLocation().subtract(0, 1, 0);
         Firework firework = player.getWorld().spawn(location, Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
-        FireworkEffect fireworkEffect = FireworkEffect.builder()
-                .withColor(configColor)
-                .withFade(mixColor)
-                .with(getFireworkType())
-                .build();
+        FireworkEffect fireworkEffect = FireworkEffect.builder().withColor(configColor).withFade(mixColor).with(getFireworkType()).build();
         fireworkMeta.addEffects(fireworkEffect);
         firework.setFireworkMeta(fireworkMeta);
         firework.setMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK, new FixedMetadataValue(advancedAchievements, true));
@@ -349,7 +323,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      *
      * @param player
      */
-    private void displaySimplifiedReception(@NotNull Player player) {
+    private void displaySimplifiedReception(@NonNull Player player) {
         Sound sound = Registry.SOUNDS.get(SoundEventKeys.ENTITY_PLAYER_LEVELUP);
         if (sound != null) {
             player.playSound(player.getLocation(), sound, 1, 0.7f);
@@ -363,15 +337,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      *
      * @param player
      */
-    private void handleAllAchievementsReceived(@NotNull Player player) {
+    private void handleAllAchievementsReceived(@NonNull Player player) {
         List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
         rewards.forEach(r -> r.rewarder().accept(player));
         player.sendMessage(langAllAchievementsReceived);
-        rewards.stream()
-                .map(Reward::chatTexts)
-                .flatMap(List::stream)
-                .map(m -> StringHelper.replacePlayerPlaceholders(m, player))
-                .map(m -> PlainTextComponentSerializer.plainText().serialize(m))
-                .forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
+        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
     }
 }

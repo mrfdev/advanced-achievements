@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to update the player's location when teleporting, in order to keep the distance achievement statistics
@@ -28,13 +28,13 @@ public class TeleportListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
+    public void onPlayerRespawn(@NonNull PlayerRespawnEvent event) {
         // Update location of player if he respawns after dying.
         distanceRunnable.updateLocation(event.getPlayer().getUniqueId(), event.getRespawnLocation());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
+    public void onPlayerTeleport(@NonNull PlayerTeleportEvent event) {
         // Event fired twice when teleporting with a nether portal: first time to go to nether with the cause
         // NETHER_PORTAL, then later on to change location in nether; we must only consider the second change because
         // the location of the player is not updated during the first event; if the distances are monitored by the
@@ -48,7 +48,7 @@ public class TeleportListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityTeleport(@NotNull EntityTeleportEvent event) {
+    public void onEntityTeleport(@NonNull EntityTeleportEvent event) {
         for (Entity passenger : event.getEntity().getPassengers()) {
             if (passenger instanceof Player) {
                 // Update location of player if they teleport somewhere else.
