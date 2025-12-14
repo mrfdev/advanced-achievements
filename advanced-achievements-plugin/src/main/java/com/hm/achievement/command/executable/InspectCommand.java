@@ -58,6 +58,7 @@ public class InspectCommand extends AbstractCommand {
         this.cachedPaginations = new HashMap<>();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();

@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of handling /aach commands and dispatching to the different command modules.
@@ -30,8 +31,7 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
     private String langInvalidCommand;
 
     @Inject
-    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands,
-                                 StringBuilder pluginHeader) {
+    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands, StringBuilder pluginHeader) {
         this.langConfig = langConfig;
         this.commands = commands;
         this.pluginHeader = pluginHeader;
@@ -43,7 +43,7 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         String[] parsedArgs = parseArguments(args);
         Optional<AbstractCommand> cmdToExecute = commands.stream().filter(cmd -> shouldExecute(cmd, parsedArgs)).findFirst();
         if (cmdToExecute.isPresent()) {
@@ -54,10 +54,8 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
         return true;
     }
 
-    private String[] parseArguments(String[] args) {
-        return Arrays.stream(args)
-                .flatMap(argument -> Arrays.stream(StringUtils.split(argument, '\u2423')))
-                .toArray(String[]::new);
+    private String @NonNull [] parseArguments(String[] args) {
+        return Arrays.stream(args).flatMap(argument -> Arrays.stream(StringUtils.split(argument, '␣'))).toArray(String[]::new);
     }
 
     /**
@@ -68,9 +66,8 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
      * @param args
      * @return true if command matches args, false otherwise.
      */
-    private boolean shouldExecute(AbstractCommand command, String[] args) {
+    private boolean shouldExecute(@NonNull AbstractCommand command, String @NonNull [] args) {
         CommandSpec annotation = command.getClass().getAnnotation(CommandSpec.class);
-        return args.length >= annotation.minArgs() && args.length <= annotation.maxArgs()
-                && (args.length == 0 || annotation.name().equalsIgnoreCase(args[0]));
+        return args.length >= annotation.minArgs() && args.length <= annotation.maxArgs() && (args.length == 0 || annotation.name().equalsIgnoreCase(args[0]));
     }
 }

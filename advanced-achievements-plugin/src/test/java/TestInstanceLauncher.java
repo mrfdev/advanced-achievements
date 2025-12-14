@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 
 public class TestInstanceLauncher {
+    @SuppressWarnings("EmptyClassInitializer")
     public static final Map<String, PluginInfo> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
     }};
     private static final Logger LOGGER = Logger.getLogger("");

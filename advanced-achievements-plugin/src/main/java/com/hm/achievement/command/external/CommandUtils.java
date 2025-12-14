@@ -466,6 +466,7 @@ public class CommandUtils {
         return isGreaterThan(arg, e.getLocation().getPitch());
     }
 
+    @SuppressWarnings("SameReturnValue")
     private static boolean isL(String arg, Entity e) {
         if (e instanceof Player) {
             isLessThan(arg, ((Player) e).getTotalExperience());
