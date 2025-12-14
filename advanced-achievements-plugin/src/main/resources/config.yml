@@ -9,10 +9,10 @@
 
 # Only spaces, no tabs. Don't forget the indents (2 spaces per indentation level).
 # To check syntax errors in your file, use: https://yaml-online-parser.appspot.com
-# To get involved with the project, visit its GitHub: https://github.com/PyvesB/advanced-achievements
-# To get some valuable additional documentation, visit the Wiki: https://github.com/PyvesB/advanced-achievements/wiki
+# To get involved with the project, visit its GitHub: github.com/mrfdev/advanced-achievements/
+# To get some valuable additional documentation, visit the Wiki: https://github.com/mrfdev/advanced-achievements/wiki
 # The default configuration files can be found at the following address:
-# https://github.com/PyvesB/advanced-achievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
+# https://github.com/mrfdev/advanced-achievements/blob/master/advanced-achievements-plugin/src/main/resources/config.yml
 
 #======================================================================================================================#
 #                                                   GENERAL SETTINGS                                                   #
