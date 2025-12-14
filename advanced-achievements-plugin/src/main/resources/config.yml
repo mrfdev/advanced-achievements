@@ -241,7 +241,7 @@ DatabaseBackup: true
 DatabaseType: sqlite
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix), the plugin does
-# an automatic renaming. Otherwise, you must rename tables manually. Do a full server restart for this to take effect.
+# an automatic renaming. Otherwise you must rename tables manually. Do a full server restart for this to take effect.
 TablePrefix: ""
 
 # When using groups of subcategories for Multiple action achievements (e.g. snow|snow_block|ice), you must ensure that
@@ -645,12 +645,16 @@ Breeding:
           - beehive 1
 JobsReborn:
   hunter:
-    1:
-      Goal: Level up as a hunter!
-      Message: You have reached hunter level 2!
-      Name: jobsreborn_1_hunter
+    5:
+      Goal: Reach hunter level 5!
+      Message: You have reached hunter level 5!
+      Name: jobsreborn_5_hunter
       DisplayName: Hunter
       Type: normal
+      Reward:
+        Item:
+          - bow 1
+          - arrow 64
   fisherman:
     10:
       Goal: Reach fisherman level 10!
@@ -713,11 +717,11 @@ JobsReborn:
         Item:
           - boat 1
           - emerald 4
-  lumberjack:
+  woodcutter:
     8:
-      Goal: Reach lumberjack level 8!
+      Goal: Reach woodcutter level 8!
       Message: Timber!
-      Name: jobsreborn_8_lumberjack
+      Name: jobsreborn_8_woodcutter
       DisplayName: Treehugger
       Type: normal
       Reward:
@@ -1204,7 +1208,7 @@ OreBlocks:
   - redstone_ore
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks cannot be launched on the following
-# blocks. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right-clicking on the
+# blocks. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right clicking on the
 # block and not actually using any fireworks. You may need to expand this list when new Minecraft versions are released.
 ForbiddenFireworkBlocks:
   - glow_item_frame
@@ -1218,7 +1222,8 @@ ForbiddenFireworkBlocks:
   - chest_minecart
 
 # Used for the Fireworks achievement category. In vanilla Minecraft, fireworks can only be launched on the following
-# blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right-clicking on the block and not actually using any fireworks. You may need to expand this list when new Minecraft
+# blocks when sneaking. Unless listed here, players may be able to abuse the Fireworks category by repeatedly right
+# clicking on the block and not actually using any fireworks. You may need to expand this list when new Minecraft
 # versions are released.
 ForbiddenFireworkBlocksWhenNotSneaking:
   - polished_blackstone_button
