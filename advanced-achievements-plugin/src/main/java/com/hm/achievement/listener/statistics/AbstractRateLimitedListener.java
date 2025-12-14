@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for the
@@ -38,8 +38,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
 
     private String langStatisticCooldown;
 
-    AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, AchievementMap achievementMap,
-                                CacheManager cacheManager, AdvancedAchievements advancedAchievements, YamlConfiguration langConfig) {
+    AbstractRateLimitedListener(Category category, YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager, AdvancedAchievements advancedAchievements, YamlConfiguration langConfig) {
         super(category, mainConfig, achievementMap, cacheManager);
         this.advancedAchievements = advancedAchievements;
         this.langConfig = langConfig;
@@ -50,8 +49,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
         super.extractConfigurationParameters();
 
         List<Achievement> achievements = achievementMap.getForCategory(category);
-        hardestCategoryThreshold = achievements.isEmpty() ? Long.MAX_VALUE
-                : achievements.getLast().getThreshold();
+        hardestCategoryThreshold = achievements.isEmpty() ? Long.MAX_VALUE : achievements.getLast().getThreshold();
         categoryCooldown = mainConfig.getInt("StatisticCooldown." + category) * 1000;
         configCooldownActionBar = mainConfig.getBoolean("CooldownActionBar");
         langStatisticCooldown = langConfig.getString("statistic-cooldown");
@@ -60,8 +58,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
     @Override
     public void cleanPlayerData() {
         long currentTime = System.currentTimeMillis();
-        slotsToPlayersLastActionTimes.values().forEach(playersLastActionTimes -> playersLastActionTimes.values()
-                .removeIf(lastActionTime -> currentTime > lastActionTime + categoryCooldown));
+        slotsToPlayersLastActionTimes.values().forEach(playersLastActionTimes -> playersLastActionTimes.values().removeIf(lastActionTime -> currentTime > lastActionTime + categoryCooldown));
     }
 
     void updateStatisticAndAwardAchievementsIfAvailable(Player player, int incrementValue, int slotNumber) {
@@ -85,17 +82,15 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
      * @param slotNumber
      * @return true if the player is still in cooldown, false otherwise
      */
-    private boolean isInCooldownPeriod(@NotNull Player player, int slotNumber) {
+    private boolean isInCooldownPeriod(@NonNull Player player, int slotNumber) {
         UUID uuid = player.getUniqueId();
-        long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, uuid,
-                0);
+        long currentPlayerStatistic = cacheManager.getAndIncrementStatisticAmount((NormalAchievements) category, uuid, 0);
         // Ignore cooldown if player has received all achievements in the category.
         if (currentPlayerStatistic >= hardestCategoryThreshold) {
             return true;
         }
 
-        Map<UUID, Long> playersLastActionTimes = slotsToPlayersLastActionTimes.computeIfAbsent(slotNumber,
-                HashMap::new);
+        Map<UUID, Long> playersLastActionTimes = slotsToPlayersLastActionTimes.computeIfAbsent(slotNumber, HashMap::new);
         long currentTimeMillis = System.currentTimeMillis();
         long timeToWait = playersLastActionTimes.getOrDefault(uuid, 0L) + categoryCooldown - currentTimeMillis;
         if (timeToWait > 0) {
@@ -103,8 +98,7 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
                 if (category == NormalAchievements.MUSICDISCS) {
                     // Display message with a delay to avoid it being overwritten by disc name
                     // message.
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements,
-                            () -> displayActionBarMessage(player, timeToWait), 20);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> displayActionBarMessage(player, timeToWait), 20);
                 } else {
                     displayActionBarMessage(player, timeToWait);
                 }
@@ -121,9 +115,9 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
      * @param player
      * @param timeToWait
      */
-    private void displayActionBarMessage(@NotNull Player player, long timeToWait) {
+    private void displayActionBarMessage(@NonNull Player player, long timeToWait) {
         String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
-        String message = StringUtils.replaceEach(langStatisticCooldown, new String[] { "TIME" }, new String[] { timeWithOneDecimal });
+        String message = StringUtils.replaceEach(langStatisticCooldown, new String[]{"TIME"}, new String[]{timeWithOneDecimal});
         try (BukkitAudiences audiences = BukkitAudiences.create(advancedAchievements)) {
             audiences.player(player).sendActionBar(Component.text(message).decorate(TextDecoration.ITALIC));
         }

@@ -4,7 +4,7 @@ Found a problem or need some help? The following steps may help:
 
 1. Upgrade to the latest version of the plugin (
    available [here](https://www.spigotmc.org/resources/advancedachievements.121486/history)) and a recent Paper build for
-   your Minecraft version (see [here](https://docs.papermc.io/paper/getting-started).
+   your Minecraft version (see [here](https://docs.papermc.io/paper/getting-started)).
 2. Check your server's logs (including when plugins are loaded!), there may be warnings/errors/stack straces to help you
    out with your issue.
 3. Do a quick search through the existing [issues](https://github.com/mrfdev/advanced-achievements/issues), you might
@@ -24,4 +24,4 @@ and share your code! Here are a few pointers to help you out:
    quickly get a hang of how it works!
 3. If you are unsure about how to do something, simply ask by tagging @Greymagic27!
 4. Historically the plugin has had poor test coverage, so don't worry too much if you can't add any tests with your pull
-   request. Nevertheless if you want improve maintainability and practice your unit testing skills, please do!
+   request. Nevertheless, if you want to improve maintainability and practice your unit testing skills, please do!

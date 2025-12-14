@@ -5,7 +5,6 @@ import com.hm.achievement.command.executable.AddCommand;
 import com.hm.achievement.command.executable.BookCommand;
 import com.hm.achievement.command.executable.CheckCommand;
 import com.hm.achievement.command.executable.DeleteCommand;
-import com.hm.achievement.command.executable.EasterEggCommand;
 import com.hm.achievement.command.executable.GenerateCommand;
 import com.hm.achievement.command.executable.GiveCommand;
 import com.hm.achievement.command.executable.GrantCommand;
@@ -58,10 +57,6 @@ public interface CommandModule {
     @Binds
     @IntoSet
     AbstractCommand bindGenerateCommand(GenerateCommand generateCommand);
-
-    @Binds
-    @IntoSet
-    AbstractCommand bindEasterEggCommand(EasterEggCommand easterEggCommand);
 
     @Binds
     @IntoSet

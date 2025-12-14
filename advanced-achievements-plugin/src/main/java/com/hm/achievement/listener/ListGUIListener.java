@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import static com.hm.achievement.gui.AchievementInventoryHolder.MAIN_GUI_PAGE;
 import static com.hm.achievement.gui.CategoryGUI.ROW_SIZE;
@@ -43,8 +43,7 @@ public class ListGUIListener implements Listener {
     private final GUIItems guiItems;
 
     @Inject
-    public ListGUIListener(@Named("main") YamlConfiguration mainConfig, Set<Category> disabledCategories, MainGUI mainGUI,
-                           CategoryGUI categoryGUI, GUIItems guiItems) {
+    public ListGUIListener(@Named("main") YamlConfiguration mainConfig, Set<Category> disabledCategories, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
         this.mainConfig = mainConfig;
         this.disabledCategories = disabledCategories;
         this.mainGUI = mainGUI;
@@ -53,7 +52,7 @@ public class ListGUIListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onInventoryClick(@NotNull InventoryClickEvent event) {
+    public void onInventoryClick(@NonNull InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
         if (!(inventory.getHolder() instanceof AchievementInventoryHolder holder) || event.getRawSlot() < 0) {
             return;
@@ -78,10 +77,7 @@ public class ListGUIListener implements Listener {
             if (StringUtils.isBlank(command)) {
                 mainGUI.displayMainGUI(player);
             } else {
-                Bukkit.getServer().dispatchCommand(
-                        Bukkit.getConsoleSender(),
-                        Strings.CS.replace(command, "PLAYER", player.getName())
-                );
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), Strings.CS.replace(command, "PLAYER", player.getName()));
             }
             return;
         }

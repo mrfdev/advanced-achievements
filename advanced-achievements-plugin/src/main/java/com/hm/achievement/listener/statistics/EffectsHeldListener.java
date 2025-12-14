@@ -13,19 +13,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Singleton
 public class EffectsHeldListener extends AbstractListener {
 
     @Inject
-    public EffectsHeldListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                               CacheManager cacheManager) {
+    public EffectsHeldListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(MultipleAchievements.EFFECTSHELD, mainConfig, achievementMap, cacheManager);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityPotionEffectEvent(@NotNull EntityPotionEffectEvent event) {
+    public void onEntityPotionEffectEvent(@NonNull EntityPotionEffectEvent event) {
         if (!(event.getEntity() instanceof Player player) || event.getNewEffect() == null) {
             return;
         }

@@ -27,7 +27,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of registering achievements as advancements.
@@ -57,8 +57,7 @@ public class AdvancementManager implements Reloadable {
     private int generatedAdvancements;
 
     @Inject
-    public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap,
-                              AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories) {
+    public AdvancementManager(@Named("main") YamlConfiguration mainConfig, GUIItems guiItems, AchievementMap achievementMap, AdvancedAchievements advancedAchievements, Logger logger, Set<Category> disabledCategories) {
         this.mainConfig = mainConfig;
         this.guiItems = guiItems;
         this.advancedAchievements = advancedAchievements;
@@ -67,7 +66,7 @@ public class AdvancementManager implements Reloadable {
         this.achievementMap = achievementMap;
     }
 
-    public static @NotNull String getKey(String achName) {
+    public static @NonNull String getKey(String achName) {
         return REGEX_PATTERN_KEYS.matcher(achName).replaceAll("").toLowerCase();
     }
 
@@ -105,9 +104,9 @@ public class AdvancementManager implements Reloadable {
         File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancement");
         if (dataPack.exists()) {
             for (File file : Objects.requireNonNull(dataPack.listFiles())) {
-                file.delete();
+                if (!file.delete()) throw new IllegalStateException("Cannot delete file: " + file.getAbsolutePath());
             }
-            dataPack.delete();
+            if (!dataPack.delete()) throw new IllegalStateException("Cannot delete directory: " + dataPack.getAbsolutePath());
         }
 
         Bukkit.reloadData();
@@ -122,15 +121,9 @@ public class AdvancementManager implements Reloadable {
         NamespacedKey namespacedKey = new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_PARENT);
         if (Bukkit.getAdvancement(namespacedKey) == null) {
             if (configHideAdvancements) {
-                Bukkit.getUnsafe().loadAdvancement(namespacedKey,
-                        AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
+                Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toHiddenJson(configBackgroundTexture));
             } else {
-                AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-                        .iconItem(MINECRAFT_BOOK_KEY)
-                        .title(configRootAdvancementTitle)
-                        .description("")
-                        .background(configBackgroundTexture)
-                        .type(AdvancementType.GOAL);
+                AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder().iconItem(MINECRAFT_BOOK_KEY).title(configRootAdvancementTitle).description("").background(configBackgroundTexture).type(AdvancementType.GOAL);
                 Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
             }
         }
@@ -151,16 +144,18 @@ public class AdvancementManager implements Reloadable {
             List<Achievement> categoryAchievements = achievementMap.getForCategory(category);
             for (int i = 0; i < categoryAchievements.size(); ++i) {
                 Achievement achievement = categoryAchievements.get(i);
-                boolean last = achievement.getCategory() == CommandAchievements.COMMANDS
-                        || i == categoryAchievements.size() - 1
-                        || !achievement.getSubcategory().equals(categoryAchievements.get(i + 1).getSubcategory());
+                boolean last = achievement.getCategory() == CommandAchievements.COMMANDS || i == categoryAchievements.size() - 1 || !achievement.getSubcategory().equals(categoryAchievements.get(i + 1).getSubcategory());
                 parentKey = registerAdvancement(item, categoryAchievements.get(i), parentKey, last);
             }
         }
 
         File dataPack = new File(Bukkit.getWorlds().getFirst().getWorldFolder().getPath() + "/datapacks/bukkit/data/advancedachievements/advancements");
         File renamedDataPack = new File(dataPack.getPath().substring(0, dataPack.getPath().length() - 1));
-        if (dataPack.exists()) dataPack.renameTo(renamedDataPack);
+        if (dataPack.exists()) {
+            if (!dataPack.renameTo(renamedDataPack)) {
+                logger.warning("Failed to rename data pack: " + dataPack.getAbsolutePath() + " to " + renamedDataPack.getAbsolutePath());
+            }
+        }
 
         Bukkit.reloadData();
         logger.info("Generated " + generatedAdvancements + " new advancements.");
@@ -175,7 +170,7 @@ public class AdvancementManager implements Reloadable {
      * @param lastAchievement
      * @return the key of the registered achievement
      */
-    private @NotNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
+    private @NonNull String registerAdvancement(ItemStack item, Achievement achievement, String parentKey, boolean lastAchievement) {
         // Strip formatting codes as the advancements interface does not support them.
         String displayName = StringHelper.removeFormattingCodes(achievement.getDisplayName());
 
@@ -187,12 +182,7 @@ public class AdvancementManager implements Reloadable {
             description = StringHelper.removeFormattingCodes(StringUtils.replace(achievement.getGoal(), "\\n", " "));
         }
 
-        AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder()
-                .iconItem(item.getType().name().toLowerCase())
-                .title(displayName)
-                .description(description)
-                .parent("advancedachievements:" + parentKey)
-                .type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
+        AchievementAdvancementBuilder builder = new AchievementAdvancementBuilder().iconItem(item.getType().name().toLowerCase()).title(displayName).description(description).parent("advancedachievements:" + parentKey).type(lastAchievement ? AdvancementType.CHALLENGE : AdvancementType.TASK);
         Bukkit.getUnsafe().loadAdvancement(namespacedKey, AdvancementJsonHelper.toJson(builder.build()));
         ++generatedAdvancements;
         return achKey;

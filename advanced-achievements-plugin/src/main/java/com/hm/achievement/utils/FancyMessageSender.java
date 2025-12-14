@@ -10,7 +10,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class used to send fancy messages to the player; can be titles, hoverable chat messages or action bar messages. All
@@ -37,7 +37,7 @@ public final class FancyMessageSender {
      * @param hover   The text to display in the hover.
      * @param color   The color of the hover text.
      */
-    public void sendHoverableMessage(@NotNull Player player, String message, String hover, @NotNull String color) {
+    public void sendHoverableMessage(@NonNull Player player, String message, String hover, @NonNull String color) {
         String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
         net.kyori.adventure.text.TextComponent textComponent = Component.text(message).color(TextColor.fromHexString(hexColor));
         net.kyori.adventure.text.event.HoverEvent<Component> hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
@@ -55,7 +55,7 @@ public final class FancyMessageSender {
      * @param color   The color of the hover text.
      */
 
-    public void sendHoverableCommandMessage(@NotNull Player player, String message, String command, String hover, @NotNull String color) {
+    public void sendHoverableCommandMessage(@NonNull Player player, String message, String command, String hover, @NonNull String color) {
         String hexColor = chatColorToHex(ChatColor.valueOf(color.toUpperCase()));
         TextComponent textComponent = Component.text(message).color(TextColor.fromHexString(hexColor)).clickEvent(ClickEvent.runCommand(command));
         HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(hover));
@@ -65,7 +65,7 @@ public final class FancyMessageSender {
     }
 
     @Contract(pure = true)
-    private @NotNull String chatColorToHex(@NotNull ChatColor chatColor) {
+    private @NonNull String chatColorToHex(@NonNull ChatColor chatColor) {
         return switch (chatColor) {
             case DARK_BLUE -> "#0000AA";
             case GREEN -> "#00AA00";

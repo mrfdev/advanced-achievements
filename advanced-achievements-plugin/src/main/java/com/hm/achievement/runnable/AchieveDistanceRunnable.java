@@ -21,7 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class used to monitor distances travelled by players for the different available categories.
@@ -31,23 +31,13 @@ import org.jetbrains.annotations.NotNull;
 @Singleton
 public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements Cleanable, Runnable {
 
-    public static final Set<EntityType> BOAT_TYPES = EnumSet.of(
-            EntityType.ACACIA_BOAT,
-            EntityType.BIRCH_BOAT,
-            EntityType.DARK_OAK_BOAT,
-            EntityType.JUNGLE_BOAT,
-            EntityType.OAK_BOAT,
-            EntityType.SPRUCE_BOAT,
-            EntityType.MANGROVE_BOAT,
-            EntityType.BAMBOO_RAFT
-    );
+    public static final Set<EntityType> BOAT_TYPES = EnumSet.of(EntityType.ACACIA_BOAT, EntityType.BIRCH_BOAT, EntityType.DARK_OAK_BOAT, EntityType.JUNGLE_BOAT, EntityType.OAK_BOAT, EntityType.SPRUCE_BOAT, EntityType.MANGROVE_BOAT, EntityType.BAMBOO_RAFT);
     private final Map<UUID, Location> playerLocations = new HashMap<>();
     private final Set<Category> disabledCategories;
     private boolean configIgnoreVerticalDistance;
 
     @Inject
-    public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                                   CacheManager cacheManager, Set<Category> disabledCategories) {
+    public AchieveDistanceRunnable(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager, Set<Category> disabledCategories) {
         super(mainConfig, achievementMap, cacheManager);
         this.disabledCategories = disabledCategories;
     }
@@ -78,7 +68,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
      *
      * @param player
      */
-    private void validateMovementAndUpdateDistance(@NotNull Player player) {
+    private void validateMovementAndUpdateDistance(@NonNull Player player) {
         Location currentLocation = player.getLocation();
         Location previousLocation = playerLocations.put(player.getUniqueId(), currentLocation);
 
@@ -117,7 +107,7 @@ public class AchieveDistanceRunnable extends StatisticIncreaseHandler implements
 
     /**
      * Calculates the difference between the player's last location and his current one. May ignore the vertical axis or
-     * not depending on configuration..
+     * not depending on configuration.
      *
      * @param previousLocation
      * @param currentLocation

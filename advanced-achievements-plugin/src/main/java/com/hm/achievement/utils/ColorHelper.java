@@ -8,7 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Color;
 import org.bukkit.boss.BarColor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
@@ -68,7 +68,7 @@ public class ColorHelper {
         }
     }
 
-    private static @NotNull NamedTextColor nearestTo(@NotNull Color color) {
+    private static @NonNull NamedTextColor nearestTo(@NonNull Color color) {
         TextColor advColor = TextColor.color(color.getRed(), color.getGreen(), color.getBlue());
         return NamedTextColor.nearestTo(advColor);
     }

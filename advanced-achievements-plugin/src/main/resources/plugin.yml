@@ -5,7 +5,7 @@ author: DarkPyves, Greymagic27
 softdepend: [ CMI,Essentials,Jobs,PetMaster,PlaceholderAPI,Vault ]
 description: Advanced Achievements enables unique and challenging achievements. Try to collect as many as you can, earn rewards, climb the rankings and receive RP books!
 website: https://github.com/mrfdev/advanced-achievements
-api-version: 1.21.10
+api-version: 1.21.11
 commands:
   aach:
     description: Main Advanced Achievements command, use it to list sub-commands.
@@ -309,7 +309,7 @@ permissions:
 #======================================================================================================================#
 #                                /!\  Dynamic permissions added at plugin startup  /!\                                 #
 #======================================================================================================================#
-# For individual achievements, simply use the Name property, e.g achievement.place_100_stone
+# For individual achievements, simply use the Name property, e.g. achievement.place_100_stone
 # For categories with sub-categories (Breaks, Places, Crafts, Kills, Breeding, PlayerCommands, Custom, TargetsShot and EffectsHeld):
 # - use the sub-category key: for example for stone breaks, achievement.count.breaks.stone
 # - for PlayerCommands, use lower case without spaces nor the initial slash: achievement.count.playercommands.aachbook

@@ -3,7 +3,7 @@ package com.hm.achievement.exception;
 import java.io.Serial;
 
 /**
- * Checked exception thrown if the plugin encounters a non recoverable error during load time.
+ * Checked exception thrown if the plugin encounters a non-recoverable error during load time.
  *
  * @author Pyves
  */

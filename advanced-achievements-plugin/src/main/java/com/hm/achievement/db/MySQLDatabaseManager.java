@@ -13,8 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
 
-    public MySQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-                                DatabaseUpdater databaseUpdater, ExecutorService writeExecutor) {
+    public MySQLDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater, ExecutorService writeExecutor) {
         super(mainConfig, logger, databaseUpdater, "com.mysql.jdbc.Driver", "mysql", writeExecutor);
     }
 
@@ -22,6 +21,8 @@ public class MySQLDatabaseManager extends AbstractRemoteDatabaseManager {
     void performPreliminaryTasks() throws ClassNotFoundException, UnsupportedEncodingException {
         super.performPreliminaryTasks();
 
-        additionalConnectionOptions = "&useSSL=false" + additionalConnectionOptions;
+        synchronized (this) {
+            additionalConnectionOptions = "&useSSL=false" + additionalConnectionOptions;
+        }
     }
 }

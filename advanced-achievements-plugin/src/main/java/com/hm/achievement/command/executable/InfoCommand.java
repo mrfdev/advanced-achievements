@@ -14,7 +14,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of displaying the plugin's extra information (/aach info).
@@ -88,7 +88,7 @@ public class InfoCommand extends AbstractCommand {
         langVersionCommandDatabase = Component.text(pluginHeader.toString()).append(Component.text(Objects.requireNonNull(langConfig.getString("version-command-database")), configColor)).append(Component.text(" ")).append(Component.text(databaseType, NamedTextColor.GRAY));
     }
 
-    private String getDatabaseType() {
+    private @NonNull String getDatabaseType() {
         if ("mysql".equalsIgnoreCase(configDatabaseType)) {
             return "MySQL";
         } else if ("postgresql".equalsIgnoreCase(configDatabaseType)) {
@@ -101,7 +101,7 @@ public class InfoCommand extends AbstractCommand {
     }
 
     @Override
-    void onExecute(@NotNull CommandSender sender, String[] args) {
+    void onExecute(@NonNull CommandSender sender, String[] args) {
         sender.sendMessage(header);
         sender.sendMessage(langVersionCommandDescription);
         sender.sendMessage(langVersionCommandVersion);
@@ -116,7 +116,7 @@ public class InfoCommand extends AbstractCommand {
         }
     }
 
-    private @NotNull Component fromLegacy(String legacy) {
+    private @NonNull Component fromLegacy(String legacy) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(legacy);
     }
 }

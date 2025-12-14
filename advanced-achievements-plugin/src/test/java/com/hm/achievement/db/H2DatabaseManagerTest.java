@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import static com.google.common.util.concurrent.MoreExecutors.newDirectExecutorService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +52,7 @@ class H2DatabaseManagerTest {
     private final UUID testUUID = UUID.randomUUID();
 
     @BeforeAll
-    static void setUpClass(@TempDir @NotNull Path tempDir) throws Exception {
+    static void setUpClass(@TempDir @NonNull Path tempDir) throws Exception {
         AdvancedAchievements plugin = mock(AdvancedAchievements.class);
         when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
         YamlConfiguration config = YamlConfiguration
@@ -186,14 +187,14 @@ class H2DatabaseManagerTest {
     @Test
     void testGetPlayerConnectionDate() {
         ConnectionInformation connectionInformation1 = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.epoch(), connectionInformation1.getDate());
-        assertEquals(0, connectionInformation1.getCount());
+        assertEquals(ConnectionInformation.epoch(), connectionInformation1.date());
+        assertEquals(0, connectionInformation1.count());
 
         db.updateConnectionInformation(testUUID, 1);
 
         ConnectionInformation connectionInformation2 = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.today(), connectionInformation2.getDate());
-        assertEquals(1, connectionInformation2.getCount());
+        assertEquals(ConnectionInformation.today(), connectionInformation2.date());
+        assertEquals(1, connectionInformation2.count());
     }
 
     @Test
@@ -203,8 +204,8 @@ class H2DatabaseManagerTest {
         db.clearConnection(testUUID);
 
         ConnectionInformation connectionInformation = db.getConnectionInformation(testUUID);
-        assertEquals(ConnectionInformation.epoch(), connectionInformation.getDate());
-        assertEquals(0, connectionInformation.getCount());
+        assertEquals(ConnectionInformation.epoch(), connectionInformation.date());
+        assertEquals(0, connectionInformation.count());
     }
 
     @Test

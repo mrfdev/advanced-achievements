@@ -8,7 +8,7 @@ import javax.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Class used to handle a H2 database.
+ * Class used to handle an H2 database.
  *
  * @author Pyves
  */

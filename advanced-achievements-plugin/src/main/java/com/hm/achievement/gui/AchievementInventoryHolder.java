@@ -3,6 +3,7 @@ package com.hm.achievement.gui;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Simple wrapper class to keep track of the plugin's inventories and their page numbers.
@@ -36,7 +37,7 @@ public class AchievementInventoryHolder implements InventoryHolder {
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NonNull Inventory getInventory() {
         return inventory;
     }
 

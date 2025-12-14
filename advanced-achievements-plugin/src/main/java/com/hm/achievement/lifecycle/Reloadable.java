@@ -15,6 +15,7 @@ public interface Reloadable {
      *
      * @throws PluginLoadError
      */
+    @SuppressWarnings("RedundantThrows")
     void extractConfigurationParameters() throws PluginLoadError;
 
 }

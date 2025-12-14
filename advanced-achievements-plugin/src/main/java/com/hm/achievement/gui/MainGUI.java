@@ -130,7 +130,7 @@ public class MainGUI implements Reloadable {
             } else {
                 ItemStack itemWithLore = item.clone();
                 ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
-                String amountMessage = StringUtils.replaceEach(message, new String[] { "AMOUNT" }, new String[] { receivedAmount + "/" + totalAmount });
+                String amountMessage = StringUtils.replaceEach(message, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
                 List<Component> loreComponents = List.of(Component.text(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
                 itemMetaWithLore.lore(loreComponents);
                 itemWithLore.setItemMeta(itemMetaWithLore);

@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Utility for paginating command messages.
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * box.
  * <p>
  * Wrapping in the chat box is difficult to calculate since the Minecraft font is not monospaced so 'w' and 'i' are
- * different width, as well as unicode characters which are their own special category.
+ * different width, as well as Unicode characters which are their own special category.
  *
  * @author Rsl1122
  */
@@ -30,7 +30,7 @@ public class CommandPagination {
     private final int maxPage;
 
     @Contract(pure = true)
-    public CommandPagination(@NotNull List<String> toPaginate, int perPage, YamlConfiguration langConfig) {
+    public CommandPagination(@NonNull List<String> toPaginate, int perPage, YamlConfiguration langConfig) {
         this.toPaginate = toPaginate;
         size = toPaginate.size();
         this.perPage = perPage;
@@ -40,11 +40,11 @@ public class CommandPagination {
         maxPage = (size - leftovers) / perPage + (leftovers > 0 ? 1 : 0);
     }
 
-    public void sendPage(int page, @NotNull CommandSender to) {
+    public void sendPage(int page, @NonNull CommandSender to) {
         sendPage(page, to::sendMessage);
     }
 
-    public void sendPage(int page, @NotNull Consumer<String> to) {
+    public void sendPage(int page, @NonNull Consumer<String> to) {
         int pageToSend = Math.min(page, maxPage);
 
         String header = ChatColor.translateAlternateColorCodes('&',
