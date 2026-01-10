@@ -43,7 +43,7 @@ public class TestInstanceLauncher {
     private static final Long UNIX_TIME = System.currentTimeMillis() / 1000L;
     private static String originalConfigSettings = null;
 
-    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
+    static void main() throws IOException, InterruptedException, ExecutionException {
         LOGGER.setLevel(Level.ALL);
         Path tempServerDir = Files.createTempDirectory("mc-server-" + UNIX_TIME);
         LOGGER.info("Temp server directory: " + tempServerDir);
@@ -88,7 +88,7 @@ public class TestInstanceLauncher {
         }
         Path eulaFile = tempServerDir.resolve("eula.txt");
         Files.writeString(eulaFile, "eula=true\n", StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        ProcessBuilder serverBuilder = new ProcessBuilder("java", "-Xmx2G", "-jar", paperJar.toString(), "nogui");
+        ProcessBuilder serverBuilder = new ProcessBuilder("java", "-Xmx4G", "-XX:+UseZGC", "-jar", paperJar.toString(), "nogui");
         serverBuilder.directory(tempServerDir.toFile());
         serverBuilder.redirectErrorStream(true);
         Process serverProcess = serverBuilder.start();
