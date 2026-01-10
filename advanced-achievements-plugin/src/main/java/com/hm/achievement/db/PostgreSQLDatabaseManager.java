@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

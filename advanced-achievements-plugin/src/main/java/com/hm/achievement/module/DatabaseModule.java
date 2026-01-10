@@ -12,8 +12,8 @@ import dagger.Provides;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 @Module

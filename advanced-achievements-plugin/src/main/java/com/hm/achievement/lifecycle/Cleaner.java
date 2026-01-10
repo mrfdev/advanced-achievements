@@ -1,7 +1,7 @@
 package com.hm.achievement.lifecycle;
 
 import java.util.Set;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class Cleaner implements Runnable {
 

@@ -1,11 +1,11 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.utils.FancyMessageSender;
+import com.hm.achievement.utils.StringHelper;
 import java.util.Objects;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import org.apache.commons.text.StringEscapeUtils;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -73,7 +73,7 @@ public class HelpCommand extends AbstractCommand {
         super.extractConfigurationParameters();
 
         configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
-        configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
+        configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
 
         langCommandList = header("/aach list") + langConfig.getString("aach-command-list");
         langCommandListHover = langConfig.getString("aach-command-list-hover");

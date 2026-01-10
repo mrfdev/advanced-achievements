@@ -14,7 +14,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,7 +1,7 @@
 package com.hm.achievement.listener;
 
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

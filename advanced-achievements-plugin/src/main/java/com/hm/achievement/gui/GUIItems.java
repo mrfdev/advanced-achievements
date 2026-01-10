@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +65,7 @@ public class GUIItems implements Reloadable {
     @Override
     public void extractConfigurationParameters() {
         configListAchievementFormat = "&8" + mainConfig.getString("ListAchievementFormat");
-        configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
+        configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
 
         orderedAchievementItems.clear();
         // getKeys returns a LinkedHashSet, preserving the ordering specified in the file.
@@ -135,11 +134,11 @@ public class GUIItems implements Reloadable {
     private @NonNull ItemStack createButton(String category, String msg, String lore) {
         ItemStack button = createItemStack(category);
         ItemMeta meta = button.getItemMeta();
-        Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(msg))));
+        Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringHelper.unescapeJava(langConfig.getString(msg))));
         meta.displayName(displayName);
         if (lore != null) {
-            String loreString = Objects.requireNonNull(StringEscapeUtils.unescapeJava(langConfig.getString(lore)));
-            if (!loreString.isEmpty()) {
+            String loreString = StringHelper.unescapeJava(langConfig.getString(lore));
+            if (!Objects.requireNonNull(loreString).isEmpty()) {
                 Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(loreString);
                 List<Component> loreComponents = Collections.singletonList(loreComponent);
                 meta.lore(loreComponents);

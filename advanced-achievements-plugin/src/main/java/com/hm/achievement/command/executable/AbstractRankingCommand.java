@@ -3,6 +3,7 @@ package com.hm.achievement.command.executable;
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.utils.SoundPlayer;
+import com.hm.achievement.utils.StringHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
@@ -159,7 +159,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
         } else {
             decimalRankSymbol = DECIMAL_CIRCLED_THIRTY_SIX + rank - 36;
         }
-        return StringEscapeUtils.unescapeJava("\\u" + Integer.toHexString(decimalRankSymbol));
+        return StringHelper.unescapeJava("\\u" + Integer.toHexString(decimalRankSymbol));
     }
 
     /**

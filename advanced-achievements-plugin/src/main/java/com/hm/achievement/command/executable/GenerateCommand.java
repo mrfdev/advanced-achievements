@@ -1,9 +1,9 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.advancement.AdvancementManager;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 

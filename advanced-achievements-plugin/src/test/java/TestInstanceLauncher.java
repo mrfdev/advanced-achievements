@@ -50,14 +50,14 @@ public class TestInstanceLauncher {
         LOGGER.info("Temp server directory: " + tempServerDir);
         Path pluginDir = tempServerDir.resolve("plugins");
         Files.createDirectories(pluginDir);
-        setRestrictCreative(CONFIG_YML, false);
-        addDisabledCategories(CONFIG_YML, List.of("JobsReborn"));
+        setRestrictCreative();
+        addDisabledCategories(List.of("JobsReborn"));
         String mcVersion = fetchLatestVersion();
         int build = fetchLatestStableBuild(mcVersion);
         CompletableFuture<Void> packageFuture = CompletableFuture.runAsync(() -> {
             try {
                 packagePlugin();
-            } catch (Exception e) {
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException("Failed to package plugin", e);
             }
         });
@@ -69,7 +69,7 @@ public class TestInstanceLauncher {
             }
         });
         CompletableFuture.allOf(packageFuture, paperDownloadFuture).join();
-        Path pluginJar = findPluginJar(PLUGIN_TARGET_JAR);
+        Path pluginJar = findPluginJar();
         if (pluginJar == null) {
             throw new RuntimeException("Could not find plugin JAR after packaging");
         }
@@ -128,27 +128,7 @@ public class TestInstanceLauncher {
                 LOGGER.log(Level.SEVERE, "Error reading output", e);
             }
         });
-        Thread consoleInputThread = new Thread(() -> {
-            try (BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in)); BufferedWriter serverWriter = new BufferedWriter(new OutputStreamWriter(serverProcess.getOutputStream()))) {
-                String inputLine;
-                while ((inputLine = consoleReader.readLine()) != null) {
-                    if ("m".equalsIgnoreCase(inputLine.trim())) {
-                        System.out.println("Opening server directory " + tempServerDir);
-                        try {
-                            openFolder(tempServerDir);
-                        } catch (IOException e) {
-                            LOGGER.log(Level.SEVERE, "Failed to open server directory", e);
-                        }
-                    } else {
-                        serverWriter.write(inputLine + System.lineSeparator());
-                        serverWriter.flush();
-                    }
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error forwarding console input to server", e);
-            }
-        });
-        consoleInputThread.setDaemon(true);
+        Thread consoleInputThread = getThread(serverProcess, tempServerDir);
         consoleInputThread.start();
         serverOutputThread.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -161,7 +141,7 @@ public class TestInstanceLauncher {
                     }
                     serverProcess.waitFor(30, TimeUnit.SECONDS);
                 }
-            } catch (Exception e) {
+            } catch (IOException | InterruptedException e) {
                 LOGGER.log(Level.SEVERE, "Error stopping server", e);
             }
 
@@ -187,7 +167,32 @@ public class TestInstanceLauncher {
         System.exit(exitCode);
     }
 
-    public static void packagePlugin() throws Exception {
+    private static @NonNull Thread getThread(Process serverProcess, Path tempServerDir) {
+        Thread consoleInputThread = new Thread(() -> {
+            try (BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in)); BufferedWriter serverWriter = new BufferedWriter(new OutputStreamWriter(serverProcess.getOutputStream()))) {
+                String inputLine;
+                while ((inputLine = consoleReader.readLine()) != null) {
+                    if ("m".equalsIgnoreCase(inputLine.trim())) {
+                        System.out.println("Opening server directory " + tempServerDir);
+                        try {
+                            openFolder(tempServerDir);
+                        } catch (IOException e) {
+                            LOGGER.log(Level.SEVERE, "Failed to open server directory", e);
+                        }
+                    } else {
+                        serverWriter.write(inputLine + System.lineSeparator());
+                        serverWriter.flush();
+                    }
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Error forwarding console input to server", e);
+            }
+        });
+        consoleInputThread.setDaemon(true);
+        return consoleInputThread;
+    }
+
+    private static void packagePlugin() throws IOException, InterruptedException {
         LOGGER.info("Running mvn clean package");
         String mvnCommand = System.getProperty("os.name").toLowerCase().contains("win") ? "mvn.cmd" : "mvn";
         ProcessBuilder mvnBuilder = new ProcessBuilder(mvnCommand, "clean", "package");
@@ -201,13 +206,13 @@ public class TestInstanceLauncher {
         LOGGER.info("Plugin packaged");
     }
 
-    public static Path findPluginJar(Path targetDir) throws IOException {
-        try (Stream<Path> files = Files.list(targetDir)) {
+    private static Path findPluginJar() throws IOException {
+        try (Stream<Path> files = Files.list(TestInstanceLauncher.PLUGIN_TARGET_JAR)) {
             return files.filter(f -> f.getFileName().toString().endsWith(".jar")).findFirst().orElse(null);
         }
     }
 
-    public static String fetchLatestVersion() throws IOException, InterruptedException {
+    private static String fetchLatestVersion() throws IOException, InterruptedException {
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode root = MAPPER.readTree(res.body());
@@ -232,7 +237,7 @@ public class TestInstanceLauncher {
         return latestVersion;
     }
 
-    public static int fetchLatestStableBuild(String version) throws IOException, InterruptedException {
+    private static int fetchLatestStableBuild(String version) throws IOException, InterruptedException {
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper/versions/" + version + "/builds")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode builds = MAPPER.readTree(res.body());
@@ -247,7 +252,7 @@ public class TestInstanceLauncher {
         return maxBuild;
     }
 
-    public static @NonNull Path downloadPaper(String version, int build, @NonNull Path dir) throws IOException, InterruptedException {
+    private static @NonNull Path downloadPaper(String version, int build, @NonNull Path dir) throws IOException, InterruptedException {
         String fileName = "paper" + "-" + version + "-" + build + ".jar";
         Path jarPath = dir.resolve(fileName);
         if (!Files.exists(jarPath)) {
@@ -268,7 +273,7 @@ public class TestInstanceLauncher {
         return jarPath;
     }
 
-    public static void copyFolderRecursive(Path source, Path target) throws IOException {
+    private static void copyFolderRecursive(Path source, Path target) throws IOException {
         if (!Files.exists(source)) return;
         try (Stream<Path> stream = Files.walk(source)) {
             stream.forEach(sourcePath -> {
@@ -288,7 +293,8 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void downloadAndAddPlugin(@NonNull PluginInfo pluginInfo, String pluginFileName, @NonNull Path pluginDir) throws IOException, InterruptedException {
+    @SuppressWarnings("HttpUrlsUsage")
+    private static void downloadAndAddPlugin(@NonNull PluginInfo pluginInfo, String pluginFileName, @NonNull Path pluginDir) throws IOException, InterruptedException {
         String pluginUrl = pluginInfo.url();
         String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
@@ -327,7 +333,7 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void deleteDirectoryRecursive(Path path) throws IOException {
+    private static void deleteDirectoryRecursive(Path path) throws IOException {
         if (!Files.exists(path)) return;
         try (Stream<Path> walk = Files.walk(path)) {
             walk.sorted(Comparator.reverseOrder()).forEach(p -> {
@@ -340,7 +346,7 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void openFolder(Path folder) throws IOException {
+    private static void openFolder(Path folder) throws IOException {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
             new ProcessBuilder("explorer.exe", folder.toAbsolutePath().toString()).start();
@@ -353,32 +359,32 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void setRestrictCreative(Path configFile, boolean value) throws IOException {
-        if (!Files.exists(configFile)) {
-            throw new IOException("Config file not found: " + configFile);
+    private static void setRestrictCreative() throws IOException {
+        if (!Files.exists(TestInstanceLauncher.CONFIG_YML)) {
+            throw new IOException("Config file not found: " + TestInstanceLauncher.CONFIG_YML);
         }
-        var lines = Files.readAllLines(configFile);
+        var lines = Files.readAllLines(TestInstanceLauncher.CONFIG_YML);
         if (originalConfigSettings == null) {
-            originalConfigSettings = Files.readString(configFile);
+            originalConfigSettings = Files.readString(TestInstanceLauncher.CONFIG_YML);
         }
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i).trim();
             if (line.startsWith("RestrictCreative:")) {
-                lines.set(i, "RestrictCreative: " + value);
+                lines.set(i, "RestrictCreative: " + false);
                 break;
             }
         }
-        Files.writeString(configFile, String.join(System.lineSeparator(), lines));
-        LOGGER.info("Set RestrictCreative to " + value + " in " + configFile);
+        Files.writeString(TestInstanceLauncher.CONFIG_YML, String.join(System.lineSeparator(), lines));
+        LOGGER.info("Set RestrictCreative to " + false + " in " + TestInstanceLauncher.CONFIG_YML);
     }
 
-    public static void addDisabledCategories(Path configFile, List<String> categoriesToAdd) throws IOException {
-        if (!Files.exists(configFile)) {
-            throw new IOException("Config file not found: " + configFile);
+    private static void addDisabledCategories(List<String> categoriesToAdd) throws IOException {
+        if (!Files.exists(TestInstanceLauncher.CONFIG_YML)) {
+            throw new IOException("Config file not found: " + TestInstanceLauncher.CONFIG_YML);
         }
-        var lines = Files.readAllLines(configFile);
+        var lines = Files.readAllLines(TestInstanceLauncher.CONFIG_YML);
         if (originalConfigSettings == null) {
-            originalConfigSettings = Files.readString(configFile);
+            originalConfigSettings = Files.readString(TestInstanceLauncher.CONFIG_YML);
         }
         boolean inDisabledCategories = false;
         int insertIndex = -1;
@@ -404,11 +410,11 @@ public class TestInstanceLauncher {
                 newLines.add(insertIndex++, indent + "- " + category);
             }
         }
-        Files.writeString(configFile, String.join(System.lineSeparator(), newLines));
-        LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
+        Files.writeString(TestInstanceLauncher.CONFIG_YML, String.join(System.lineSeparator(), newLines));
+        LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + TestInstanceLauncher.CONFIG_YML);
     }
 
-    public static int compareVersions(@NonNull String v1, @NonNull String v2) {
+    private static int compareVersions(@NonNull String v1, @NonNull String v2) {
         String[] parts1 = v1.split("\\.");
         String[] parts2 = v2.split("\\.");
         int length = Math.max(parts1.length, parts2.length);
@@ -423,7 +429,7 @@ public class TestInstanceLauncher {
     }
 
     @Contract(pure = true)
-    public static boolean isStableVersion(@NonNull String version) {
+    private static boolean isStableVersion(@NonNull String version) {
         return !version.contains("-");
     }
 

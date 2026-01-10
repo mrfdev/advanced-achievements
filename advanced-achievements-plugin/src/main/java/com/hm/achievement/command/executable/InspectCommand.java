@@ -7,7 +7,9 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.utils.StringHelper;
-import java.util.ArrayList;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +19,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.text.TextStringBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -92,18 +90,12 @@ public class InspectCommand extends AbstractCommand {
     }
 
     private @NonNull String parseAchievementName(String @NonNull [] args) {
-        TextStringBuilder achName = new TextStringBuilder();
-
         boolean lastArgumentIsNumber = args.length > 1 && NumberUtils.isDigits(args[args.length - 1]);
         if (lastArgumentIsNumber) {
-            List<String> endsRemoved = new ArrayList<>(Arrays.asList(args).subList(1, args.length - 1));
-            achName.appendWithSeparators(endsRemoved, " ");
+            return String.join(" ", Arrays.asList(args).subList(1, args.length - 1));
         } else {
-            List<String> firstArgRemoved = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
-            achName.appendWithSeparators(firstArgRemoved, " ");
+            return String.join(" ", Arrays.asList(args).subList(1, args.length));
         }
-
-        return achName.toString();
     }
 
     private Achievement getAchievement(String achievementDisplayName) {

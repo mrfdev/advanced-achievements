@@ -3,7 +3,7 @@ package com.hm.achievement.db;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**

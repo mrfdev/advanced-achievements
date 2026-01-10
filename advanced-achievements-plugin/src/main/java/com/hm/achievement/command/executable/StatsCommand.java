@@ -4,13 +4,13 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
+import com.hm.achievement.utils.StringHelper;
 import java.util.Objects;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -56,7 +56,7 @@ public class StatsCommand extends AbstractCommand {
 
         // Load configuration parameters.
         configColor = ColorHelper.parseColor(mainConfig.getString("Color"));
-        configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
+        configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundStats = Objects.requireNonNull(mainConfig.getString("SoundStats")).toUpperCase();
