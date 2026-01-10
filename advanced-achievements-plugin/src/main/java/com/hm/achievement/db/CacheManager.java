@@ -198,7 +198,7 @@ public class CacheManager implements Cleanable {
 
     /**
      * Adds an achievement to the achievement received cache and removes it from the not received cache. A call to
-     * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made made beforehand for the same player.
+     * {@link #hasPlayerAchievement(UUID, String)} is expected to have been made beforehand for the same player.
      *
      * @param player
      * @param achievementName

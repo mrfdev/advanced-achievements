@@ -4,6 +4,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to deal with HoePlowings achievements.
@@ -28,8 +30,7 @@ public class HoePlowingListener extends AbstractListener {
     private Set<String> hoePlowableBlocks;
 
     @Inject
-    public HoePlowingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                              CacheManager cacheManager) {
+    public HoePlowingListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(NormalAchievements.HOEPLOWING, mainConfig, achievementMap, cacheManager);
     }
 
@@ -44,15 +45,10 @@ public class HoePlowingListener extends AbstractListener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR) // Do NOT set ignoreCancelled to true, deprecated for this event.
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.useItemInHand() == Result.DENY
-                || event.getAction() != Action.RIGHT_CLICK_BLOCK
-                || !event.getMaterial().name().contains("HOE")
-                || !hoePlowableBlocks.contains(event.getClickedBlock().getType().name())
-                || event.getClickedBlock().getRelative(BlockFace.UP).getType() != Material.AIR) {
+    public void onPlayerInteract(@NonNull PlayerInteractEvent event) {
+        if (event.useItemInHand() == Result.DENY || event.getAction() != Action.RIGHT_CLICK_BLOCK || !event.getMaterial().name().contains("HOE") || !hoePlowableBlocks.contains(Objects.requireNonNull(event.getClickedBlock()).getType().name()) || event.getClickedBlock().getRelative(BlockFace.UP).getType() != Material.AIR) {
             return;
         }
-
         updateStatisticAndAwardAchievementsIfAvailable(event.getPlayer(), 1);
     }
 }

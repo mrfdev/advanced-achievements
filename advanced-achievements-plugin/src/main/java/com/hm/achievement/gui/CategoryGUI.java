@@ -41,7 +41,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Represents the main GUI, corresponding to more specific details about the different achievements.
@@ -169,7 +169,7 @@ public class CategoryGUI implements Reloadable {
      * @param clickedItem
      * @param achievements
      */
-    private void displayPage(Player player, Map<String, Long> subcategoriesToStatistics, int requestedIndex, ItemStack clickedItem, @NotNull List<Achievement> achievements) {
+    private void displayPage(Player player, Map<String, Long> subcategoriesToStatistics, int requestedIndex, ItemStack clickedItem, @NonNull List<Achievement> achievements) {
         int pageIndex = getPageIndex(requestedIndex, achievements.size());
         int pageStart = MAX_ACHIEVEMENTS_PER_PAGE * pageIndex;
         int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
@@ -195,7 +195,7 @@ public class CategoryGUI implements Reloadable {
                 }
             }
         }
-        // Populate the current GUI page with all of the achievements for the category.
+        // Populate the current GUI page with all the achievements for the category.
         for (int index = pageStart; index < pageEnd; ++index) {
             // Path can either be a threshold (eg '10', or a subcategory and threshold (eg 'skeleton.10').
             Achievement achievement = achievements.get(index);
@@ -309,7 +309,7 @@ public class CategoryGUI implements Reloadable {
      * @param player
      * @return the player's statistic for the category
      */
-    public long getNormalStatistic(NormalAchievements category, @NotNull Player player) {
+    public long getNormalStatistic(NormalAchievements category, @NonNull Player player) {
         return cacheManager.getAndIncrementStatisticAmount(category, player.getUniqueId(), 0);
     }
 
@@ -356,7 +356,7 @@ public class CategoryGUI implements Reloadable {
      * @param player
      * @return the list representing the lore of a category item
      */
-    private @NotNull List<String> buildLore(Achievement achievement, String date, long statistic, boolean ineligibleSeriesItem, Player player) {
+    private @NonNull List<String> buildLore(Achievement achievement, String date, long statistic, boolean ineligibleSeriesItem, Player player) {
         List<String> descriptions = getDescriptionsToDisplay(achievement, date != null);
         List<String> lore = new ArrayList<>();
         lore.add("");
@@ -388,7 +388,7 @@ public class CategoryGUI implements Reloadable {
         }
 
         List<Reward> rewards = achievement.getRewards();
-        // Add the rewards information.
+        // Add the rewards' information.
         if (!rewards.isEmpty() && !configHideRewardDisplayInList) {
             lore.add("");
             if (rewards.size() == 1 && !langListReward.isEmpty()) {
@@ -414,7 +414,7 @@ public class CategoryGUI implements Reloadable {
      * @param time
      * @return progress bar
      */
-    private @NotNull String constructProgressBar(long threshold, long statistic, boolean time) {
+    private @NonNull String constructProgressBar(long threshold, long statistic, boolean time) {
         double statisticDouble;
         String statisticString;
         if (time) {
@@ -465,7 +465,7 @@ public class CategoryGUI implements Reloadable {
      * @param text
      * @return a string with randomised alphabetic characters
      */
-    private @NotNull String randomiseParts(@NotNull String text) {
+    private @NonNull String randomiseParts(@NonNull String text) {
         if (text.isEmpty()) {
             return "";
         }
@@ -482,7 +482,7 @@ public class CategoryGUI implements Reloadable {
         return randomisedText.toString().trim();
     }
 
-    private @NotNull String notReceivedStyle(String input, boolean ineligibleSeriesItem) {
+    private @NonNull String notReceivedStyle(String input, boolean ineligibleSeriesItem) {
         if (configObfuscateNotReceived || (configObfuscateProgressiveAchievements && ineligibleSeriesItem)) {
             return configListColorNotReceived + "&k" + randomiseParts(StringHelper.removeFormattingCodes(input));
         } else {
@@ -491,7 +491,7 @@ public class CategoryGUI implements Reloadable {
     }
 
     @Contract("_ -> new")
-    private @NotNull String translateColorCodes(String translate) {
+    private @NonNull String translateColorCodes(String translate) {
         return ChatColor.translateAlternateColorCodes('&', translate);
     }
 

@@ -199,7 +199,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
      * size and total number of pages, as
      * well as title length. This function bypasses such limits and restores the
      * original CraftBukkit behaviour. See
-     * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab
+     * <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab">...</a>
      * for more information.
      *
      * @param bookPages

@@ -6,7 +6,7 @@ FireworkStyle: ball_large
 
 # When a player receives an achievement, the Name, Message and rewards of the achievement are displayed in
 # the chat. If HoverableReceiverChatText is true, a single hoverable text will be displayed to the receiver.
-# Otherwise texts will be displayed one after the other.
+# Otherwise, texts will be displayed one after the other.
 HoverableReceiverChatText: false
 
 # Display achievement Name and Message as screen titles.

@@ -27,9 +27,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
 
 public class TestInstanceLauncher {
+    @SuppressWarnings("EmptyClassInitializer")
     public static final Map<String, PluginInfo> PLUGINS_TO_DOWNLOAD = new LinkedHashMap<>() {{
         put("mcMMO.jar", new PluginInfo("https://ci.mcmmo.org/job/mcMMO/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar", null));
     }};
@@ -210,16 +212,22 @@ public class TestInstanceLauncher {
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode root = MAPPER.readTree(res.body());
         JsonNode versions = root.get("versions");
-        if (versions == null || !versions.isObject())
-            throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
+        if (versions == null || !versions.isObject()) throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
         List<String> majorVersions = new ArrayList<>();
-        versions.fieldNames().forEachRemaining(majorVersions::add);
+        versions.fieldNames().forEachRemaining(v -> {
+            if (isStableVersion(v)) majorVersions.add(v);
+        });
         if (majorVersions.isEmpty()) throw new RuntimeException("No major versions found");
         majorVersions.sort((v1, v2) -> compareVersions(v2, v1));
         JsonNode patchVersions = versions.get(majorVersions.getFirst());
-        if (patchVersions == null || !patchVersions.isArray() || patchVersions.isEmpty())
-            throw new RuntimeException("No patch versions found for latest major version " + majorVersions.getFirst());
-        String latestVersion = patchVersions.get(0).asText();
+        List<String> stablePatches = new ArrayList<>();
+        for (JsonNode n : patchVersions) {
+            String v = n.asText();
+            if (isStableVersion(v)) stablePatches.add(v);
+        }
+        if (stablePatches.isEmpty()) throw new RuntimeException("No stable patch versions found for " + majorVersions.getFirst());
+        stablePatches.sort((v1, v2) -> compareVersions(v2, v1));
+        String latestVersion = stablePatches.getFirst();
         LOGGER.info("Latest Version " + latestVersion);
         return latestVersion;
     }
@@ -228,8 +236,7 @@ public class TestInstanceLauncher {
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create("https://fill.papermc.io/v3/projects/paper/versions/" + version + "/builds")).build();
         HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
         JsonNode builds = MAPPER.readTree(res.body());
-        if (builds == null || !builds.isArray() || builds.isEmpty())
-            throw new RuntimeException("No builds found for version " + version);
+        if (builds == null || !builds.isArray() || builds.isEmpty()) throw new RuntimeException("No builds found for version " + version);
         int maxBuild = -1;
         for (JsonNode build : builds) {
             int buildNum = build.get("id").asInt();
@@ -240,7 +247,7 @@ public class TestInstanceLauncher {
         return maxBuild;
     }
 
-    public static @NotNull Path downloadPaper(String version, int build, @NotNull Path dir) throws IOException, InterruptedException {
+    public static @NonNull Path downloadPaper(String version, int build, @NonNull Path dir) throws IOException, InterruptedException {
         String fileName = "paper" + "-" + version + "-" + build + ".jar";
         Path jarPath = dir.resolve(fileName);
         if (!Files.exists(jarPath)) {
@@ -250,8 +257,7 @@ public class TestInstanceLauncher {
             HttpResponse<String> res = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
             JsonNode root = MAPPER.readTree(res.body());
             JsonNode downloads = root.get("downloads");
-            if (downloads == null || downloads.get("server:default") == null)
-                throw new IOException("No download URL found for build " + build);
+            if (downloads == null || downloads.get("server:default") == null) throw new IOException("No download URL found for build " + build);
             String downloadUrl = downloads.get("server:default").get("url").asText();
             HttpRequest downloadReq = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).build();
             HTTP.send(downloadReq, HttpResponse.BodyHandlers.ofFile(jarPath));
@@ -282,7 +288,7 @@ public class TestInstanceLauncher {
         }
     }
 
-    public static void downloadAndAddPlugin(@NotNull PluginInfo pluginInfo, String pluginFileName, @NotNull Path pluginDir) throws IOException, InterruptedException {
+    public static void downloadAndAddPlugin(@NonNull PluginInfo pluginInfo, String pluginFileName, @NonNull Path pluginDir) throws IOException, InterruptedException {
         String pluginUrl = pluginInfo.url();
         String configFolderPath = pluginInfo.config();
         Path pluginPath = pluginDir.resolve(pluginFileName);
@@ -402,7 +408,7 @@ public class TestInstanceLauncher {
         LOGGER.info("Added " + categoriesToAdd + " to DisabledCategories in " + configFile);
     }
 
-    public static int compareVersions(@NotNull String v1, @NotNull String v2) {
+    public static int compareVersions(@NonNull String v1, @NonNull String v2) {
         String[] parts1 = v1.split("\\.");
         String[] parts2 = v2.split("\\.");
         int length = Math.max(parts1.length, parts2.length);
@@ -414,6 +420,11 @@ public class TestInstanceLauncher {
             }
         }
         return 0;
+    }
+
+    @Contract(pure = true)
+    public static boolean isStableVersion(@NonNull String version) {
+        return !version.contains("-");
     }
 
     public record PluginInfo(String url, String config) {

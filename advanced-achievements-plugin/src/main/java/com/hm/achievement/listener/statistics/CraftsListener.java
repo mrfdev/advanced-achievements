@@ -25,7 +25,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to deal with Crafts achievements.
@@ -42,7 +42,7 @@ public class CraftsListener extends AbstractListener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onCraftItem(@NotNull CraftItemEvent event) {
+    public void onCraftItem(@NonNull CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player player) || event.getAction() == InventoryAction.NOTHING
                 || event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_SWAP
                 || isCraftingIngotFromBlock(event.getRecipe())) {
@@ -58,7 +58,7 @@ public class CraftsListener extends AbstractListener {
         Set<String> subcategories = new HashSet<>();
         addMatchingSubcategories(subcategories, craftName);
 
-        if (craftName.endsWith("_banner")) {
+        if (item.getType().name().endsWith("_BANNER")) {
             addMatchingSubcategories(subcategories, "banner");
         }
 

@@ -21,6 +21,7 @@ import com.hm.achievement.placeholder.AchievementPlaceholderHook;
 import com.hm.achievement.runnable.AchieveDistanceRunnable;
 import com.hm.achievement.runnable.AchievePlayTimeRunnable;
 import dagger.Lazy;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -82,15 +83,7 @@ public class PluginLoader {
     private BukkitTask cleanerTask;
 
     @Inject
-    public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables,
-                        JoinListener joinListener, ListGUIListener listGUIListener, TeleportListener teleportListener,
-                        PlayerAdvancedAchievementListener playerAdvancedAchievementListener, Cleaner cleaner,
-                        Lazy<AchievementPlaceholderHook> achievementPlaceholderHook, AbstractDatabaseManager databaseManager,
-                        AsyncCachedRequestsSender asyncCachedRequestsSender, PluginCommandExecutor pluginCommandExecutor,
-                        CommandTabCompleter commandTabCompleter, Set<Category> disabledCategories,
-                        @Named("main") YamlConfiguration mainConfig, ConfigurationParser configurationParser,
-                        AchieveDistanceRunnable distanceRunnable, AchievePlayTimeRunnable playTimeRunnable, ReloadCommand reloadCommand,
-                        AchievementMap achievementMap) {
+    public PluginLoader(AdvancedAchievements advancedAchievements, Logger logger, Set<Reloadable> reloadables, JoinListener joinListener, ListGUIListener listGUIListener, TeleportListener teleportListener, PlayerAdvancedAchievementListener playerAdvancedAchievementListener, Cleaner cleaner, Lazy<AchievementPlaceholderHook> achievementPlaceholderHook, AbstractDatabaseManager databaseManager, AsyncCachedRequestsSender asyncCachedRequestsSender, PluginCommandExecutor pluginCommandExecutor, CommandTabCompleter commandTabCompleter, Set<Category> disabledCategories, @Named("main") YamlConfiguration mainConfig, ConfigurationParser configurationParser, AchieveDistanceRunnable distanceRunnable, AchievePlayTimeRunnable playTimeRunnable, ReloadCommand reloadCommand, AchievementMap achievementMap) {
         this.advancedAchievements = advancedAchievements;
         this.logger = logger;
         this.reloadables = reloadables;
@@ -184,7 +177,7 @@ public class PluginLoader {
         logger.info("Setting up command executor and custom tab completers...");
 
         PluginCommand pluginCommand = Bukkit.getPluginCommand("aach");
-        pluginCommand.setTabCompleter(commandTabCompleter);
+        Objects.requireNonNull(pluginCommand).setTabCompleter(commandTabCompleter);
         pluginCommand.setExecutor(pluginCommandExecutor);
     }
 
@@ -197,8 +190,7 @@ public class PluginLoader {
         // Schedule a repeating task to group database queries when statistics are modified.
         if (asyncCachedRequestsSenderTask == null) {
             long taskPeriod = mainConfig.getBoolean("BungeeMode") ? 40L : 1200L;
-            asyncCachedRequestsSenderTask = Bukkit.getScheduler().runTaskTimerAsynchronously(advancedAchievements,
-                    asyncCachedRequestsSender, taskPeriod, taskPeriod);
+            asyncCachedRequestsSenderTask = Bukkit.getScheduler().runTaskTimerAsynchronously(advancedAchievements, asyncCachedRequestsSender, taskPeriod, taskPeriod);
         }
 
         if (cleanerTask == null) {
@@ -212,25 +204,16 @@ public class PluginLoader {
         }
         if (!disabledCategories.contains(NormalAchievements.PLAYEDTIME)) {
             int configPlaytimeTaskInterval = mainConfig.getInt("PlaytimeTaskInterval");
-            playedTimeTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable,
-                    configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
+            playedTimeTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, playTimeRunnable, configPlaytimeTaskInterval * 10L, configPlaytimeTaskInterval * 20L);
         }
 
         // Schedule a repeating task to monitor distances travelled by each player (not directly related to an event).
         if (distanceTask != null) {
             distanceTask.cancel();
         }
-        if (!disabledCategories.contains(NormalAchievements.DISTANCEFOOT)
-                || !disabledCategories.contains(NormalAchievements.DISTANCEPIG)
-                || !disabledCategories.contains(NormalAchievements.DISTANCEHORSE)
-                || !disabledCategories.contains(NormalAchievements.DISTANCEMINECART)
-                || !disabledCategories.contains(NormalAchievements.DISTANCEBOAT)
-                || !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING)
-                || !disabledCategories.contains(NormalAchievements.DISTANCELLAMA)
-                || !disabledCategories.contains(NormalAchievements.DISTANCESNEAKING)) {
+        if (!disabledCategories.contains(NormalAchievements.DISTANCEFOOT) || !disabledCategories.contains(NormalAchievements.DISTANCEPIG) || !disabledCategories.contains(NormalAchievements.DISTANCEHORSE) || !disabledCategories.contains(NormalAchievements.DISTANCEMINECART) || !disabledCategories.contains(NormalAchievements.DISTANCEBOAT) || !disabledCategories.contains(NormalAchievements.DISTANCEGLIDING) || !disabledCategories.contains(NormalAchievements.DISTANCELLAMA) || !disabledCategories.contains(NormalAchievements.DISTANCESNEAKING)) {
             int configDistanceTaskInterval = mainConfig.getInt("DistanceTaskInterval");
-            distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable,
-                    configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
+            distanceTask = Bukkit.getScheduler().runTaskTimer(advancedAchievements, distanceRunnable, configDistanceTaskInterval * 40L, configDistanceTaskInterval * 20L);
         }
     }
 
@@ -277,8 +260,7 @@ public class PluginLoader {
      * Links the PlaceholderAPI plugin.
      */
     private void linkPlaceholders() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
-                && !achievementPlaceholderHook.get().isRegistered()) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && !achievementPlaceholderHook.get().isRegistered()) {
             achievementPlaceholderHook.get().register();
         }
     }

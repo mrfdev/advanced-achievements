@@ -5,8 +5,9 @@ import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Simple class providing helper methods to process strings.
@@ -25,7 +26,7 @@ public class StringHelper {
         return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");
     }
 
-    public static String getClosestMatch(String toMatch, @NotNull Collection<String> possibleMatches) {
+    public static String getClosestMatch(String toMatch, @NonNull Collection<String> possibleMatches) {
         Integer smallestDistance = Integer.MAX_VALUE;
         String closestMatch = "";
         for (String possibleMatch : possibleMatches) {
@@ -38,7 +39,7 @@ public class StringHelper {
         return closestMatch;
     }
 
-    public static @NotNull Component replacePlayerPlaceholders(Object input, @NotNull Player player) {
+    public static @NonNull Component replacePlayerPlaceholders(Object input, @NonNull Player player) {
         String str;
         if (input instanceof Component) {
             str = input.toString();
@@ -47,11 +48,13 @@ public class StringHelper {
         } else {
             throw new IllegalStateException("Input must be string or component");
         }
-        str = StringUtils.replaceEach(str,
-                new String[]{"PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z", "PLAYER"},
-                new String[]{player.getWorld().getName(), Integer.toString(player.getLocation().getBlockX()),
-                        Integer.toString(player.getLocation().getBlockY()),
-                        Integer.toString(player.getLocation().getBlockZ()), player.getName()});
+        str = StringUtils.replaceEach(str, new String[]{"PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z", "PLAYER"}, new String[]{player.getWorld().getName(), Integer.toString(player.getLocation().getBlockX()), Integer.toString(player.getLocation().getBlockY()), Integer.toString(player.getLocation().getBlockZ()), player.getName()});
         return Component.text(str);
+    }
+
+    public static @NonNull String toReadableName(@NonNull Material material) {
+        String[] words = material.name().toLowerCase().split("_");
+        for (int i = 0; i < words.length; i++) words[i] = Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+        return String.join(" ", words);
     }
 }

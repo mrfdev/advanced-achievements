@@ -5,7 +5,7 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * List of multiple achievements, ie. with sub-categories
+ * List of multiple achievements, i.e. with sub-categories
  *
  * @author Pyves
  */

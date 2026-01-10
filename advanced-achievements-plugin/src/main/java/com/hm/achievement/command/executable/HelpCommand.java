@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of displaying the plugin's help (/aach help).
@@ -113,12 +113,12 @@ public class HelpCommand extends AbstractCommand {
         langTip = ChatColor.GRAY + translateColorCodes(langConfig.getString("aach-tip"));
     }
 
-    private @NotNull String header(String command) {
+    private @NonNull String header(String command) {
         return pluginHeader.toString() + configColor + command + ChatColor.GRAY + " > ";
     }
 
     @Override
-    void onExecute(@NotNull CommandSender sender, String[] args) {
+    void onExecute(@NonNull CommandSender sender, String[] args) {
         // Header.
         sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon + configColor + " ------------");
 

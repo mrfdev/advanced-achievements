@@ -19,8 +19,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <revision>MCMMO</revision>
-        <mockito.version>5.20.0</mockito.version>
+        <revision>7.3.9</revision>
+        <mockito.version>5.21.0</mockito.version>
         <!--<maven.test.skip>true</maven.test.skip>!-->
     </properties>
 
@@ -74,10 +74,6 @@
             <url>https://repo.extendedclip.com/releases</url>
         </repository>
         <repository>
-            <id>Codemc Public</id>
-            <url>https://repo.codemc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>jitpack-repo</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -102,17 +98,17 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.19.0</version>
+                <version>3.20.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.14.0</version>
+                <version>1.15.0</version>
             </dependency>
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21.10-R0.1-SNAPSHOT</version>
+                <version>1.21.11-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -136,7 +132,7 @@
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>CMI-API</artifactId>
-                <version>120078a1b9</version>
+                <version>9.7.14.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -148,7 +144,7 @@
             <dependency>
                 <groupId>me.clip</groupId>
                 <artifactId>placeholderapi</artifactId>
-                <version>2.11.6</version>
+                <version>2.11.7</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -164,7 +160,8 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.20.0</version>
+                <version>2.20.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
@@ -174,24 +171,29 @@
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-legacy</artifactId>
-                <version>4.25.0</version>
+                <version>4.26.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-api</artifactId>
-                <version>4.25.0</version>
+                <version>4.26.1</version>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-plain</artifactId>
-                <version>4.25.0</version>
+                <version>4.26.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
@@ -204,11 +206,23 @@
                 <version>2.2.031</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.5.0-jre</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>6.0.0</version>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>6.0.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>6.0.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -223,13 +237,9 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>33.5.0-jre</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
+
+
 

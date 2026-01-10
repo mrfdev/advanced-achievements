@@ -2,6 +2,7 @@ package com.hm.achievement.advancement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+
 import static com.hm.achievement.advancement.AchievementAdvancement.CRITERIA_NAME;
 
 /**

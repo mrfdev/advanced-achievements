@@ -117,7 +117,10 @@ public class ConfigurationParser {
 
         try {
             if (!configFile.exists()) {
-                configFile.getParentFile().mkdir();
+                File parentDir = configFile.getParentFile();
+                if (!parentDir.exists() && !parentDir.mkdirs()) {
+                    throw new IOException("Failed to create parent directory: " + parentDir.getAbsolutePath());
+                }
                 try (InputStream defaultConfig = plugin.getResource(userConfigName)) {
                     if (defaultConfig != null) {
                         Files.copy(defaultConfig, configFile.toPath());

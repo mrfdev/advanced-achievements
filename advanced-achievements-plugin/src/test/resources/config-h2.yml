@@ -9,7 +9,7 @@ DatabaseBackup: false
 DatabaseType: h2
 
 # Prefix added to the tables in the database. If you switch from the default tables names (no prefix),
-# the plugin will attempt an automatic renaming. Otherwise you have to rename your tables manually.
+# the plugin will attempt an automatic renaming. Otherwise, you have to rename your tables manually.
 # Do a full server restart for this to take effect.
 TablePrefix: ""
 

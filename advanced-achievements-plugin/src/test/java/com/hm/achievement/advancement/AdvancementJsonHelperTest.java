@@ -2,6 +2,7 @@ package com.hm.achievement.advancement;
 
 import com.hm.achievement.advancement.AchievementAdvancement.AchievementAdvancementBuilder;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
