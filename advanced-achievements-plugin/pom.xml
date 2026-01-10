@@ -112,10 +112,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <scope>provided</scope>
@@ -165,10 +161,6 @@
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-legacy</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -182,8 +174,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jspecify</groupId>

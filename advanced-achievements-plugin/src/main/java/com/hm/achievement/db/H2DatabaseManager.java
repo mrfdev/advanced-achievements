@@ -4,7 +4,7 @@ import com.hm.achievement.AdvancedAchievements;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**

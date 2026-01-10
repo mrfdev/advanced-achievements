@@ -3,14 +3,14 @@ package com.hm.achievement.command.executable;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.config.RewardParser;
 import com.hm.achievement.utils.ColorHelper;
+import com.hm.achievement.utils.StringHelper;
 import java.util.Objects;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -53,7 +53,7 @@ public class InfoCommand extends AbstractCommand {
         super.extractConfigurationParameters();
 
         NamedTextColor configColor = ColorHelper.parseColor(Objects.requireNonNull(mainConfig.getString("Color")));
-        String configIcon = StringEscapeUtils.unescapeJava(mainConfig.getString("Icon"));
+        String configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configDatabaseType = mainConfig.getString("DatabaseType");
 
         header = Component.text("------------ ", configColor).append(Component.text(Objects.requireNonNull(configIcon))).append(Component.text(" Advanced Achievements ", NamedTextColor.WHITE)).append(Component.text(configIcon)).append(Component.text(" ------------", configColor));

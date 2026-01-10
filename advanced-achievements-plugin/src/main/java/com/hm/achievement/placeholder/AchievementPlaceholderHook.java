@@ -7,7 +7,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import java.util.UUID;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;

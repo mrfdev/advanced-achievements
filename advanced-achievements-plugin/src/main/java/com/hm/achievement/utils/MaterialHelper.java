@@ -2,8 +2,8 @@ package com.hm.achievement.utils;
 
 import java.util.Optional;
 import java.util.logging.Logger;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;

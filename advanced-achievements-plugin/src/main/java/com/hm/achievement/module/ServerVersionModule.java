@@ -2,7 +2,7 @@ package com.hm.achievement.module;
 
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.bukkit.Bukkit;
 
 @Module

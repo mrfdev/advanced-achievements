@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.commons.lang3.StringUtils;
@@ -118,8 +117,6 @@ public class AbstractRateLimitedListener extends AbstractListener implements Cle
     private void displayActionBarMessage(@NonNull Player player, long timeToWait) {
         String timeWithOneDecimal = String.format("%.1f", (double) timeToWait / 1000);
         String message = StringUtils.replaceEach(langStatisticCooldown, new String[]{"TIME"}, new String[]{timeWithOneDecimal});
-        try (BukkitAudiences audiences = BukkitAudiences.create(advancedAchievements)) {
-            audiences.player(player).sendActionBar(Component.text(message).decorate(TextDecoration.ITALIC));
-        }
+        player.sendActionBar(Component.text(message).decorate(TextDecoration.ITALIC));
     }
 }

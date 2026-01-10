@@ -2,8 +2,8 @@ package com.hm.achievement.utils;
 
 import java.util.Locale;
 import java.util.logging.Logger;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Sound;

@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 /**
@@ -44,7 +45,7 @@ class StringHelperTest {
 
     @Test
     void shouldReturnClosestMatchingString() {
-        List<String> possibleMatches = Arrays.asList("nothing", "something", "random text", "amasing");
+        List<String> possibleMatches = Arrays.asList("nothing", "something", "random text", "amazing");
         String result = StringHelper.getClosestMatch("somaeThing", possibleMatches);
 
         assertEquals("something", result);
@@ -65,4 +66,51 @@ class StringHelperTest {
         assertEquals("Player Pyves is in the Nether at position 1 5 8", resultString);
     }
 
+    @Test
+    void unescapeJavaNullInput() {
+        assertNull(StringHelper.unescapeJava(null));
+    }
+
+    @Test
+    void unescapeJavaConvertUnicodeEscapes() {
+        String input = "Hello\\u0020World\\u0021";
+        String expected = "Hello World!";
+        assertEquals(expected, StringHelper.unescapeJava(input));
+    }
+
+    @Test
+    void unescapeJavaLeavesInvalidEscapes() {
+        String input = "Invalid \\uZZZZ escape";
+        String expected = "Invalid \\uZZZZ escape";
+        assertEquals(expected, StringHelper.unescapeJava(input));
+    }
+
+
+    @Test
+    void escapeJson_shouldReturnNullForNullInput() {
+        assertNull(StringHelper.escapeJson(null));
+    }
+
+    @Test
+    void escapeJson_shouldEscapeSpecialCharacters() {
+        String input = "Quotes: \", Backslash: \\, Newline:\n, Tab:\t";
+        String expected = "Quotes: \\\", Backslash: \\\\, Newline:\\n, Tab:\\t";
+        assertEquals(expected, StringHelper.escapeJson(input));
+    }
+
+    @Test
+    void escapeJson_shouldEscapeControlCharacters() {
+        String input = "Control:\u0001\u0002";
+        String expected = "Control:\\u0001\\u0002";
+        assertEquals(expected, StringHelper.escapeJson(input));
+    }
+
+    @Test
+    void levenshteinDistance_shouldReturnCorrectDistance() {
+        assertEquals(0, StringHelper.levenshteinDistance("test", "test"));
+        assertEquals(1, StringHelper.levenshteinDistance("test", "tent"));
+        assertEquals(4, StringHelper.levenshteinDistance("test", "abcd"));
+        assertEquals(4, StringHelper.levenshteinDistance("", "abcd"));
+        assertEquals(0, StringHelper.levenshteinDistance("", ""));
+    }
 }

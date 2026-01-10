@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.Strings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

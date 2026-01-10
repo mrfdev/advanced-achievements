@@ -11,6 +11,9 @@ import com.hm.achievement.domain.Reward;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.NumberHelper;
 import com.hm.achievement.utils.StringHelper;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,13 +27,9 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -117,8 +116,8 @@ public class CategoryGUI implements Reloadable {
         langListBackMessage = translateColorCodes(langConfig.getString("list-back-message"));
         langListBackLore = translateColorCodes(langConfig.getString("list-back-lore"));
         langListGUITitle = translateColorCodes(langConfig.getString("list-gui-title"));
-        langListAchievementReceived = StringEscapeUtils.unescapeJava(langConfig.getString("list-achievement-received"));
-        langListAchievementNotReceived = StringEscapeUtils.unescapeJava(langConfig.getString("list-achievement-not-received")) + configListColorNotReceived;
+        langListAchievementReceived = StringHelper.unescapeJava(langConfig.getString("list-achievement-received"));
+        langListAchievementNotReceived = StringHelper.unescapeJava(langConfig.getString("list-achievement-not-received")) + configListColorNotReceived;
         String description = langConfig.getString("list-description");
         langListDescription = Objects.requireNonNull(description).isEmpty() ? "" : translateColorCodes("&7&l" + description);
         String reception = langConfig.getString("list-reception");
@@ -396,7 +395,7 @@ public class CategoryGUI implements Reloadable {
             } else if (rewards.size() > 1 && !langListRewards.isEmpty()) {
                 lore.add(langListRewards);
             }
-            String dot = StringEscapeUtils.unescapeJava(date == null ? configListColorNotReceived + "● " + configFormatNotReceived : "&r&f● ");
+            String dot = StringHelper.unescapeJava(date == null ? configListColorNotReceived + "● " + configFormatNotReceived : "&r&f● ");
             for (Reward reward : rewards) {
                 for (String listText : reward.listTexts()) {
                     lore.add(LegacyComponentSerializer.legacyAmpersand().serialize(StringHelper.replacePlayerPlaceholders(translateColorCodes(dot + listText), player)));
@@ -494,5 +493,4 @@ public class CategoryGUI implements Reloadable {
     private @NonNull String translateColorCodes(String translate) {
         return ChatColor.translateAlternateColorCodes('&', translate);
     }
-
 }

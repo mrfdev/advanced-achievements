@@ -1,7 +1,7 @@
 package com.hm.achievement.advancement;
 
+import com.hm.achievement.utils.StringHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 
 import static com.hm.achievement.advancement.AchievementAdvancement.CRITERIA_NAME;
 
@@ -17,45 +17,11 @@ public class AdvancementJsonHelper {
     }
 
     public static String toJson(AchievementAdvancement aa) {
-        return "{\n" +
-                "  \"criteria\":{\n" +
-                "    \"" + CRITERIA_NAME + "\":{\n" +
-                "      \"trigger\":\"minecraft:impossible\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"requirements\":[\n" +
-                "    [\n" +
-                "      \"" + CRITERIA_NAME + "\"\n" +
-                "    ]\n" +
-                "  ],\n" +
-                "  \"display\":{\n" +
-                "    \"icon\":{\n" +
-                "      \"id\":\"" + aa.getIconItem() + "\"" + getIntegerFieldOrEmpty(aa.getIconData()) + "\n" +
-                "    },\n" +
-                "    \"title\":\"" + StringEscapeUtils.escapeJson(aa.getTitle()) + "\",\n" +
-                "    \"description\":\"" + StringEscapeUtils.escapeJson(aa.getDescription()) + "\",\n" +
-                "    \"frame\":\"" + aa.getFrame() + "\",\n" +
-                "    \"announce_to_chat\":false" +
-                getStringFieldOrLineBreak("background", aa.getBackground(), 4) +
-                "  }" +
-                getStringFieldOrLineBreak("parent", aa.getParent(), 2) +
-                "}\n";
+        return "{\n" + "  \"criteria\":{\n" + "    \"" + CRITERIA_NAME + "\":{\n" + "      \"trigger\":\"minecraft:impossible\"\n" + "    }\n" + "  },\n" + "  \"requirements\":[\n" + "    [\n" + "      \"" + CRITERIA_NAME + "\"\n" + "    ]\n" + "  ],\n" + "  \"display\":{\n" + "    \"icon\":{\n" + "      \"id\":\"" + aa.getIconItem() + "\"" + getIntegerFieldOrEmpty(aa.getIconData()) + "\n" + "    },\n" + "    \"title\":\"" + StringHelper.escapeJson(aa.getTitle()) + "\",\n" + "    \"description\":\"" + StringHelper.escapeJson(aa.getDescription()) + "\",\n" + "    \"frame\":\"" + aa.getFrame() + "\",\n" + "    \"announce_to_chat\":false" + getStringFieldOrLineBreak("background", aa.getBackground(), 4) + "  }" + getStringFieldOrLineBreak("parent", aa.getParent(), 2) + "}\n";
     }
 
     public static String toHiddenJson(String background) {
-        return "{\n" +
-                "  \"criteria\":{\n" +
-                "    \"" + CRITERIA_NAME + "\":{\n" +
-                "      \"trigger\":\"minecraft:impossible\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"requirements\":[\n" +
-                "    [\n" +
-                "      \"" + CRITERIA_NAME + "\"\n" +
-                "    ]\n" +
-                "  ],\n" +
-                "  \"background\":\"" + background + "\"\n" +
-                "}\n";
+        return "{\n" + "  \"criteria\":{\n" + "    \"" + CRITERIA_NAME + "\":{\n" + "      \"trigger\":\"minecraft:impossible\"\n" + "    }\n" + "  },\n" + "  \"requirements\":[\n" + "    [\n" + "      \"" + CRITERIA_NAME + "\"\n" + "    ]\n" + "  ],\n" + "  \"background\":\"" + background + "\"\n" + "}\n";
     }
 
     private static String getIntegerFieldOrEmpty(String value) {
