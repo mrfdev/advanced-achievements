@@ -3,6 +3,8 @@ package com.hm.achievement.config;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.utils.MaterialHelper;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +52,7 @@ class RewardParserTest {
     private RewardParser underTest;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws URISyntaxException, IOException, InvalidConfigurationException {
         when(advancedAchievements.getServer()).thenReturn(server);
         when(server.getPluginManager().isPluginEnabled("Vault")).thenReturn(true);
         when(Objects.requireNonNull(server.getServicesManager().getRegistration(Economy.class)).getProvider()).thenReturn(economy);
@@ -61,7 +64,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseMoneyRewardSingular() throws Exception {
+    void shouldParseMoneyRewardSingular() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-1.yml")).toURI()).toFile());
         when(economy.currencyNameSingular()).thenReturn("coin");
 
@@ -76,7 +79,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseMoneyRewardPlural() throws Exception {
+    void shouldParseMoneyRewardPlural() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-2.yml")).toURI()).toFile());
         when(economy.currencyNamePlural()).thenReturn("coins");
 
@@ -91,7 +94,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseSingleCommandReward() throws Exception {
+    void shouldParseSingleCommandReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         World world = Mockito.mock(World.class);
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/command.yml")).toURI()).toFile());
         when(player.getName()).thenReturn("Pyves");
@@ -112,7 +115,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseMultipleCommandRewards() throws Exception {
+    void shouldParseMultipleCommandRewards() throws URISyntaxException, IOException, InvalidConfigurationException {
         World world = Mockito.mock(World.class);
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/commands.yml")).toURI()).toFile());
         when(player.getName()).thenReturn("Pyves");
@@ -137,7 +140,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseExperienceReward() throws Exception {
+    void shouldParseExperienceReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/experience.yml")).toURI()).toFile());
 
         List<Reward> rewards = underTest.parseRewards("Reward");
@@ -152,7 +155,7 @@ class RewardParserTest {
 
     @Disabled("Cannot fix right now")
     @Test
-    void shouldParseMaxHealthReward() throws Exception {
+    void shouldParseMaxHealthReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-health.yml")).toURI()).toFile());
         AttributeInstance healthAttribute = Mockito.mock(AttributeInstance.class);
         when(player.getAttribute(any())).thenReturn(healthAttribute);
@@ -170,7 +173,7 @@ class RewardParserTest {
     }
 
     @Test
-    void shouldParseMaxOxygenReward() throws Exception {
+    void shouldParseMaxOxygenReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-oxygen.yml")).toURI()).toFile());
         when(player.getMaximumAir()).thenReturn(5);
 
