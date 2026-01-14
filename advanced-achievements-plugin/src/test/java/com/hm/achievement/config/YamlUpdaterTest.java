@@ -3,9 +3,12 @@ package com.hm.achievement.config;
 import com.hm.achievement.AdvancedAchievements;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +39,7 @@ class YamlUpdaterTest {
     }
 
     @Test
-    void shouldAppendMissingDefaultSectionsToUserConfiguration() throws Exception {
+    void shouldAppendMissingDefaultSectionsToUserConfiguration() throws IOException, InvalidConfigurationException, URISyntaxException {
         when(plugin.getDataFolder()).thenReturn(tempDir);
         File userFile = createFileFromTestResource("config-missing-sections.yml");
 
@@ -48,7 +51,7 @@ class YamlUpdaterTest {
     }
 
     @Test
-    void shouldReloadConfigurationIfThereWereMissingSections() throws Exception {
+    void shouldReloadConfigurationIfThereWereMissingSections() throws IOException, InvalidConfigurationException, URISyntaxException {
         when(plugin.getDataFolder()).thenReturn(tempDir);
         File userFile = createFileFromTestResource("config-missing-sections.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(userFile);
@@ -59,7 +62,7 @@ class YamlUpdaterTest {
     }
 
     @Test
-    void shouldNotChangeUserConfigIfThereAreNoMissingKeys() throws Exception {
+    void shouldNotChangeUserConfigIfThereAreNoMissingKeys() throws IOException, InvalidConfigurationException, URISyntaxException {
         File userFile = createFileFromTestResource("config-default.yml");
         long lastModified = userFile.lastModified();
 
@@ -68,7 +71,7 @@ class YamlUpdaterTest {
         assertEquals(lastModified, userFile.lastModified());
     }
 
-    private @NonNull File createFileFromTestResource(String testResourceName) throws Exception {
+    private @NonNull File createFileFromTestResource(String testResourceName) throws IOException, URISyntaxException {
         File userFile = new File(tempDir, testResourceName);
         try (FileOutputStream targetUserConfig = new FileOutputStream(userFile)) {
             Files.copy(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(testResourceName)).toURI()), targetUserConfig);
