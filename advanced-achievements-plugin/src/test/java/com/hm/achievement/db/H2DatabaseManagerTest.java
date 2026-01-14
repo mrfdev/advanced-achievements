@@ -5,6 +5,7 @@ import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.db.data.ConnectionInformation;
+import com.hm.achievement.exception.PluginLoadError;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,7 +53,7 @@ class H2DatabaseManagerTest {
     private final UUID testUUID = UUID.randomUUID();
 
     @BeforeAll
-    static void setUpClass(@TempDir @NonNull Path tempDir) throws Exception {
+    static void setUpClass(@TempDir @NonNull Path tempDir) throws PluginLoadError {
         AdvancedAchievements plugin = mock(AdvancedAchievements.class);
         when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
         YamlConfiguration config = YamlConfiguration
