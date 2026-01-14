@@ -1,5 +1,3 @@
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,6 +27,8 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class TestInstanceLauncher {
     @SuppressWarnings("EmptyClassInitializer")
@@ -219,7 +219,7 @@ public class TestInstanceLauncher {
         JsonNode versions = root.get("versions");
         if (versions == null || !versions.isObject()) throw new RuntimeException("Invalid JSON Response: 'versions' is missing or is not an object");
         List<String> majorVersions = new ArrayList<>();
-        versions.fieldNames().forEachRemaining(v -> {
+        versions.propertyNames().forEach(v -> {
             if (isStableVersion(v)) majorVersions.add(v);
         });
         if (majorVersions.isEmpty()) throw new RuntimeException("No major versions found");
@@ -227,7 +227,7 @@ public class TestInstanceLauncher {
         JsonNode patchVersions = versions.get(majorVersions.getFirst());
         List<String> stablePatches = new ArrayList<>();
         for (JsonNode n : patchVersions) {
-            String v = n.asText();
+            String v = n.asString();
             if (isStableVersion(v)) stablePatches.add(v);
         }
         if (stablePatches.isEmpty()) throw new RuntimeException("No stable patch versions found for " + majorVersions.getFirst());
@@ -263,7 +263,7 @@ public class TestInstanceLauncher {
             JsonNode root = MAPPER.readTree(res.body());
             JsonNode downloads = root.get("downloads");
             if (downloads == null || downloads.get("server:default") == null) throw new IOException("No download URL found for build " + build);
-            String downloadUrl = downloads.get("server:default").get("url").asText();
+            String downloadUrl = downloads.get("server:default").get("url").asString();
             HttpRequest downloadReq = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).build();
             HTTP.send(downloadReq, HttpResponse.BodyHandlers.ofFile(jarPath));
             LOGGER.info("Downloaded paper.jar to " + jarPath);
