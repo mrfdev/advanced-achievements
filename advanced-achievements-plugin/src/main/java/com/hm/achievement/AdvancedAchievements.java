@@ -12,9 +12,9 @@ import com.hm.achievement.module.ReloadableModule;
 import com.hm.achievement.module.ServerVersionModule;
 import dagger.BindsInstance;
 import dagger.Component;
+import jakarta.inject.Singleton;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jakarta.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

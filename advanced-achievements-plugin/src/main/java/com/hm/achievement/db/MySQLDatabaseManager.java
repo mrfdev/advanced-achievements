@@ -1,9 +1,9 @@
 package com.hm.achievement.db;
 
+import jakarta.inject.Named;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
