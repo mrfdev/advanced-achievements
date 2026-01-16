@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class used to handle an H2 database.
@@ -14,16 +15,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class H2DatabaseManager extends AbstractFileDatabaseManager {
 
-    public H2DatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater,
-                             AdvancedAchievements advancedAchievements, ExecutorService writeExecutor) {
-        super(mainConfig, logger, databaseUpdater, advancedAchievements, "org.h2.Driver", "jdbc:h2:./"
-                + new File(advancedAchievements.getDataFolder(), "achievements")
-                + ";DATABASE_TO_UPPER=false;MODE=MySQL", "achievements.mv.db", writeExecutor);
+    public H2DatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements, ExecutorService writeExecutor) {
+        super(mainConfig, logger, databaseUpdater, advancedAchievements, "org.h2.Driver", buildUrl(new File(advancedAchievements.getDataFolder(), "achievements")), "achievements.mv.db", writeExecutor);
+        @SuppressWarnings("unused") Class<?>[] classes = new Class<?>[]{org.h2.engine.Engine.class};
+    }
 
-        // Convince Maven Shade that H2 is used to prevent full exclusion during minimisation.
-        @SuppressWarnings("unused")
-        Class<?>[] classes = new Class<?>[]{
-                org.h2.engine.Engine.class
-        };
+    private static @NonNull String buildUrl(@NonNull File dbFile) {
+        String path = dbFile.toPath().toAbsolutePath().normalize().toString().replace('\\', '/');
+        return "jdbc:h2:file:" + path + ";DATABASE_TO_UPPER=false" + ";MODE=MySQL";
     }
 }
