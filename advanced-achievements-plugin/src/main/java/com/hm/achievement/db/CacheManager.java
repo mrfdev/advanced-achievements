@@ -4,6 +4,8 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Cleanable;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -12,8 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 

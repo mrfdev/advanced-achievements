@@ -2,6 +2,7 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
+import jakarta.inject.Inject;
 import java.sql.BatchUpdateException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Logger;
-import jakarta.inject.Inject;
 import org.apache.commons.lang3.Strings;
 
 /**

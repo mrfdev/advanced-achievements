@@ -2,10 +2,10 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.StringHelper;
-import java.util.Objects;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.Objects;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;

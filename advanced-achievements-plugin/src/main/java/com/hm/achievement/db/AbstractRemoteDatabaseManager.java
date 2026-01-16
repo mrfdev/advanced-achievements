@@ -1,5 +1,6 @@
 package com.hm.achievement.db;
 
+import jakarta.inject.Named;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -8,7 +9,6 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

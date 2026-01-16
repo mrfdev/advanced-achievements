@@ -3,10 +3,10 @@ package com.hm.achievement.module;
 import com.hm.achievement.category.Category;
 import dagger.Module;
 import dagger.Provides;
-import java.util.HashSet;
-import java.util.Set;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 @Module

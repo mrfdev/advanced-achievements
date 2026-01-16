@@ -9,11 +9,11 @@ import com.hm.achievement.db.PostgreSQLDatabaseManager;
 import com.hm.achievement.db.SQLiteDatabaseManager;
 import dagger.Module;
 import dagger.Provides;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 @Module

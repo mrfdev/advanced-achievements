@@ -2,13 +2,13 @@ package com.hm.achievement.db;
 
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.db.data.ConnectionInformation;
+import jakarta.inject.Named;
 import java.io.UnsupportedEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import jakarta.inject.Named;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
