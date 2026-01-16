@@ -8,7 +8,6 @@ import com.hm.achievement.db.data.ConnectionInformation;
 import com.hm.achievement.exception.PluginLoadError;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,7 +22,6 @@ import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +39,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Rsl1122
  */
-@Disabled("Cannot fix right now")
+
 @ExtendWith(MockitoExtension.class)
 class H2DatabaseManagerTest {
 
@@ -55,9 +53,8 @@ class H2DatabaseManagerTest {
     @BeforeAll
     static void setUpClass(@TempDir @NonNull Path tempDir) throws PluginLoadError {
         AdvancedAchievements plugin = mock(AdvancedAchievements.class);
-        when(plugin.getDataFolder()).thenReturn(tempDir.relativize(Paths.get("").toAbsolutePath()).toFile());
-        YamlConfiguration config = YamlConfiguration
-                .loadConfiguration(new InputStreamReader(Objects.requireNonNull(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml"))));
+        when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(H2DatabaseManagerTest.class.getResourceAsStream("/config-h2.yml"))));
         db = new H2DatabaseManager(config, LOGGER, new DatabaseUpdater(LOGGER), plugin, newDirectExecutorService());
         db.initialise();
         db.extractConfigurationParameters();
@@ -80,8 +77,7 @@ class H2DatabaseManagerTest {
         List<AwardedDBAchievement> achievements = db.getPlayerAchievementsList(testUUID);
         assertEquals(1, achievements.size());
         AwardedDBAchievement found = achievements.getFirst();
-        AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(),
-                found.formattedDate());
+        AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(), found.formattedDate());
         assertEquals(expected, found);
     }
 
@@ -92,8 +88,7 @@ class H2DatabaseManagerTest {
         List<AwardedDBAchievement> achievements = db.getAchievementsRecipientList(TEST_ACHIEVEMENT);
         assertEquals(1, achievements.size());
         AwardedDBAchievement found = achievements.getFirst();
-        AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(),
-                found.formattedDate());
+        AwardedDBAchievement expected = new AwardedDBAchievement(testUUID, TEST_ACHIEVEMENT, found.dateAwarded(), found.formattedDate());
         assertEquals(expected, found);
     }
 
@@ -214,8 +209,7 @@ class H2DatabaseManagerTest {
         assertEquals(0, db.getNormalAchievementAmount(testUUID, NormalAchievements.BEDS));
 
         ((SQLWriteOperation) () -> {
-            try (PreparedStatement ps = db.getConnection()
-                    .prepareStatement("REPLACE INTO beds VALUES ('" + testUUID + "',5)")) {
+            try (PreparedStatement ps = db.getConnection().prepareStatement("REPLACE INTO beds VALUES ('" + testUUID + "',5)")) {
                 ps.execute();
             }
         }).executeOperation(db.writeExecutor, LOGGER, "Writing beds statistics");
@@ -228,8 +222,7 @@ class H2DatabaseManagerTest {
         assertEquals(0, db.getMultipleAchievementAmount(testUUID, MultipleAchievements.CRAFTS, "diamond_axe"));
 
         ((SQLWriteOperation) () -> {
-            try (PreparedStatement ps = db.getConnection()
-                    .prepareStatement("REPLACE INTO crafts VALUES ('" + testUUID + "','diamond_axe',7)")) {
+            try (PreparedStatement ps = db.getConnection().prepareStatement("REPLACE INTO crafts VALUES ('" + testUUID + "','diamond_axe',7)")) {
                 ps.execute();
             }
         }).executeOperation(db.writeExecutor, LOGGER, "Writing crafts statistics");

@@ -26,9 +26,7 @@ public class AbstractFileDatabaseManager extends AbstractDatabaseManager {
     private final String url;
     private final String filename;
 
-    public AbstractFileDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger,
-                                       DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements,
-                                       String driverPath, String url, String filename, ExecutorService writeExecutor) {
+    public AbstractFileDatabaseManager(@Named("main") YamlConfiguration mainConfig, Logger logger, DatabaseUpdater databaseUpdater, AdvancedAchievements advancedAchievements, String driverPath, String url, String filename, ExecutorService writeExecutor) {
         super(mainConfig, logger, databaseUpdater, driverPath, writeExecutor);
         this.advancedAchievements = advancedAchievements;
         this.url = url;
