@@ -6,6 +6,7 @@ import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
 import java.util.HashSet;
 import java.util.Set;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +30,13 @@ class PluginCommandExecutorTest {
 
     private static final String PLUGIN_HEADER = "header ";
     private static final String ERROR_MESSAGE = "error message";
+    private static final String label = "label";
 
     @Mock
     private CommandSender sender;
+
+    @Mock
+    private Command command;
 
     @Mock
     private YamlConfiguration langConfig;
@@ -62,8 +67,7 @@ class PluginCommandExecutorTest {
     @Test
     void itShouldCallListCommand() {
         String[] args = {"list"};
-        underTest.onCommand(sender, null, null, args);
-
+        underTest.onCommand(sender, command, label, args);
         verify(listCommand).execute(sender, args);
         verifyNoMoreInteractions(listCommand, helpCommand, sender);
     }
@@ -71,8 +75,7 @@ class PluginCommandExecutorTest {
     @Test
     void itShouldDisplayErrorMessageIfNoCommandCouldBeMapped() {
         String[] args = {"book", "unexpected_arg"};
-        underTest.onCommand(sender, null, null, args);
-
+        underTest.onCommand(sender, command, label, args);
         verify(sender).sendMessage(PLUGIN_HEADER + ERROR_MESSAGE);
         verifyNoMoreInteractions(listCommand, helpCommand, sender);
     }
@@ -80,8 +83,7 @@ class PluginCommandExecutorTest {
     @Test
     void itShouldFallBackToHelpCommandIfArgsEmpty() {
         String[] noArgs = {};
-        underTest.onCommand(sender, null, null, noArgs);
-
+        underTest.onCommand(sender, command, label, noArgs);
         verify(helpCommand).execute(sender, noArgs);
         verifyNoMoreInteractions(listCommand, helpCommand, sender);
     }
@@ -90,8 +92,7 @@ class PluginCommandExecutorTest {
     void itShouldParseOpenBoxCharactersIntoArray() {
         String[] args = {"inspect", "one␣two", "three␣four"};
         String[] expected = {"inspect", "one", "two", "three", "four"};
-        underTest.onCommand(sender, null, null, args);
-
+        underTest.onCommand(sender, command, label, args);
         verify(argsCommand).execute(sender, expected);
     }
 }
