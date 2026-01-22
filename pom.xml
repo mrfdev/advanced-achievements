@@ -21,7 +21,8 @@
         <java.version>21</java.version>
         <revision>7.3.9</revision>
         <mockito.version>5.21.0</mockito.version>
-        <!--<maven.test.skip>true</maven.test.skip>!-->
+        <dagger.version>2.59</dagger.version>
+        <adventure.version>4.26.1</adventure.version>
     </properties>
 
     <modules>
@@ -93,7 +94,7 @@
             <dependency>
                 <groupId>com.google.dagger</groupId>
                 <artifactId>dagger</artifactId>
-                <version>2.59</version>
+                <version>${dagger.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -161,18 +162,18 @@
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-legacy</artifactId>
-                <version>4.26.1</version>
+                <version>${adventure.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-api</artifactId>
-                <version>4.26.1</version>
+                <version>${adventure.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-text-serializer-plain</artifactId>
-                <version>4.26.1</version>
+                <version>${adventure.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
