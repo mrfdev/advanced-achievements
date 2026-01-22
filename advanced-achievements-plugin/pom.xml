@@ -21,7 +21,7 @@
                         <path>
                             <groupId>com.google.dagger</groupId>
                             <artifactId>dagger-compiler</artifactId>
-                            <version>2.59</version>
+                            <version>${dagger.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
