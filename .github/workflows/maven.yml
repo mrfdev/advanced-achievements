@@ -16,6 +16,5 @@ jobs:
         with:
           java-version: '25'
           distribution: 'microsoft'
-          cache: maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
