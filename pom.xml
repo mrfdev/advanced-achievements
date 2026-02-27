@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <revision>7.3.9</revision>
-        <mockito.version>5.21.0</mockito.version>
+        <mockito.version>5.22.0</mockito.version>
         <jupiter.version>6.0.3</jupiter.version>             
         <dagger.version>2.59.2</dagger.version>
         <adventure.version>4.26.1</adventure.version>
