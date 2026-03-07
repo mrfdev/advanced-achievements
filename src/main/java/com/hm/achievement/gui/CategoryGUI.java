@@ -397,7 +397,7 @@ public class CategoryGUI implements Reloadable {
             }
             String dot = StringHelper.unescapeJava(date == null ? configListColorNotReceived + "● " + configFormatNotReceived : "&r&f● ");
             for (Reward reward : rewards) {
-                for (String listText : reward.listTexts()) {
+                for (String listText : reward.getListTexts()) {
                     lore.add(LegacyComponentSerializer.legacyAmpersand().serialize(StringHelper.replacePlayerPlaceholders(translateColorCodes(dot + listText), player)));
                 }
             }

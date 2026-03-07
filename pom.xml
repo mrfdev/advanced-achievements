@@ -26,11 +26,6 @@
         <adventure.version>4.26.1</adventure.version>
     </properties>
 
-    <modules>
-        <module>advanced-achievements-plugin</module>
-        <module>advanced-achievements-api</module>
-    </modules>
-
     <repositories>
         <repository>
             <id>essentials-repo</id>
@@ -40,27 +35,33 @@
             <id>placeholderapi-repo</id>
             <url>https://repo.extendedclip.com/releases</url>
         </repository>
+
         <repository>
-            <id>jitpack-repo</id>
-            <url>https://jitpack.io</url>
+            <id>Codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>jitpack-repo</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
-    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.hm.achievement</groupId>
                 <artifactId>advanced-achievements-api</artifactId>
-                <version>${project.version}</version>
+                <version>8.0.2</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.dagger</groupId>
                 <artifactId>dagger</artifactId>
                 <version>${dagger.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -91,6 +92,7 @@
                 <version>v5.2.6.2</version>
                 <scope>provided</scope>
             </dependency>
+            <!--suppress VulnerableLibrariesLocal -->
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>CMI-API</artifactId>
@@ -189,7 +191,6 @@
                 <scope>test</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>

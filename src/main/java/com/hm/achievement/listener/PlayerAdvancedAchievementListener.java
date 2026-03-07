@@ -185,7 +185,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         }
         databaseManager.registerAchievement(player.getUniqueId(), achievement.getName(), System.currentTimeMillis());
 
-        achievement.getRewards().forEach(r -> r.rewarder().accept(player));
+        achievement.getRewards().forEach(r -> r.getRewarder().accept(player));
         displayAchievement(player, achievement);
 
         if (cacheManager.getPlayerAchievements(player.getUniqueId()).size() == achievementMap.getAll().size()) {
@@ -254,7 +254,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param rewards
      */
     private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser, @NonNull List<Reward> rewards) {
-        List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
+        List<String> chatMessages = rewards.stream().map(Reward::getChatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
         String message = langAchievementNew.contains("ACH") ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser}) : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
             StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
@@ -339,8 +339,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      */
     private void handleAllAchievementsReceived(@NonNull Player player) {
         List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
-        rewards.forEach(r -> r.rewarder().accept(player));
+        rewards.forEach(r -> r.getRewarder().accept(player));
         player.sendMessage(langAllAchievementsReceived);
-        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
+        rewards.stream().map(Reward::getChatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
     }
 }
