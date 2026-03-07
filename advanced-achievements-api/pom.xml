@@ -10,18 +10,6 @@
     <artifactId>advanced-achievements-api</artifactId>
     <packaging>jar</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <repositories>
         <repository>
             <id>papermc</id>
@@ -39,4 +27,16 @@
             <artifactId>paper-api</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
