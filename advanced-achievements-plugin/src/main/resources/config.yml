@@ -20,6 +20,9 @@
 #                                Various settings to fine-tune the plugin's behaviour.                                 #
 #======================================================================================================================#
 
+# Toggles if [AACH] is shown as a prefix
+PrefixEnabled: true
+
 # Time in seconds between each /aach book. Ignored for players with achievement.* permission.
 TimeBook: 900
 

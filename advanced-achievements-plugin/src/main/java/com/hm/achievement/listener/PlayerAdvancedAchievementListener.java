@@ -257,13 +257,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
         String message = langAchievementNew.contains("ACH") ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser}) : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
-            StringBuilder hover = new StringBuilder(messageToShowUser + "\n");
-            chatMessages.forEach(t -> hover.append(ChatColor.translateAlternateColorCodes('&', t)).append("\n"));
-            fancyMessageSender.sendHoverableMessage(player, message, hover.substring(0, hover.length() - 1), "white");
+            StringBuilder hover = new StringBuilder(applyPrefix(messageToShowUser + "\n"));
+            chatMessages.forEach(t -> hover.append(applyPrefix(ChatColor.translateAlternateColorCodes('&', t))).append("\n"));
+            fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), hover.substring(0, hover.length() - 1), "white");
             return;
         }
-        player.sendMessage(message);
-        player.sendMessage(pluginHeader.toString() + ChatColor.WHITE + messageToShowUser);
+        player.sendMessage(applyPrefix(message));
+        player.sendMessage(pluginHeader.toString() + ChatColor.WHITE + applyPrefix(messageToShowUser));
         chatMessages.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
     }
 
@@ -342,5 +342,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         rewards.forEach(r -> r.rewarder().accept(player));
         player.sendMessage(langAllAchievementsReceived);
         rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
+    }
+
+    private String applyPrefix(String s) {
+        if (mainConfig.getBoolean("PrefixEnabled")) return "[AACH] " + s;
+        return s;
     }
 }
