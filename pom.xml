@@ -10,18 +10,14 @@
     <description>A Minecraft plugin that brings unique and challenging achievements on your server! Books, GUI,
         rankings, rewards, effects and more!
     </description>
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/mrfdev/advanced-achievements/issues</url>
-    </issueManagement>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <revision>7.3.9</revision>
-        <mockito.version>5.22.0</mockito.version>
-        <jupiter.version>6.0.3</jupiter.version>             
+        <mockito.version>5.23.0</mockito.version>
+        <jupiter.version>6.0.3</jupiter.version>
         <dagger.version>2.59.2</dagger.version>
         <adventure.version>4.26.1</adventure.version>
     </properties>
@@ -41,31 +37,32 @@
             <url>https://repo.extendedclip.com/releases</url>
         </repository>
         <repository>
-            <id>jitpack-repo</id>
-            <url>https://jitpack.io</url>
+            <id>Codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>jitpack-repo</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.hm.achievement</groupId>
-                <artifactId>advanced-achievements-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.dagger</groupId>
                 <artifactId>dagger</artifactId>
                 <version>${dagger.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.20.0</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>io.papermc.paper</groupId>
@@ -91,6 +88,7 @@
                 <version>v5.2.6.2</version>
                 <scope>provided</scope>
             </dependency>
+            <!--suppress VulnerableLibrariesLocal -->
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>CMI-API</artifactId>
@@ -113,11 +111,13 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>42.7.10</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>2.4.240</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>tools.jackson.core</groupId>
@@ -135,6 +135,7 @@
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-api</artifactId>
                 <version>${adventure.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.kyori</groupId>
@@ -146,16 +147,19 @@
                 <groupId>jakarta.inject</groupId>
                 <artifactId>jakarta.inject-api</artifactId>
                 <version>2.0.1.MR</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
                 <version>1.0.0</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>26.1.0</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -192,41 +196,43 @@
     </dependencyManagement>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.15.0</version>
-                    <configuration>
-                        <compilerArgs>
-                            <arg>-Xlint:deprecation</arg>
-                            <arg>-Xlint:-options</arg>
-                            <arg>-Xdiags:verbose</arg>
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.6.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.5</version>
-                    <configuration>
-                        <argLine>
-                            -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
-                            -Xshare:off
-                        </argLine>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration>
+                    <release>${java.version}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-Xlint:-options</arg>
+                        <arg>-Xdiags:verbose</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.dagger</groupId>
+                            <artifactId>dagger-compiler</artifactId>
+                            <version>${dagger.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.5</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                        -Xshare:off
+                    </argLine>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
-
-
-
-
