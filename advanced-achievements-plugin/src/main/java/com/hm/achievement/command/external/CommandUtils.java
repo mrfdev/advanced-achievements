@@ -526,7 +526,7 @@ public class CommandUtils {
     }
 
     public static @NonNull String getString(@NonNull String arg) {
-        return arg.split("=")[1].replaceAll("!", "");
+        return arg.split("=")[1].replace("!", "");
     }
 
     private static boolean isLessThan(String arg, double value) {
