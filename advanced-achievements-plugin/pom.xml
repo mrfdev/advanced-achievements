@@ -52,7 +52,6 @@
             <artifactId>petmaster</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMI-API</artifactId>
