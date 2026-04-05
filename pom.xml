@@ -63,7 +63,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>26.1.1.build.14-alpha</version>
+                <version>26.1.1.build.20-alpha</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -226,6 +226,11 @@
                 <groupId>io.github.greymagic27</groupId>
                 <artifactId>McTestServer</artifactId>
                 <version>1.0.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.10.0</version>
             </plugin>
         </plugins>
     </build>
