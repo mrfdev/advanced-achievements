@@ -35,8 +35,7 @@ public class ListCommand extends AbstractCommand {
     private String langCategoryDoesNotExist;
 
     @Inject
-    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                       StringBuilder pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
+    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
         super(mainConfig, langConfig, pluginHeader);
         this.mainGUI = mainGUI;
         this.categoryGUI = categoryGUI;
@@ -46,38 +45,26 @@ public class ListCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
         langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
     }
 
     @Override
     void onExecute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)) {
-            return;
-        }
-
+        if (!(sender instanceof Player player)) return;
         if (player.isSleeping()) {
             sender.sendMessage(Objects.requireNonNull(langConfig.getString("list-unavailable-whilst-sleeping")));
             return;
         }
-
         if (args.length == 1) {
             mainGUI.displayMainGUI(player);
         } else {
             String categoryName = args[1];
-            Optional<Entry<OrderedCategory, ItemStack>> matchingCategory = guiItems.getOrderedAchievementItems().entrySet()
-                    .stream()
-                    .filter(e -> e.getKey().category().toString().equals(categoryName))
-                    .findFirst();
+            Optional<Entry<OrderedCategory, ItemStack>> matchingCategory = guiItems.getOrderedAchievementItems().entrySet().stream().filter(e -> e.getKey().category().toString().equals(categoryName)).findFirst();
             if (matchingCategory.isPresent()) {
                 categoryGUI.displayCategoryGUI(matchingCategory.get().getValue(), player, 0);
             } else {
-                List<String> allGUICategoryNames = guiItems.getOrderedAchievementItems().keySet()
-                        .stream()
-                        .map(c -> c.category().toString())
-                        .collect(Collectors.toList());
-                sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"},
-                        new String[]{categoryName, StringHelper.getClosestMatch(categoryName, allGUICategoryNames)}));
+                List<String> allGUICategoryNames = guiItems.getOrderedAchievementItems().keySet().stream().map(c -> c.category().toString()).collect(Collectors.toList());
+                sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"}, new String[]{categoryName, StringHelper.getClosestMatch(categoryName, allGUICategoryNames)}));
             }
         }
     }

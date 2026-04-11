@@ -204,5 +204,4 @@ public class GUIItems implements Reloadable {
     public ItemStack getCategoryLock() {
         return categoryLock;
     }
-
 }
