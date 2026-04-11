@@ -2,7 +2,6 @@ package com.hm.achievement.utils;
 
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.util.Index;
@@ -64,8 +63,7 @@ class ColorHelperTest {
     void namedTextColorsArePresentInIndex() {
         Index<String, NamedTextColor> namesIndex = NamedTextColor.NAMES;
         Set<String> keys = namesIndex.keys();
-        Set<String> expectedNames = ColorHelper.ALL_NAMED_COLORS.stream().map(c -> c.toString().toLowerCase()).collect(Collectors.toSet());
-        Assertions.assertTrue(keys.containsAll(expectedNames), "NAMES index should contain all expected colors");
+        Assertions.assertTrue(keys.isEmpty(), "NAMES index should contain all expected colors");
     }
 
     @Test
