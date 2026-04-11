@@ -26,7 +26,6 @@ public class GrantCommand extends AbstractParsableCommand {
     private final AchievementMap achievementMap;
     private boolean configMultiCommand;
     private String langAchievementAlreadyReceived;
-    private String langAchievementGranted;
     private String langAchievementNotFound;
     private String langAchievementNoPermission;
     private String langPlayerNotFound;
@@ -44,7 +43,6 @@ public class GrantCommand extends AbstractParsableCommand {
         super.extractConfigurationParameters();
         configMultiCommand = mainConfig.getBoolean("MultiCommand");
         langAchievementAlreadyReceived = pluginHeader + langConfig.getString("achievement-already-received");
-        langAchievementGranted = pluginHeader + langConfig.getString("achievement-granted");
         langAchievementGrantedAll = pluginHeader + langConfig.getString("achievement-granted-all");
         langAchievementNotFound = pluginHeader + langConfig.getString("achievement-not-found");
         langAchievementNoPermission = pluginHeader + langConfig.getString("achievement-no-permission");
@@ -94,7 +92,6 @@ public class GrantCommand extends AbstractParsableCommand {
                 return;
             }
             Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(targetPlayer, ach));
-            sender.sendMessage(StringUtils.replaceEach(langAchievementGranted, new String[]{"PLAYER"}, new String[]{playerName}));
         } else {
             Set<String> names = achievementMap.getForCategory(CommandAchievements.COMMANDS).stream().map(Achievement::getName).collect(Collectors.toSet());
             sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound, new String[]{"CLOSEST_MATCH"}, new String[]{StringHelper.getClosestMatch(achName, names)}));
