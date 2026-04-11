@@ -31,6 +31,7 @@ public class GiveCommand extends AbstractParsableCommand {
 
     private boolean configMultiCommand;
     private String langAchievementAlreadyReceived;
+    private String langAchievementGiven;
     private String langAchievementNotFound;
     private String langAchievementNoPermission;
 
@@ -49,6 +50,7 @@ public class GiveCommand extends AbstractParsableCommand {
         configMultiCommand = mainConfig.getBoolean("MultiCommand");
 
         langAchievementAlreadyReceived = pluginHeader + langConfig.getString("achievement-already-received");
+        langAchievementGiven = pluginHeader + langConfig.getString("achievement-given");
         langAchievementNotFound = pluginHeader + langConfig.getString("achievement-not-found");
         langAchievementNoPermission = pluginHeader + langConfig.getString("achievement-no-permission");
     }
@@ -71,6 +73,8 @@ public class GiveCommand extends AbstractParsableCommand {
             }
 
             Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(player, achievement.get()));
+
+            sender.sendMessage(langAchievementGiven);
         } else {
             Set<String> commandKeys = achievementMap.getSubcategoriesForCategory(CommandAchievements.COMMANDS);
             sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound,
