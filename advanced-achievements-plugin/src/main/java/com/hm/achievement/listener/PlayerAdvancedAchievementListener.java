@@ -348,7 +348,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     }
 
     private String applyPrefix(String s) {
-        if (mainConfig.getBoolean("PrefixEnabled")) return "[AACH] " + s;
+        if (mainConfig.getBoolean("PrefixEnabled")) return "§7[AACH] §r " + s;
         return s;
     }
 }
