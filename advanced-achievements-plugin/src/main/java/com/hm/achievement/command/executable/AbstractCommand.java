@@ -1,7 +1,8 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.lifecycle.Reloadable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -53,7 +54,7 @@ public abstract class AbstractCommand implements Reloadable {
      */
     abstract void onExecute(CommandSender sender, String[] args);
 
-    String translateColorCodes(String translate) {
-        return ChatColor.translateAlternateColorCodes('&', translate);
+    TextComponent translateColorCodes(String translate) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(translate);
     }
 }

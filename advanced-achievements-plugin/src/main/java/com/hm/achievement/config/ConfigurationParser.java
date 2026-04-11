@@ -8,6 +8,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Achievement.AchievementBuilder;
 import com.hm.achievement.exception.PluginLoadError;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -25,10 +26,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,6 +81,7 @@ public class ConfigurationParser {
         backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
         backupAndLoadConfiguration("lang.yml", mainConfig.getString("LanguageFileName"), langConfig);
         backupAndLoadConfiguration("gui.yml", "gui.yml", guiConfig);
+        ColorHelper.setMainConfig(mainConfig);
         parseHeader();
         parseDisabledCategories();
         parseAchievements();
@@ -141,8 +144,10 @@ public class ConfigurationParser {
         pluginHeader.setLength(0);
         String icon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         if (StringUtils.isNotBlank(icon)) {
-            String coloredIcon = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color"))) + icon;
-            pluginHeader.append(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Strings.CS.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon)))).append(" ");
+            String coloredIcon = LegacyComponentSerializer.legacySection().serialize(Component.text(icon, ColorHelper.configColor()));
+            String rawHeader = Strings.CS.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon);
+            Component header = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(rawHeader));
+            pluginHeader.append(LegacyComponentSerializer.legacySection().serialize(header)).append(" ");
         }
         pluginHeader.trimToSize();
     }

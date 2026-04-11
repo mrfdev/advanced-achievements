@@ -1,12 +1,17 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.Objects;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,44 +28,44 @@ public class HelpCommand extends AbstractCommand {
 
     private final FancyMessageSender fancyMessageSender;
 
-    private ChatColor configColor;
+    private NamedTextColor configColor;
     private String configIcon;
 
-    private String langCommandList;
-    private String langCommandListHover;
-    private String langCommandTop;
-    private String langCommandTopHover;
-    private String langCommandInfo;
-    private String langCommandInfoHover;
-    private String langCommandBook;
-    private String langCommandBookHover;
-    private String langCommandWeek;
-    private String langCommandWeekHover;
-    private String langCommandStats;
-    private String langCommandStatsHover;
-    private String langCommandMonth;
-    private String langCommandMonthHover;
-    private String langCommandToggleHover;
-    private String langCommandToggle;
-    private String langCommandReload;
-    private String langCommandReloadHover;
-    private String langCommandGenerate;
-    private String langCommandGenerateHover;
-    private String langCommandInspect;
-    private String langCommandInspectHover;
-    private String langCommandGive;
-    private String langCommandGiveHover;
-    private String langCommandAdd;
-    private String langCommandAddHover;
-    private String langCommandReset;
-    private String langCommandResetHover;
-    private String langCommandCheck;
-    private String langCommandCheckHover;
-    private String langCommandDelete;
-    private String langCommandDeleteHover;
-    private String langCommandGrant;
-    private String langCommandGrantHover;
-    private String langTip;
+    private TextComponent langCommandList;
+    private TextComponent langCommandListHover;
+    private TextComponent langCommandTop;
+    private TextComponent langCommandTopHover;
+    private TextComponent langCommandInfo;
+    private TextComponent langCommandInfoHover;
+    private TextComponent langCommandBook;
+    private TextComponent langCommandBookHover;
+    private TextComponent langCommandWeek;
+    private TextComponent langCommandWeekHover;
+    private TextComponent langCommandStats;
+    private TextComponent langCommandStatsHover;
+    private TextComponent langCommandMonth;
+    private TextComponent langCommandMonthHover;
+    private TextComponent langCommandToggleHover;
+    private TextComponent langCommandToggle;
+    private TextComponent langCommandReload;
+    private TextComponent langCommandReloadHover;
+    private TextComponent langCommandGenerate;
+    private TextComponent langCommandGenerateHover;
+    private TextComponent langCommandInspect;
+    private TextComponent langCommandInspectHover;
+    private TextComponent langCommandGive;
+    private TextComponent langCommandGiveHover;
+    private TextComponent langCommandAdd;
+    private TextComponent langCommandAddHover;
+    private TextComponent langCommandReset;
+    private TextComponent langCommandResetHover;
+    private TextComponent langCommandCheck;
+    private TextComponent langCommandCheckHover;
+    private TextComponent langCommandDelete;
+    private TextComponent langCommandDeleteHover;
+    private TextComponent langCommandGrant;
+    private TextComponent langCommandGrantHover;
+    private TextComponent langTip;
 
     @Inject
     public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, FancyMessageSender fancyMessageSender) {
@@ -72,125 +77,107 @@ public class HelpCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+        String colorValue = mainConfig.getString("Color", "DARK_PURPLE");
+        configColor = ColorHelper.configColor();
         configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
 
-        langCommandList = header("/aach list") + langConfig.getString("aach-command-list");
-        langCommandListHover = langConfig.getString("aach-command-list-hover");
-        langCommandTop = header("/aach top") + langConfig.getString("aach-command-top");
-        langCommandTopHover = langConfig.getString("aach-command-top-hover");
-        langCommandInfo = header("/aach info") + langConfig.getString("aach-command-info");
-        langCommandInfoHover = langConfig.getString("aach-command-info-hover");
-        langCommandBook = header("/aach book") + langConfig.getString("aach-command-book");
-        langCommandBookHover = langConfig.getString("aach-command-book-hover");
-        langCommandWeek = header("/aach week") + langConfig.getString("aach-command-week");
-        langCommandWeekHover = langConfig.getString("aach-command-week-hover");
-        langCommandStats = header("/aach stats") + langConfig.getString("aach-command-stats");
-        langCommandStatsHover = langConfig.getString("aach-command-stats-hover");
-        langCommandMonth = header("/aach month") + langConfig.getString("aach-command-month");
-        langCommandMonthHover = langConfig.getString("aach-command-month-hover");
-        langCommandToggle = header("/aach toggle") + langConfig.getString("aach-command-toggle");
-        langCommandToggleHover = langConfig.getString("aach-command-toggle-hover");
-        langCommandReload = header("/aach reload") + langConfig.getString("aach-command-reload");
-        langCommandReloadHover = langConfig.getString("aach-command-reload-hover");
-        langCommandGenerate = header("/aach generate") + langConfig.getString("aach-command-generate");
-        langCommandGenerateHover = langConfig.getString("aach-command-generate-hover");
-        langCommandGive = header("/aach give player") + langConfig.getString("aach-command-give");
-        langCommandInspect = header("/aach inspect") + langConfig.getString("aach-command-inspect");
-        langCommandInspectHover = langConfig.getString("aach-command-inspect-hover");
-        langCommandGiveHover = langConfig.getString("aach-command-give-hover");
-        langCommandAdd = header("/aach add 1 cat player") + langConfig.getString("aach-command-add");
-        langCommandAddHover = langConfig.getString("aach-command-add-hover");
-        langCommandReset = header("/aach reset cat player") + langConfig.getString("aach-command-reset");
-        langCommandResetHover = langConfig.getString("aach-command-reset-hover");
-        langCommandCheck = header("/aach check cat player") + langConfig.getString("aach-command-check");
-        langCommandCheckHover = langConfig.getString("aach-command-check-hover");
-        langCommandDelete = header("/aach delete cat player") + langConfig.getString("aach-command-delete");
-        langCommandDeleteHover = langConfig.getString("aach-command-delete-hover");
-        langCommandGrant = header("/aach grant cat player") + langConfig.getString("aach-command-grant");
-        langCommandGrantHover = langConfig.getString("aach-command-grant-hover");
+        langCommandList = header("/aach list").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-list"))));
+        langCommandListHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-list-hover")));
+        langCommandTop = header("/aach top").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-top"))));
+        langCommandTopHover =Component.text(Objects.requireNonNull(langConfig.getString("aach-command-top-hover")));
+        langCommandInfo = header("/aach info").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-info"))));
+        langCommandInfoHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-info-hover")));
+        langCommandBook = header("/aach book").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-book"))));
+        langCommandBookHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-book-hover")));
+        langCommandWeek = header("/aach week").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-week"))));
+        langCommandWeekHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-week-hover")));
+        langCommandStats = header("/aach stats").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-stats"))));
+        langCommandStatsHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-stats-hover")));
+        langCommandMonth = header("/aach month").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-month"))));
+        langCommandMonthHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-month-hover")));
+        langCommandToggle = header("/aach toggle").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-toggle"))));
+        langCommandToggleHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-toggle-hover")));
+        langCommandReload = header("/aach reload").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-reload"))));
+        langCommandReloadHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-reload-hover")));
+        langCommandGenerate = header("/aach generate").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-generate"))));
+        langCommandGenerateHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-generate-hover")));
+        langCommandInspect = header("/aach inspect").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-inspect"))));
+        langCommandInspectHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-inspect-hover")));
+        langCommandGive = header("/aach give player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-give"))));
+        langCommandGiveHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-give-hover")));
+        langCommandAdd = header("/aach add 1 cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-add"))));
+        langCommandAddHover = Component.text(Objects.requireNonNull(Objects.requireNonNull(langConfig.getString("aach-command-add-hover"))));
+        langCommandReset = header("/aach reset cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-reset"))));
+        langCommandResetHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-reset-hover")));
+        langCommandCheck = header("/aach check cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-check"))));
+        langCommandCheckHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-check-hover")));
+        langCommandDelete = header("/aach delete cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-delete"))));
+        langCommandDeleteHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-delete-hover")));
+        langCommandGrant = header("/aach grant cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-grant"))));
+        langCommandGrantHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-grant-hover")));
 
-        langTip = ChatColor.GRAY + translateColorCodes(langConfig.getString("aach-tip"));
+        langTip = translateColorCodes(langConfig.getString("aach-tip")).colorIfAbsent(NamedTextColor.GRAY);
     }
 
-    private @NonNull String header(String command) {
-        return pluginHeader.toString() + configColor + command + ChatColor.GRAY + " > ";
+    private @NonNull TextComponent header(String command) {
+        return Component.text().append(LegacyComponentSerializer.legacySection().deserialize(pluginHeader.toString())).append(Component.text(command, configColor)).append(Component.text(" > ", NamedTextColor.GRAY)).build();
     }
 
     @Override
     void onExecute(@NonNull CommandSender sender, String[] args) {
-        // Header.
-        sender.sendMessage(configColor + "------------ " + configIcon + translateColorCodes(" &lAdvanced Achievements ") + configColor + configIcon + configColor + " ------------");
+        sender.sendMessage(Component.text().append(Component.text("------------ " + configIcon + " ", configColor)).append(Component.text("Advanced Achievements", configColor).decorate(TextDecoration.BOLD)).append(Component.text(" " + configIcon + " ------------", configColor)).build());
 
         if (sender.hasPermission("achievement.list")) {
             sendJsonClickableHoverableMessage(sender, langCommandList, "/aach list", langCommandListHover);
         }
-
         if (sender.hasPermission("achievement.top")) {
             sendJsonClickableHoverableMessage(sender, langCommandTop, "/aach top", langCommandTopHover);
         }
-
         sendJsonClickableHoverableMessage(sender, langCommandInfo, "/aach info", langCommandInfoHover);
-
         if (sender.hasPermission("achievement.book")) {
             sendJsonClickableHoverableMessage(sender, langCommandBook, "/aach book", langCommandBookHover);
         }
-
         if (sender.hasPermission("achievement.week")) {
             sendJsonClickableHoverableMessage(sender, langCommandWeek, "/aach week", langCommandWeekHover);
         }
-
         if (sender.hasPermission("achievement.stats")) {
             sendJsonClickableHoverableMessage(sender, langCommandStats, "/aach stats", langCommandStatsHover);
         }
-
         if (sender.hasPermission("achievement.month")) {
             sendJsonClickableHoverableMessage(sender, langCommandMonth, "/aach month", langCommandMonthHover);
         }
-
         if (sender.hasPermission("achievement.toggle")) {
             sendJsonClickableHoverableMessage(sender, langCommandToggle, "/aach toggle", langCommandToggleHover);
         }
-
         if (sender.hasPermission("achievement.reload")) {
             sendJsonClickableHoverableMessage(sender, langCommandReload, "/aach reload", langCommandReloadHover);
         }
-
         if (sender.hasPermission("achievement.generate")) {
             sendJsonClickableHoverableMessage(sender, langCommandGenerate, "/aach generate", langCommandGenerateHover);
         }
-
         if (sender.hasPermission("achievement.inspect")) {
             sendJsonClickableHoverableMessage(sender, langCommandInspect, "/aach inspect ach", langCommandInspectHover);
         }
-
         if (sender.hasPermission("achievement.give")) {
             sendJsonClickableHoverableMessage(sender, langCommandGive, "/aach give ach name", langCommandGiveHover);
         }
-
         if (sender.hasPermission("achievement.add")) {
             sendJsonClickableHoverableMessage(sender, langCommandAdd, "/aach add x cat name", langCommandAddHover);
         }
-
         if (sender.hasPermission("achievement.reset")) {
             sendJsonClickableHoverableMessage(sender, langCommandReset, "/aach reset cat name", langCommandResetHover);
         }
-
         if (sender.hasPermission("achievement.check")) {
             sendJsonClickableHoverableMessage(sender, langCommandCheck, "/aach check ach name", langCommandCheckHover);
         }
-
         if (sender.hasPermission("achievement.delete")) {
             sendJsonClickableHoverableMessage(sender, langCommandDelete, "/aach delete ach name", langCommandDeleteHover);
         }
-
         if (sender.hasPermission("achievement.grant")) {
             sendJsonClickableHoverableMessage(sender, langCommandGrant, "/aach grant ach name", langCommandGrantHover);
         }
 
-        // Empty line.
-        sender.sendMessage(configColor + " ");
-
+        sender.sendMessage(Component.text(" "));
         sender.sendMessage(langTip);
     }
 
@@ -198,15 +185,14 @@ public class HelpCommand extends AbstractCommand {
      * Sends a packet message to the server in order to display a clickable and hoverable message. A suggested command
      * is displayed in the chat when clicked on, and an additional help message appears when a command is hovered.
      *
-     * @param sender
-     * @param message
-     * @param command
-     * @param hover
+     * @param sender sender
+     * @param message message
+     * @param command command
+     * @param hover hover
      */
-    private void sendJsonClickableHoverableMessage(CommandSender sender, String message, String command, String hover) {
-        // Send clickable and hoverable message if sender is a player.
-        if (sender instanceof Player) {
-            fancyMessageSender.sendHoverableCommandMessage((Player) sender, message, command, hover, configColor.name().toLowerCase());
+    private void sendJsonClickableHoverableMessage(CommandSender sender, TextComponent message, String command, TextComponent hover) {
+        if (sender instanceof Player player) {
+            fancyMessageSender.sendHoverableCommandMessage(player, message, command, hover);
         } else {
             sender.sendMessage(message);
         }

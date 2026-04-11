@@ -64,8 +64,8 @@ SoundRanking: entity_firework_rocket_blast
 # Icon of the plugin (default: shamrock, \u2618).
 Icon: \u2618
 
-# Main color of the plugin (default: 5, dark purple).
-Color: 5
+# Main color of the plugin (default: DARK_PURPLE).
+Color: DARK_PURPLE
 
 # Notify other connected players when an achievement is received. This defines the default behaviour, players can
 # override what they see by using /aach toggle.

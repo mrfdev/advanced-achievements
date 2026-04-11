@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.pagination.CommandPagination;
 import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.achievement.utils.StringHelper;
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -39,7 +40,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     private final AbstractDatabaseManager databaseManager;
     private final SoundPlayer soundPlayer;
 
-    private ChatColor configColor;
+    private NamedTextColor configColor;
     private int configTopList;
     private boolean configAdditionalEffects;
     private boolean configSound;
@@ -52,8 +53,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     private List<Integer> cachedAchievementCounts;
     private long lastCacheUpdate = 0L;
 
-    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
-                           Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.logger = logger;
         this.languageKey = languageKey;
@@ -64,8 +64,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
-        configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+        configColor = ColorHelper.configColor();
         configTopList = mainConfig.getInt("TopList");
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
@@ -110,8 +109,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
                 if (playerRank <= configTopList) {
                     launchEffects((Player) sender);
                 }
-                sender.sendMessage(
-                        langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedSortedRankings.size());
+                sender.sendMessage(langPlayerRank + playerRank + NamedTextColor.GRAY + "/" + configColor + cachedSortedRankings.size());
             }
         }
     }
@@ -127,9 +125,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
             String playerName = Bukkit.getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
             if (playerName != null) {
                 // Color the name of the player if he is in the top list.
-                ChatColor color = playerName.equals(sender.getName()) ? configColor : ChatColor.GRAY;
-                rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - "
-                        + ranking.getValue());
+                NamedTextColor color = playerName.equals(sender.getName()) ? configColor : NamedTextColor.GRAY;
+                rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
             } else {
                 logger.warning("Ranking command: could not find player's name using a database UUID.");
             }
@@ -145,8 +142,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     /**
      * Returns a UTF-8 circled number based on the player's rank.
      *
-     * @param rank
-     * @return an UTF-8 string corresponding to the rank
+     * @param rank rank
+     * @return a UTF-8 string corresponding to the rank
      */
     private String getRankingSymbol(int rank) {
         int decimalRankSymbol;
@@ -172,7 +169,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     /**
      * Launches sound and particle effects if player is in a top list.
      *
-     * @param player
+     * @param player player
      */
     private void launchEffects(Player player) {
         if (configAdditionalEffects) {

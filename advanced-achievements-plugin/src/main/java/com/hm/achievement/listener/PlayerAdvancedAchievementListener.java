@@ -27,8 +27,10 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.apache.commons.lang3.EnumUtils;
@@ -197,8 +199,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * Displays chat messages, screen title and launches a firework when a player
      * receives an achievement.
      *
-     * @param player
-     * @param achievement
+     * @param player player
+     * @param achievement achievement
      */
     private void displayAchievement(@NonNull Player player, @NonNull Achievement achievement) {
         logger.info("Player " + player.getName() + " received the achievement: " + achievement.getDisplayName());
@@ -248,23 +250,24 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * can display a single hoverable
      * message or several messages one after the other.
      *
-     * @param player
-     * @param nameToShowUser
-     * @param messageToShowUser
-     * @param rewards
+     * @param player            player
+     * @param nameToShowUser    name shown to user
+     * @param messageToShowUser message shown to user
+     * @param rewards           rewards
      */
     private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser, @NonNull List<Reward> rewards) {
         List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
         String message = langAchievementNew.contains("ACH") ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser}) : langAchievementNew + nameToShowUser;
         if (configHoverableReceiverChatText) {
-            StringBuilder hover = new StringBuilder(applyPrefix(messageToShowUser + "\n"));
-            chatMessages.forEach(t -> hover.append(applyPrefix(ChatColor.translateAlternateColorCodes('&', t))).append("\n"));
-            fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), hover.substring(0, hover.length() - 1), "white");
+            TextComponent messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(message));
+            TextComponent.Builder hoverBuilder = Component.text().append(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(messageToShowUser)));
+            chatMessages.forEach(t -> hoverBuilder.append(Component.newline()).append(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(t))));
+            fancyMessageSender.sendHoverableMessage(player, messageComponent, hoverBuilder.build());
             return;
         }
-        player.sendMessage(applyPrefix(message));
-        player.sendMessage(pluginHeader.toString() + ChatColor.WHITE + applyPrefix(messageToShowUser));
-        chatMessages.forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
+        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(message)));
+        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(messageToShowUser)).colorIfAbsent(NamedTextColor.WHITE));
+        chatMessages.forEach(t -> player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(t))));
     }
 
     /**

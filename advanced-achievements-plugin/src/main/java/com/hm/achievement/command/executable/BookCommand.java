@@ -9,8 +9,6 @@ import com.hm.achievement.utils.SoundPlayer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,10 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
@@ -30,6 +28,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of handling the /aach book command, which creates and gives a
@@ -42,19 +41,9 @@ import org.bukkit.inventory.meta.BookMeta;
 @CommandSpec(name = "book", permission = "book", minArgs = 1, maxArgs = 1)
 public class BookCommand extends AbstractCommand implements Cleanable {
 
-    // Strings related to Reflection.
-    private static final String PACKAGE_INVENTORY = "inventory";
-    private static final String PACKAGE_UTIL = "util";
-    private static final String CLASS_CRAFT_META_BOOK = "CraftMetaBook";
-    private static final String CLASS_CRAFT_CHAT_MESSAGE = "CraftChatMessage";
-    private static final String FIELD_PAGES = "pages";
-    private static final String METHOD_FROM_STRING = "fromString";
-
     // Corresponds to times at which players have received their books. Cooldown
     // structure.
     private final HashMap<UUID, Long> playersBookTime = new HashMap<>();
-    private final Logger logger;
-    private final int serverVersion;
     private final AbstractDatabaseManager databaseManager;
     private final SoundPlayer soundPlayer;
     private final AchievementMap achievementMap;
@@ -66,16 +55,14 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     private String configSoundBook;
     private String langBookDelay;
     private String langBookNotReceived;
-    private String langBookDate;
+    private TextComponent langBookDate;
     private String langBookName;
     private String langBookReceived;
     private DateFormat dateFormat;
 
     @Inject
-    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, Logger logger, int serverVersion, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer, AchievementMap achievementMap) {
+    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
-        this.logger = logger;
-        this.serverVersion = serverVersion;
         this.databaseManager = databaseManager;
         this.soundPlayer = soundPlayer;
         this.achievementMap = achievementMap;
@@ -92,7 +79,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
         langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[]{"TIME"}, new String[]{Integer.toString(configTimeBook / 1000)});
         langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
-        langBookDate = translateColorCodes("&8" + langConfig.getString("book-date"));
+        langBookDate = translateColorCodes(langConfig.getString("book-date")).colorIfAbsent(NamedTextColor.DARK_GRAY);
         langBookName = langConfig.getString("book-name");
         langBookReceived = pluginHeader + langConfig.getString("book-received");
 
@@ -137,29 +124,27 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     /**
      * Constructs the pages of a book.
      *
-     * @param achievements
-     * @param player
+     * @param achievements achievements
+     * @param player player
      */
-    private void fillBook(List<AwardedDBAchievement> achievements, Player player) {
+    private void fillBook(@NonNull List<AwardedDBAchievement> achievements, Player player) {
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-        List<String> bookPages = new ArrayList<>(achievements.size());
+        List<Component> bookPages = new ArrayList<>(achievements.size());
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
-
         for (AwardedDBAchievement awardedAchievement : achievements) {
             Achievement achievement = achievementMap.getForName(awardedAchievement.name());
             if (achievement != null) {
                 String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator + achievement.getMessage() + configBookSeparator + awardedAchievement.formattedDate();
-                currentAchievement = translateColorCodes(currentAchievement);
-                bookPages.add(currentAchievement);
+                bookPages.add(translateColorCodes(currentAchievement));
             }
         }
 
         // Set the pages and other elements of the book (author, title and date of
         // reception).
-        setBookPages(bookPages, bookMeta);
+        bookMeta.addPages(bookPages.toArray(new Component[0]));
         bookMeta.setAuthor(player.getName());
         bookMeta.setTitle(langBookName);
-        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(langBookDate, new String[]{"DATE"}, new String[]{dateFormat.format(System.currentTimeMillis())}))));
+        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(String.valueOf(langBookDate), new String[]{"DATE"}, new String[]{dateFormat.format(System.currentTimeMillis())}))));
         book.setItemMeta(bookMeta);
 
         // Check whether player has room in his inventory, else drop book on the ground.
@@ -175,10 +160,10 @@ public class BookCommand extends AbstractCommand implements Cleanable {
      * Checks if player hasn't done a command too recently (with "too recently"
      * being defined in configuration file).
      *
-     * @param player
+     * @param player player
      * @return whether a player is authorised to perform the list command
      */
-    private boolean isInCooldownPeriod(Player player) {
+    private boolean isInCooldownPeriod(@NonNull Player player) {
         // Player bypasses cooldown if he has full plugin permissions.
         if (player.hasPermission("achievement.*") || configTimeBook == 0) {
             return false;
@@ -190,42 +175,5 @@ public class BookCommand extends AbstractCommand implements Cleanable {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Adds pages to the BookMeta. A Spigot commit in the late days of Minecraft
-     * 1.11.2 started enforcing extremely low
-     * limits (why? If it's not broken, don't fix it.), with books limited in page
-     * size and total number of pages, as
-     * well as title length. This function bypasses such limits and restores the
-     * original CraftBukkit behaviour. See
-     * <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/4acd0f49e07e0912096e79494472535baf0db2ab">...</a>
-     * for more information.
-     *
-     * @param bookPages
-     * @param bookMeta
-     */
-    @SuppressWarnings({"unchecked", "deprecation"})
-    private void setBookPages(List<String> bookPages, BookMeta bookMeta) {
-        if (serverVersion <= 15) {
-            try {
-                // Code we're trying to execute:
-                // this.pages.add(CraftChatMessage.fromString(page, true)[0]); in
-                // CraftMetaBook.java.
-                String versionIdentifier = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-                Class<?> craftMetaBookClass = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "." + PACKAGE_INVENTORY + "." + CLASS_CRAFT_META_BOOK);
-                List<Object> pages = (List<Object>) craftMetaBookClass.getField(FIELD_PAGES).get(craftMetaBookClass.cast(bookMeta));
-                Method fromStringMethod = Class.forName("org.bukkit.craftbukkit." + versionIdentifier + "." + PACKAGE_UTIL + "." + CLASS_CRAFT_CHAT_MESSAGE).getMethod(METHOD_FROM_STRING, String.class, boolean.class);
-                for (String bookPage : bookPages) {
-                    pages.add(((Object[]) fromStringMethod.invoke(null, bookPage, true))[0]);
-                }
-            } catch (ClassNotFoundException | InvocationTargetException | SecurityException | NoSuchMethodException |
-                     NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-                logger.warning("Error while creating book pages. Your achievements book may be trimmed down to 50 pages.");
-                bookMeta.setPages(bookPages);
-            }
-        } else {
-            bookMeta.setPages(bookPages);
-        }
     }
 }
