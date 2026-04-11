@@ -20,7 +20,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -277,9 +276,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
     /**
      * Gets the type of the firework, which can either be predefined or random.
+     * Can be set to random via the config
      *
      * @return the firework type.
      */
+    @SuppressWarnings("unused")
     private Type getFireworkType() {
         if ("RANDOM".equals(configFireworkStyle)) {
             Type[] fireworkTypes = Type.values();
