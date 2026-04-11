@@ -61,8 +61,7 @@ public class MainGUI implements Reloadable {
     public void extractConfigurationParameters() {
         configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
         configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
-
-        langListGUITitle = Component.text(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("list-gui-title"))));
+        langListGUITitle = Component.text(Objects.requireNonNull(langConfig.getString("list-gui-title")));
         langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
         langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
     }

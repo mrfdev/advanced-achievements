@@ -55,13 +55,9 @@ class PlayerAdvancedAchievementListenerTest {
         AchievementMap achievementMap = new AchievementMap();
         achievementMap.put(new AchievementBuilder().name("connect_1").displayName("Good Choice").build());
         achievementMap.put(new AchievementBuilder().name("place_500_smooth_brick").displayName("Stone Brick Layer").build());
-        YamlConfiguration mainConfig = YamlConfiguration
-                .loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml"))));
-        YamlConfiguration langConfig = YamlConfiguration
-                .loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml"))));
-        PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class),
-                new StringBuilder(PLUGIN_HEADER), new CacheManager(plugin, abstractDatabaseManager), plugin, null,
-                achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
+        YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml"))));
+        YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml"))));
+        PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), new StringBuilder(PLUGIN_HEADER), new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
         underTest.extractConfigurationParameters();
         when(player.getUniqueId()).thenReturn(PLAYER_UUID);
         when(player.getName()).thenReturn("DarkPyves");
@@ -70,14 +66,8 @@ class PlayerAdvancedAchievementListenerTest {
         Set<String> receivedAchievements = new HashSet<>();
         receivedAchievements.add("connect_1");
         when(abstractDatabaseManager.getPlayerAchievementNames(PLAYER_UUID)).thenReturn(receivedAchievements);
-        Achievement achievement = new AchievementBuilder()
-                .name("connect_1")
-                .displayName("Good Choice")
-                .message("Connected for the first time!")
-                .build();
-
+        Achievement achievement = new AchievementBuilder().name("connect_1").displayName("Good Choice").message("Connected for the first time!").build();
         underTest.onPlayerAdvancedAchievementReception(new PlayerAdvancedAchievementEvent(player, achievement));
-
         verify(abstractDatabaseManager).registerAchievement(eq(PLAYER_UUID), eq("connect_1"), anyLong());
     }
 

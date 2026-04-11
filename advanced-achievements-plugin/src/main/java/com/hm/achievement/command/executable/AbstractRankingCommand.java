@@ -64,7 +64,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        configColor = ColorHelper.configColor();
+        configColor = ColorHelper.configColor(mainConfig);
         configTopList = mainConfig.getInt("TopList");
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");

@@ -76,9 +76,7 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
-        String colorValue = mainConfig.getString("Color", "DARK_PURPLE");
-        configColor = ColorHelper.configColor();
+        configColor = ColorHelper.configColor(mainConfig);
         configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
 
         langCommandList = header("/aach list").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-list"))));

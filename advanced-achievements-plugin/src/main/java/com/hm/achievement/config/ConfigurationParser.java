@@ -81,7 +81,6 @@ public class ConfigurationParser {
         backupAndLoadConfiguration("config.yml", "config.yml", mainConfig);
         backupAndLoadConfiguration("lang.yml", mainConfig.getString("LanguageFileName"), langConfig);
         backupAndLoadConfiguration("gui.yml", "gui.yml", guiConfig);
-        ColorHelper.setMainConfig(mainConfig);
         parseHeader();
         parseDisabledCategories();
         parseAchievements();
@@ -144,7 +143,7 @@ public class ConfigurationParser {
         pluginHeader.setLength(0);
         String icon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         if (StringUtils.isNotBlank(icon)) {
-            String coloredIcon = LegacyComponentSerializer.legacySection().serialize(Component.text(icon, ColorHelper.configColor()));
+            String coloredIcon = LegacyComponentSerializer.legacySection().serialize(Component.text(icon, ColorHelper.configColor(mainConfig)));
             String rawHeader = Strings.CS.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon);
             Component header = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(rawHeader));
             pluginHeader.append(LegacyComponentSerializer.legacySection().serialize(header)).append(" ");

@@ -64,8 +64,15 @@ SoundRanking: entity_firework_rocket_blast
 # Icon of the plugin (default: shamrock, \u2618).
 Icon: \u2618
 
-# Main color of the plugin (default: DARK_PURPLE).
+# Main color of the plugin for chat messages and information (default: DARK_PURPLE).
+# https://jd.advntr.dev/api/4.26.1/net/kyori/adventure/text/format/NamedTextColor.html
 Color: DARK_PURPLE
+
+# Color used for not yet received achievements in /aach list (default: DARK_GRAY).
+ListColorNotReceived: DARK_GRAY
+
+# Color used for the firework and fade when you get an achievement (default: DARK_PURPLE).
+FireworkColor: DARK_PURPLE
 
 # Notify other connected players when an achievement is received. This defines the default behaviour, players can
 # override what they see by using /aach toggle.
@@ -217,9 +224,6 @@ EnrichedListProgressBars: true
 
 # Annotate each achievement displayed in a /aach list category with a number.
 NumberedItemsInList: false
-
-# Color used for not yet received achievements in /aach list.
-ListColorNotReceived: 8
 
 # Italicise not yet received achievements in /aach list. Obfuscated achievements are not affected.
 ListItaliciseNotReceived: true

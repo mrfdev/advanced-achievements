@@ -55,7 +55,7 @@ public class StatsCommand extends AbstractCommand {
         super.extractConfigurationParameters();
 
         // Load configuration parameters.
-        configColor = ColorHelper.parseColor(mainConfig.getString("Color"));
+        configColor = ColorHelper.configColor(mainConfig);
         configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");

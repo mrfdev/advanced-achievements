@@ -20,9 +20,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -66,33 +65,11 @@ import org.jspecify.annotations.NonNull;
  *
  * @author Pyves
  */
-@SuppressWarnings("deprecation")
 @Singleton
 public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
 
     private static final Random RANDOM = new Random();
     private static final String ADVANCED_ACHIEVEMENTS_FIREWORK = "advanced_achievements_firework";
-    private static final Map<NamedTextColor, NamedTextColor> FIREWORK_COLOR_MIX = new HashMap<>();
-
-    static {
-        FIREWORK_COLOR_MIX.put(NamedTextColor.AQUA, NamedTextColor.DARK_AQUA);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.BLACK, NamedTextColor.GRAY);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.BLUE, NamedTextColor.DARK_BLUE);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.GRAY, NamedTextColor.DARK_GRAY);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_AQUA, NamedTextColor.AQUA);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_BLUE, NamedTextColor.BLUE);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_GRAY, NamedTextColor.GRAY);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_GREEN, NamedTextColor.GREEN);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_PURPLE, NamedTextColor.LIGHT_PURPLE);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.DARK_RED, NamedTextColor.RED);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.GOLD, NamedTextColor.YELLOW);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.GREEN, NamedTextColor.DARK_GREEN);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.LIGHT_PURPLE, NamedTextColor.DARK_PURPLE);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.RED, NamedTextColor.DARK_RED);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.WHITE, NamedTextColor.GRAY);
-        FIREWORK_COLOR_MIX.put(NamedTextColor.YELLOW, NamedTextColor.GOLD);
-    }
-
     private final YamlConfiguration mainConfig;
     private final YamlConfiguration langConfig;
     private final Logger logger;
@@ -104,12 +81,13 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private final AbstractDatabaseManager databaseManager;
     private final ToggleCommand toggleCommand;
     private final FancyMessageSender fancyMessageSender;
-
     private String configFireworkStyle;
+    private String langAchievementReceived;
+    private String langAchievementNew;
+    private String langAllAchievementsReceived;
+    private String langBossBarProgress;
+    private NamedTextColor configFireworkColor;
     private boolean configFirework;
-    private Color configColor;
-    private Color mixColor;
-    private BarColor barColor;
     private boolean configSimplifiedReception;
     private boolean configTitleScreen;
     private boolean configNotifyOtherPlayers;
@@ -117,11 +95,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private boolean configHoverableReceiverChatText;
     private boolean configReceiverChatMessages;
     private boolean configBossBarProgress;
-
-    private String langAchievementReceived;
-    private String langAchievementNew;
-    private String langAllAchievementsReceived;
-    private String langBossBarProgress;
 
     @Inject
     public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
@@ -146,6 +119,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: " + "ball_large, ball, burst, creeper, star or random.");
         }
         configFirework = mainConfig.getBoolean("Firework");
+        configFireworkColor = ColorHelper.configFireworkColor(mainConfig);
         configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception");
         configTitleScreen = mainConfig.getBoolean("TitleScreen");
         configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
@@ -153,11 +127,6 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
         configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
         configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
-        NamedTextColor chatColor = ColorHelper.parseColor(Objects.requireNonNull(mainConfig.getString("Color")));
-        configColor = ColorHelper.convertChatColorToColor(Objects.requireNonNull(chatColor));
-        mixColor = Color.WHITE.mixColors(ColorHelper.convertChatColorToColor(FIREWORK_COLOR_MIX.get(chatColor)));
-        barColor = ColorHelper.convertChatColorToBarColor(chatColor);
-
         langAchievementReceived = langConfig.getString("achievement-received") + " " + ChatColor.WHITE;
         langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
         langAllAchievementsReceived = pluginHeader + langConfig.getString("all-achievements-received");
@@ -199,7 +168,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * Displays chat messages, screen title and launches a firework when a player
      * receives an achievement.
      *
-     * @param player player
+     * @param player      player
      * @param achievement achievement
      */
     private void displayAchievement(@NonNull Player player, @NonNull Achievement achievement) {
@@ -238,7 +207,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             int totalAmount = achievementMap.getAll().size();
             double progress = ((double) receivedAmount) / totalAmount;
             String message = StringUtils.replaceEach(langBossBarProgress, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
-            BossBar bossBar = Bukkit.getServer().createBossBar(message, barColor, BarStyle.SOLID);
+            BossBar bossBar = Bukkit.getServer().createBossBar(message, BarColor.PURPLE, BarStyle.SOLID);
             bossBar.setProgress(progress);
             Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
             Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
@@ -298,7 +267,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         Location location = player.getLocation().subtract(0, 1, 0);
         Firework firework = player.getWorld().spawn(location, Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
-        FireworkEffect fireworkEffect = FireworkEffect.builder().withColor(configColor).withFade(mixColor).with(getFireworkType()).build();
+        Color fireworkColor = Color.fromRGB(configFireworkColor.red(), configFireworkColor.green(), configFireworkColor.blue());
+        FireworkEffect fireworkEffect = FireworkEffect.builder().withColor(fireworkColor).withFade(fireworkColor).build();
         fireworkMeta.addEffects(fireworkEffect);
         firework.setFireworkMeta(fireworkMeta);
         firework.setMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK, new FixedMetadataValue(advancedAchievements, true));

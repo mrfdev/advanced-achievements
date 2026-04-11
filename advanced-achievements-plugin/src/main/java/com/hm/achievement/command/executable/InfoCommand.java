@@ -52,7 +52,7 @@ public class InfoCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        NamedTextColor configColor = ColorHelper.parseColor(Objects.requireNonNull(mainConfig.getString("Color")));
+        NamedTextColor configColor = ColorHelper.configColor(mainConfig);
         String configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configDatabaseType = mainConfig.getString("DatabaseType");
 
