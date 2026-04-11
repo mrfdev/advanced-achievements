@@ -162,7 +162,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <finalName>advanced-achievements-plugin-${project.version}</finalName>
+                            <finalName>advanced-achievements-${project.version}</finalName>
                             <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
