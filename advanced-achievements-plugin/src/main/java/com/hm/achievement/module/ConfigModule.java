@@ -27,6 +27,13 @@ public class ConfigModule {
 
     @Provides
     @Singleton
+    // TODO: Convert all to component
+    StringBuilder provideLegacyPluginHeader() {
+        return new StringBuilder();
+    }
+
+    @Provides
+    @Singleton
     @Named("main")
     YamlConfiguration providesMainConfig() {
         return new YamlConfiguration();
