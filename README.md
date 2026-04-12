@@ -7,7 +7,7 @@
 
 Custom fork for Minecraft server 1MoreBlock.com
 
-Recent changes include java 25+, 26.1.2, and removing deprecated ChatColor methods in favour of Adventure Components.
+Recent changes include Java 25, 26.1.2, and removing deprecated ChatColor methods in favour of Adventure Components.
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can,
 earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an
