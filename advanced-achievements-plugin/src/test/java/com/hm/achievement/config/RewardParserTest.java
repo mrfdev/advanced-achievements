@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -67,13 +68,11 @@ class RewardParserTest {
     void shouldParseMoneyRewardSingular() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-1.yml")).toURI()).toFile());
         when(economy.currencyNameSingular()).thenReturn("coin");
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 1 coin"), reward.listTexts());
-        assertEquals(List.of("You received: 1 coin!"), reward.chatTexts());
+        assertEquals(List.of("You received: 1 coin!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(economy).depositPlayer(player, 1);
     }
@@ -82,13 +81,11 @@ class RewardParserTest {
     void shouldParseMoneyRewardPlural() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/money-2.yml")).toURI()).toFile());
         when(economy.currencyNamePlural()).thenReturn("coins");
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 2 coins"), reward.listTexts());
-        assertEquals(List.of("You received: 2 coins!"), reward.chatTexts());
+        assertEquals(List.of("You received: 2 coins!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(economy).depositPlayer(player, 2);
     }
@@ -101,13 +98,11 @@ class RewardParserTest {
         when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
         when(player.getWorld()).thenReturn(world);
         when(world.getName()).thenReturn("Nether");
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
-        assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts());
+        assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         TextComponent expectedCommand = Component.text("teleport Pyves");
         String expectedRaw = PlainTextComponentSerializer.plainText().serialize(expectedCommand);
@@ -122,14 +117,11 @@ class RewardParserTest {
         when(player.getLocation()).thenReturn(new Location(world, 1, 5, 8));
         when(player.getWorld()).thenReturn(world);
         when(world.getName()).thenReturn("Nether");
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(Arrays.asList("display 1", "display 2"), reward.listTexts());
-        assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"),
-                reward.chatTexts());
+        assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         TextComponent exec1 = Component.text("execute 1");
         TextComponent exec2 = Component.text("execute 2");
@@ -142,13 +134,11 @@ class RewardParserTest {
     @Test
     void shouldParseExperienceReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/experience.yml")).toURI()).toFile());
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 500 experience"), reward.listTexts());
-        assertEquals(List.of("You received: 500 experience!"), reward.chatTexts());
+        assertEquals(List.of("You received: 500 experience!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).giveExp(500);
     }
@@ -160,13 +150,11 @@ class RewardParserTest {
         AttributeInstance healthAttribute = Mockito.mock(AttributeInstance.class);
         when(player.getAttribute(any())).thenReturn(healthAttribute);
         when(healthAttribute.getBaseValue()).thenReturn(1.0);
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("increase max health by 2"), reward.listTexts());
-        assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts());
+        assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).getAttribute(Attribute.MAX_HEALTH);
         verify(healthAttribute).setBaseValue(3.0);
@@ -176,15 +164,12 @@ class RewardParserTest {
     void shouldParseMaxOxygenReward() throws URISyntaxException, IOException, InvalidConfigurationException {
         mainConfig.load(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("reward-parser/max-oxygen.yml")).toURI()).toFile());
         when(player.getMaximumAir()).thenReturn(5);
-
         List<Reward> rewards = underTest.parseRewards("Reward");
-
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("increase max oxygen by 10"), reward.listTexts());
-        assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts());
+        assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).setMaximumAir(15);
     }
-
 }

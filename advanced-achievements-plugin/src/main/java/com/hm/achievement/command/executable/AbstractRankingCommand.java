@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
@@ -86,7 +88,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
         sender.sendMessage(langPeriodAchievement);
 
-        List<String> rankingMessages = getRankingMessages(sender);
+        List<Component> rankingMessages = getRankingMessages(sender);
 
         // If config has top set at less than one page, don't use pagination.
         if (configTopList < PER_PAGE) {
@@ -114,27 +116,22 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
         }
     }
 
-    private int getPage(String[] args) {
+    private int getPage(String @NonNull [] args) {
         return args.length > 1 && NumberUtils.isDigits(args[1]) ? Integer.parseInt(args[1]) : 1;
     }
 
-    private List<String> getRankingMessages(CommandSender sender) {
-        List<String> rankingMessages = new ArrayList<>();
+    private @NonNull List<Component> getRankingMessages(CommandSender sender) {
+        List<Component> rankingMessages = new ArrayList<>();
         int currentRank = 1;
         for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
             String playerName = Bukkit.getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
             if (playerName != null) {
-                // Color the name of the player if he is in the top list.
+                // Colour the name of the player if he is in the top list.
                 NamedTextColor color = playerName.equals(sender.getName()) ? configColor : NamedTextColor.GRAY;
-                rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue());
-            } else {
-                logger.warning("Ranking command: could not find player's name using a database UUID.");
-            }
-
+                rankingMessages.add(Component.text(" " + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue()).color(color));
+            } else logger.warning("Ranking command: could not find player's name using a database UUID.");
             ++currentRank;
-            if (currentRank > configTopList) {
-                break;
-            }
+            if (currentRank > configTopList) break;
         }
         return rankingMessages;
     }
@@ -172,12 +169,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
      * @param player player
      */
     private void launchEffects(Player player) {
-        if (configAdditionalEffects) {
-            player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
-        }
-
-        if (configSound) {
-            soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
-        }
+        if (configAdditionalEffects) player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
+        if (configSound) soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
     }
 }

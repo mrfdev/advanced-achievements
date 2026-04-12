@@ -2,6 +2,7 @@ package com.hm.achievement.utils;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -32,7 +33,7 @@ public final class FancyMessageSender {
      * @param message The text to display in the chat.
      * @param hover   The text to display in the hover.
      */
-    public void sendHoverableMessage(@NonNull Player player, @NonNull TextComponent message, TextComponent hover) {
+    public void sendHoverableMessage(@NonNull Player player, @NonNull Component message, Component hover) {
         player.sendMessage(message.hoverEvent(HoverEvent.showText(hover)));
     }
 

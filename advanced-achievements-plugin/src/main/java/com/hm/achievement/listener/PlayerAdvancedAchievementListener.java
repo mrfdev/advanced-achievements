@@ -25,16 +25,14 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.Title.Times;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -55,7 +53,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -72,7 +70,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private final YamlConfiguration mainConfig;
     private final YamlConfiguration langConfig;
     private final Logger logger;
-    private final StringBuilder pluginHeader;
+    private final Component pluginHeader;
     private final CacheManager cacheManager;
     private final AdvancedAchievements advancedAchievements;
     private final RewardParser rewardParser;
@@ -81,10 +79,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private final ToggleCommand toggleCommand;
     private final FancyMessageSender fancyMessageSender;
     private String configFireworkStyle;
-    private String langAchievementReceived;
-    private String langAchievementNew;
-    private String langAllAchievementsReceived;
     private String langBossBarProgress;
+    private Component langAchievementReceived;
+    private Component langAchievementNew;
+    private Component langAllAchievementsReceived;
     private NamedTextColor configFireworkColor;
     private boolean configFirework;
     private boolean configSimplifiedReception;
@@ -96,7 +94,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private boolean configBossBarProgress;
 
     @Inject
-    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, StringBuilder pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
+    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, Component pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.logger = logger;
@@ -126,16 +124,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
         configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
         configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
-        langAchievementReceived = langConfig.getString("achievement-received") + " " + ChatColor.WHITE;
-        langAchievementNew = pluginHeader + langConfig.getString("achievement-new") + " " + ChatColor.WHITE;
-        langAllAchievementsReceived = pluginHeader + langConfig.getString("all-achievements-received");
+        langAchievementReceived = Component.text(Objects.requireNonNull(langConfig.getString("achievement-received"))).color(NamedTextColor.WHITE);
+        langAchievementNew = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-new"))).color(NamedTextColor.WHITE));
+        langAllAchievementsReceived = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("all-achievements-received"))));
         langBossBarProgress = langConfig.getString("boss-bar-progress");
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(@NonNull EntityDamageByEntityEvent event) {
         // Cancel damage if the firework was launched by the plugin.
-        event.setCancelled(event.getEntity().hasMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK));
+        event.setCancelled(event.getEntity().getPersistentDataContainer().has(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -173,8 +171,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private void displayAchievement(@NonNull Player player, @NonNull Achievement achievement) {
         logger.info("Player " + player.getName() + " received the achievement: " + achievement.getDisplayName());
 
-        String nameToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getDisplayName());
-        String messageToShowUser = ChatColor.translateAlternateColorCodes('&', achievement.getMessage());
+        Component nameToShowUser = Component.text(achievement.getDisplayName());
+        Component messageToShowUser = Component.text(achievement.getMessage());
 
         if (configReceiverChatMessages || player.hasPermission("achievement.config.receiver.chat.messages")) {
             displayReceiverMessages(player, nameToShowUser, messageToShowUser, achievement.getRewards());
@@ -197,7 +195,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         }
 
         if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
-            Title title = Title.title(Component.text(nameToShowUser), Component.text(messageToShowUser), Title.Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5)));
+            Title title = Title.title(nameToShowUser, messageToShowUser, Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5)));
             player.showTitle(title);
         }
 
@@ -223,19 +221,17 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param messageToShowUser message shown to user
      * @param rewards           rewards
      */
-    private void displayReceiverMessages(Player player, String nameToShowUser, String messageToShowUser, @NonNull List<Reward> rewards) {
+    private void displayReceiverMessages(Player player, Component nameToShowUser, Component messageToShowUser, @NonNull List<Reward> rewards) {
         List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
-        String message = langAchievementNew.contains("ACH") ? StringUtils.replaceEach(langAchievementNew, new String[]{"ACH"}, new String[]{nameToShowUser}) : langAchievementNew + nameToShowUser;
+        Component message = langAchievementNew.replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
         if (configHoverableReceiverChatText) {
-            TextComponent messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(message));
-            TextComponent.Builder hoverBuilder = Component.text().append(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(messageToShowUser)));
-            chatMessages.forEach(t -> hoverBuilder.append(Component.newline()).append(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(t))));
-            fancyMessageSender.sendHoverableMessage(player, messageComponent, hoverBuilder.build());
-            return;
+            Component hoverComponent = messageToShowUser;
+            for (Component t : chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).toList()) hoverComponent = hoverComponent.append(Component.newline().append(t));
+            fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), applyPrefix(hoverComponent));
         }
-        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(message)));
-        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(messageToShowUser)).colorIfAbsent(NamedTextColor.WHITE));
-        chatMessages.forEach(t -> player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(applyPrefix(t))));
+        player.sendMessage(applyPrefix(message));
+        player.sendMessage(applyPrefix(messageToShowUser).colorIfAbsent(NamedTextColor.WHITE));
+        chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).forEach(t -> player.sendMessage(applyPrefix(t)));
     }
 
     /**
@@ -245,15 +241,10 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param nameToShowUser
      * @param otherPlayer
      */
-    private void displayNotification(Player receiver, String nameToShowUser, Player otherPlayer) {
-        String message = langAchievementReceived.contains("ACH") ? StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER", "ACH"}, new String[]{receiver.getName(), nameToShowUser}) : StringUtils.replaceEach(langAchievementReceived, new String[]{"PLAYER"}, new String[]{receiver.getName()}) + nameToShowUser;
-        if (configActionBarNotify) {
-            Component actionBarMessage = Component.text(message).decorate(TextDecoration.ITALIC);
-            otherPlayer.sendActionBar(actionBarMessage);
-        } else {
-            Component regularMessage = Component.text(pluginHeader + message).decorate(TextDecoration.ITALIC);
-            otherPlayer.sendMessage(regularMessage);
-        }
+    private void displayNotification(Player receiver, Component nameToShowUser, Player otherPlayer) {
+        Component message = langAchievementReceived.replaceText(b -> b.matchLiteral("PLAYER").replacement(receiver.getName())).replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
+        if (configActionBarNotify) otherPlayer.sendActionBar(message.decorate(TextDecoration.ITALIC));
+        else otherPlayer.sendMessage(pluginHeader.append(message).decorate(TextDecoration.ITALIC));
     }
 
     /**
@@ -270,7 +261,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         FireworkEffect fireworkEffect = FireworkEffect.builder().withColor(fireworkColor).withFade(fireworkColor).build();
         fireworkMeta.addEffects(fireworkEffect);
         firework.setFireworkMeta(fireworkMeta);
-        firework.setMetadata(ADVANCED_ACHIEVEMENTS_FIREWORK, new FixedMetadataValue(advancedAchievements, true));
+        firework.getPersistentDataContainer().set(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN, true);
         firework.setVelocity(location.getDirection().multiply(0));
     }
 
@@ -315,11 +306,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
         rewards.forEach(r -> r.rewarder().accept(player));
         player.sendMessage(langAllAchievementsReceived);
-        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).forEach(t -> player.sendMessage(pluginHeader + ChatColor.translateAlternateColorCodes('&', t)));
+        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(PlainTextComponentSerializer.plainText().serialize(m), player)).forEach(t -> player.sendMessage(pluginHeader.append(t)));
     }
 
-    private String applyPrefix(String s) {
-        if (mainConfig.getBoolean("PrefixEnabled")) return "§7[AACH]§r " + s;
+    private Component applyPrefix(Component s) {
+        if (mainConfig.getBoolean("PrefixEnabled")) return Component.text("[AACH] ").color(NamedTextColor.GRAY).append(s);
         return s;
     }
 }

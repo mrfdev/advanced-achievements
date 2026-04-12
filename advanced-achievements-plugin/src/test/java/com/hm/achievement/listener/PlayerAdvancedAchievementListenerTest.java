@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PlayerAdvancedAchievementListenerTest {
 
-    private static final String PLUGIN_HEADER = "[HEADER]";
+    private static final Component PLUGIN_HEADER = Component.text("[HEADER]");
     private static final UUID PLAYER_UUID = UUID.randomUUID();
 
     @Mock
@@ -57,7 +58,7 @@ class PlayerAdvancedAchievementListenerTest {
         achievementMap.put(new AchievementBuilder().name("place_500_smooth_brick").displayName("Stone Brick Layer").build());
         YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml"))));
         YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml"))));
-        PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), new StringBuilder(PLUGIN_HEADER), new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
+        PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), PLUGIN_HEADER, new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
         underTest.extractConfigurationParameters();
         when(player.getUniqueId()).thenReturn(PLAYER_UUID);
         when(player.getName()).thenReturn("DarkPyves");

@@ -57,7 +57,7 @@ public class MainGUI implements Reloadable {
     public void extractConfigurationParameters() {
         configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
         configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
-        langListGUITitle = ColorHelper.legacySectionSignToComponent(langConfig.getString("list-gui-title"));
+        langListGUITitle = ColorHelper.convertAmpersandToComponent(langConfig.getString("list-gui-title"));
         langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
         langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
     }
@@ -120,7 +120,7 @@ public class MainGUI implements Reloadable {
                 ItemStack itemWithLore = item.clone();
                 ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
                 String amountMessage = StringUtils.replaceEach(message, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
-                List<Component> loreComponents = List.of(ColorHelper.legacyAmpersandToComponent(amountMessage));
+                List<Component> loreComponents = List.of(Component.text(amountMessage));
                 itemMetaWithLore.lore(loreComponents);
                 itemWithLore.setItemMeta(itemMetaWithLore);
                 gui.setItem(position, itemWithLore);

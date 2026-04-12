@@ -114,23 +114,23 @@ public class CategoryGUI implements Reloadable {
         configListColorNotReceivedCode = ColorHelper.namedTextColorToLegacyAmpersand(configListColorNotReceived);
         configFormatNotReceived = mainConfig.getBoolean("ListItaliciseNotReceived") ? "&o" : "";
         configBackButtonIsCategoryItem = mainConfig.getBoolean("BackButtonIsCategoryItem");
-        langListBackMessage = ColorHelper.legacyAmpersandToComponent(langConfig.getString("list-back-message"));
-        langListBackLore = ColorHelper.legacyAmpersandToComponent(langConfig.getString("list-back-lore"));
-        langListGUITitle = ColorHelper.legacyAmpersandToComponent(langConfig.getString("list-gui-title"));
+        langListBackMessage = ColorHelper.convertAmpersandToComponent(langConfig.getString("list-back-message"));
+        langListBackLore = Component.text(Objects.requireNonNull(langConfig.getString("list-back-lore")));
+        langListGUITitle = ColorHelper.convertAmpersandToComponent(langConfig.getString("list-gui-title"));
         langListAchievementReceived = StringHelper.unescapeJava(langConfig.getString("list-achievement-received"));
         langListAchievementNotReceived = StringHelper.unescapeJava(langConfig.getString("list-achievement-not-received")) + configListColorNotReceivedCode;
         String description = langConfig.getString("list-description");
-        langListDescription = Objects.requireNonNull(description).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + description);
+        langListDescription = Objects.requireNonNull(description).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + description);
         String reception = langConfig.getString("list-reception");
-        langListReception = Objects.requireNonNull(reception).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + reception);
+        langListReception = Objects.requireNonNull(reception).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + reception);
         String goal = langConfig.getString("list-goal");
-        langListGoal = Objects.requireNonNull(goal).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + goal);
+        langListGoal = Objects.requireNonNull(goal).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + goal);
         String progress = langConfig.getString("list-progress");
-        langListProgress = Objects.requireNonNull(progress).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + progress);
+        langListProgress = Objects.requireNonNull(progress).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + progress);
         String reward = langConfig.getString("list-reward");
-        langListReward = Objects.requireNonNull(reward).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + reward);
+        langListReward = Objects.requireNonNull(reward).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + reward);
         String rewards = langConfig.getString("list-rewards");
-        langListRewards = Objects.requireNonNull(rewards).isEmpty() ? Component.empty() : ColorHelper.legacyAmpersandToComponent("&7&l" + rewards);
+        langListRewards = Objects.requireNonNull(rewards).isEmpty() ? Component.empty() : ColorHelper.convertAmpersandToComponent("&7&l" + rewards);
     }
 
     /**
@@ -281,7 +281,7 @@ public class CategoryGUI implements Reloadable {
 
         String displayName = date == null ? langListAchievementNotReceived + notReceivedStyle(name, ineligibleSeriesItem) : langListAchievementReceived + name;
         ItemMeta itemMeta = achItem.getItemMeta();
-        itemMeta.displayName(ColorHelper.legacyAmpersandToComponent(displayName));
+        itemMeta.displayName(ColorHelper.convertAmpersandToComponent(displayName));
         itemMeta.lore(lore);
         achItem.setItemMeta(itemMeta);
         if (configNumberedItemsInList) {
@@ -362,19 +362,19 @@ public class CategoryGUI implements Reloadable {
 
         if (date != null) {
             if (langListDescription != Component.empty()) lore.add(langListDescription);
-            descriptions.forEach(d -> lore.add(ColorHelper.legacyAmpersandToComponent("&r&f" + d)));
+            descriptions.forEach(d -> lore.add(ColorHelper.convertAmpersandToComponent("&r&f" + d)));
             lore.add(Component.empty());
             if (langListReception != Component.empty()) lore.add(langListReception);
-            lore.add(ColorHelper.legacyAmpersandToComponent("&r&f" + date));
+            lore.add(ColorHelper.convertAmpersandToComponent("&r&f" + date));
         } else {
             if (langListGoal != Component.empty()) lore.add(langListGoal);
-            descriptions.forEach(d -> lore.add(ColorHelper.legacyAmpersandToComponent(notReceivedStyle(d, ineligibleSeriesItem))));
+            descriptions.forEach(d -> lore.add(ColorHelper.convertAmpersandToComponent(notReceivedStyle(d, ineligibleSeriesItem))));
             // Display progress if not Commands category.
             if (!configObfuscateNotReceived && statistic != NO_STAT) {
                 lore.add(Component.empty());
                 boolean timeStat = NormalAchievements.PLAYEDTIME == achievement.getCategory();
                 if (langListProgress != Component.empty()) lore.add(langListProgress);
-                lore.add(ColorHelper.legacyAmpersandToComponent(constructProgressBar(achievement.getThreshold(), statistic, timeStat)));
+                lore.add(ColorHelper.convertAmpersandToComponent(constructProgressBar(achievement.getThreshold(), statistic, timeStat)));
             }
         }
 
@@ -390,7 +390,7 @@ public class CategoryGUI implements Reloadable {
             String dot = StringHelper.unescapeJava(date == null ? configListColorNotReceivedCode + "● " + configFormatNotReceived : "&r&f● ");
             for (Reward reward : rewards) {
                 for (String listText : reward.listTexts()) {
-                    lore.add(StringHelper.replacePlayerPlaceholders(ColorHelper.legacyAmpersandToComponent(dot + listText), player));
+                    lore.add(StringHelper.replacePlayerPlaceholders(ColorHelper.convertAmpersandToComponent(dot + listText), player));
                 }
             }
         }

@@ -29,12 +29,7 @@ public class ColorHelper {
         return parseColor(mainConfig.getString("FireworkColor", "DARK_PURPLE"));
     }
 
-    // TODO: Find all of these legacy ones and make them modern so this can be removed
-    public static @NonNull Component legacySectionSignToComponent(String text) {
-        return LegacyComponentSerializer.legacySection().deserialize(text);
-    }
-
-    public static @NonNull Component legacyAmpersandToComponent(String text) {
+    public static @NonNull Component convertAmpersandToComponent(String text) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
     }
 

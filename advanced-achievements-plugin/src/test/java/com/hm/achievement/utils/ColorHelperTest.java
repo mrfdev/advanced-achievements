@@ -63,7 +63,7 @@ class ColorHelperTest {
     void namedTextColorsArePresentInIndex() {
         Index<String, NamedTextColor> namesIndex = NamedTextColor.NAMES;
         Set<String> keys = namesIndex.keys();
-        Assertions.assertTrue(keys.isEmpty(), "NAMES index should contain all expected colors");
+        Assertions.assertFalse(keys.isEmpty(), "NAMES index should contain all expected colors");
     }
 
     @Test
