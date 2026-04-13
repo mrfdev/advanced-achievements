@@ -60,8 +60,7 @@ class PluginCommandExecutorTest {
         commands.add(helpCommand);
         commands.add(listCommand);
         commands.add(argsCommand);
-        Component pluginHeader = PLUGIN_HEADER;
-        underTest = new PluginCommandExecutor(langConfig, commands, pluginHeader);
+        underTest = new PluginCommandExecutor(langConfig, commands, PLUGIN_HEADER);
         underTest.extractConfigurationParameters();
     }
 
