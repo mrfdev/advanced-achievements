@@ -3,7 +3,6 @@ package com.hm.achievement.utils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.entity.Player;
@@ -46,7 +45,7 @@ public final class FancyMessageSender {
      * @param hover   The text to display in the hover.
      */
 
-    public void sendHoverableCommandMessage(@NonNull Player player, @NonNull TextComponent message, String command, TextComponent hover) {
+    public void sendHoverableCommandMessage(@NonNull Player player, @NonNull Component message, String command, Component hover) {
         player.sendMessage(message.clickEvent(ClickEvent.runCommand(command)).hoverEvent(HoverEvent.showText(hover)));
     }
 }

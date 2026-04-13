@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -73,7 +74,7 @@ public class InspectCommand extends AbstractCommand {
         String displayName = parseAchievementName(args);
         Achievement achievement = getAchievement(displayName);
         if (achievement == null) {
-            sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement-not-recognized"), new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())}));
+            sender.sendMessage(Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("achievement-not-recognized"), new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())})))).build());
             return;
         }
         int page = getPage(args);

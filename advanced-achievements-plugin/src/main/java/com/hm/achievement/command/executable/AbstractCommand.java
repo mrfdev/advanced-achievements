@@ -2,10 +2,9 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.lifecycle.Reloadable;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
@@ -55,7 +54,12 @@ public abstract class AbstractCommand implements Reloadable {
      */
     abstract void onExecute(CommandSender sender, String[] args);
 
-    TextComponent translateColorCodes(String translate) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(translate);
+    protected Component replace(@NonNull Component component, String placeholder, String value) {
+        return component.replaceText(b -> b.matchLiteral(placeholder).replacement(value));
+    }
+
+    protected Component replace(@NonNull Component component, String @NonNull [] placeholders, String[] values) {
+        for (int i = 0; i < placeholders.length; i++) component = replace(component, placeholders[i], values[i]);
+        return component;
     }
 }

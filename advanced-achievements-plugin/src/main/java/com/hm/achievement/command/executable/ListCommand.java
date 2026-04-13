@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -33,7 +32,7 @@ public class ListCommand extends AbstractCommand {
     private final CategoryGUI categoryGUI;
     private final GUIItems guiItems;
 
-    private String langCategoryDoesNotExist;
+    private Component langCategoryDoesNotExist;
 
     @Inject
     public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
@@ -46,7 +45,7 @@ public class ListCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
+        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override
@@ -65,7 +64,7 @@ public class ListCommand extends AbstractCommand {
                 categoryGUI.displayCategoryGUI(matchingCategory.get().getValue(), player, 0);
             } else {
                 List<String> allGUICategoryNames = guiItems.getOrderedAchievementItems().keySet().stream().map(c -> c.category().toString()).collect(Collectors.toList());
-                sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"}, new String[]{categoryName, StringHelper.getClosestMatch(categoryName, allGUICategoryNames)}));
+                sender.sendMessage(replace(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"}, new String[]{categoryName, StringHelper.getClosestMatch(categoryName, allGUICategoryNames)}));
             }
         }
     }

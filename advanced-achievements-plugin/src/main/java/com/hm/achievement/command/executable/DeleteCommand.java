@@ -7,9 +7,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.Collections;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -29,14 +28,12 @@ public class DeleteCommand extends AbstractParsableCommand {
     private final AbstractDatabaseManager databaseManager;
     private final AchievementMap achievementMap;
 
-    private String langCheckAchievementFalse;
-    private String langDeleteAchievements;
-    private String langAllDeleteAchievements;
+    private Component langCheckAchievementFalse;
+    private Component langDeleteAchievements;
+    private Component langAllDeleteAchievements;
 
     @Inject
-    public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         Component pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager,
-                         AchievementMap achievementMap) {
+    public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.databaseManager = databaseManager;
@@ -47,9 +44,9 @@ public class DeleteCommand extends AbstractParsableCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        langCheckAchievementFalse = pluginHeader + langConfig.getString("check-achievements-false");
-        langDeleteAchievements = pluginHeader + langConfig.getString("delete-achievements");
-        langAllDeleteAchievements = pluginHeader + langConfig.getString("delete-all-achievements");
+        langCheckAchievementFalse = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievements-false")))).build();
+        langDeleteAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-achievements")))).build();
+        langAllDeleteAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-all-achievements")))).build();
     }
 
     @Override
@@ -59,16 +56,11 @@ public class DeleteCommand extends AbstractParsableCommand {
         if (WILDCARD.equals(achievementName)) {
             cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(), achievementMap.getAllNames());
             databaseManager.deleteAllPlayerAchievements(player.getUniqueId());
-            sender.sendMessage(Strings.CS.replace(langAllDeleteAchievements, "PLAYER", args[args.length - 1]));
+            sender.sendMessage(replace(langAllDeleteAchievements, "PLAYER", args[args.length - 1]));
         } else if (cacheManager.hasPlayerAchievement(player.getUniqueId(), achievementName)) {
-            cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(),
-                    Collections.singletonList(achievementName));
+            cacheManager.removePreviouslyReceivedAchievements(player.getUniqueId(), Collections.singletonList(achievementName));
             databaseManager.deletePlayerAchievement(player.getUniqueId(), achievementName);
-            sender.sendMessage(StringUtils.replaceEach(langDeleteAchievements, new String[]{"PLAYER", "ACH"},
-                    new String[]{args[args.length - 1], achievementName}));
-        } else {
-            sender.sendMessage(StringUtils.replaceEach(langCheckAchievementFalse, new String[]{"PLAYER", "ACH"},
-                    new String[]{args[args.length - 1], achievementName}));
-        }
+            sender.sendMessage(replace(langDeleteAchievements, new String[]{"PLAYER", "ACH"}, new String[]{args[args.length - 1], achievementName}));
+        } else sender.sendMessage(replace(langCheckAchievementFalse, new String[]{"PLAYER", "ACH"}, new String[]{args[args.length - 1], achievementName}));
     }
 }

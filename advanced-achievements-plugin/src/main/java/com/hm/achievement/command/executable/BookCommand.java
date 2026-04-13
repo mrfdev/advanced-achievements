@@ -5,6 +5,7 @@ import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.lifecycle.Cleanable;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -18,8 +19,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -55,7 +54,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     private String configSoundBook;
     private String langBookDelay;
     private String langBookNotReceived;
-    private TextComponent langBookDate;
+    private Component langBookDate;
     private String langBookName;
     private String langBookReceived;
     private DateFormat dateFormat;
@@ -79,7 +78,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
         langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[]{"TIME"}, new String[]{Integer.toString(configTimeBook / 1000)});
         langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
-        langBookDate = translateColorCodes(langConfig.getString("book-date")).colorIfAbsent(NamedTextColor.DARK_GRAY);
+        langBookDate = ColorHelper.convertAmpersandToComponent(langConfig.getString("book-date"));
         langBookName = langConfig.getString("book-name");
         langBookReceived = pluginHeader + langConfig.getString("book-received");
 
@@ -135,7 +134,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
             Achievement achievement = achievementMap.getForName(awardedAchievement.name());
             if (achievement != null) {
                 String currentAchievement = "&0" + achievement.getDisplayName() + configBookSeparator + achievement.getMessage() + configBookSeparator + awardedAchievement.formattedDate();
-                bookPages.add(translateColorCodes(currentAchievement));
+                bookPages.add(ColorHelper.convertAmpersandToComponent(currentAchievement));
             }
         }
 

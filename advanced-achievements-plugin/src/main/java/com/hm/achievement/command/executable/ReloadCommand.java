@@ -4,6 +4,7 @@ import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.exception.PluginLoadError;
 import com.hm.achievement.lifecycle.PluginLoader;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.ColorHelper;
 import dagger.Lazy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -31,13 +32,11 @@ public class ReloadCommand extends AbstractCommand {
     private final Lazy<PluginLoader> pluginLoader;
     private final Lazy<Set<Reloadable>> reloadables;
 
-    private String langConfigReloadFailed;
-    private String langConfigSuccessfullyReloaded;
+    private Component langConfigReloadFailed;
+    private Component langConfigSuccessfullyReloaded;
 
     @Inject
-    public ReloadCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         Component pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
-                         Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
+    public ReloadCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancedAchievements advancedAchievements, Logger logger, Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.logger = logger;
@@ -49,8 +48,8 @@ public class ReloadCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        langConfigReloadFailed = pluginHeader + langConfig.getString("configuration-reload-failed");
-        langConfigSuccessfullyReloaded = pluginHeader + langConfig.getString("configuration-successfully-reloaded");
+        langConfigReloadFailed = Component.text().append(pluginHeader).append(ColorHelper.convertAmpersandToComponent(langConfig.getString("configuration-reload-failed"))).build();
+        langConfigSuccessfullyReloaded = Component.text().append(pluginHeader).append(ColorHelper.convertAmpersandToComponent(langConfig.getString("configuration-successfully-reloaded"))).build();
     }
 
     /**

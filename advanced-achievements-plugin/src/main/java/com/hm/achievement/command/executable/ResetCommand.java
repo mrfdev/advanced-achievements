@@ -7,10 +7,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -30,13 +29,12 @@ public class ResetCommand extends AbstractParsableCommand {
     private final CacheManager cacheManager;
     private final AchievementMap achievementMap;
 
-    private String langResetSuccessful;
-    private String langResetAllSuccessful;
-    private String langCategoryDoesNotExist;
+    private Component langResetSuccessful;
+    private Component langResetAllSuccessful;
+    private Component langCategoryDoesNotExist;
 
     @Inject
-    public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -45,10 +43,9 @@ public class ResetCommand extends AbstractParsableCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
-        langResetSuccessful = pluginHeader + langConfig.getString("reset-successful");
-        langResetAllSuccessful = pluginHeader + langConfig.getString("reset-all-successful");
-        langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
+        langResetSuccessful = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-successful")))).build();
+        langResetAllSuccessful = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-all-successful")))).build();
+        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override
@@ -57,15 +54,12 @@ public class ResetCommand extends AbstractParsableCommand {
         Set<String> categorySubcategories = achievementMap.getCategorySubcategories();
         if (WILDCARD.equals(categoryWithSubcategory)) {
             cacheManager.resetPlayerStatistics(player.getUniqueId(), categorySubcategories);
-            sender.sendMessage(Strings.CS.replace(langResetAllSuccessful, "PLAYER", player.getName()));
+            sender.sendMessage(replace(langResetAllSuccessful, "PLAYER", player.getName()));
         } else if (categorySubcategories.contains(categoryWithSubcategory)) {
             cacheManager.resetPlayerStatistics(player.getUniqueId(), Collections.singletonList(categoryWithSubcategory));
-            sender.sendMessage(StringUtils.replaceEach(langResetSuccessful, new String[]{"CAT", "PLAYER"},
-                    new String[]{categoryWithSubcategory, player.getName()}));
+            sender.sendMessage(replace(langResetSuccessful, new String[]{"CAT", "PLAYER"}, new String[]{categoryWithSubcategory, player.getName()}));
         } else {
-            sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"},
-                    new String[]{categoryWithSubcategory,
-                            StringHelper.getClosestMatch(categoryWithSubcategory, categorySubcategories)}));
+            sender.sendMessage(replace(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"}, new String[]{categoryWithSubcategory, StringHelper.getClosestMatch(categoryWithSubcategory, categorySubcategories)}));
         }
     }
 }

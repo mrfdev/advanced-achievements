@@ -10,6 +10,7 @@ import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class in charge of increase a statistic of an achievement by command.
@@ -35,14 +37,12 @@ public class AddCommand extends AbstractParsableCommand {
     private final CacheManager cacheManager;
     private final StatisticIncreaseHandler statisticIncreaseHandler;
     private final AchievementMap achievementMap;
-    private String langErrorValue;
-    private String langStatisticIncreased;
-    private String langCategoryDoesNotExist;
+    private Component langErrorValue;
+    private Component langStatisticIncreased;
+    private Component langCategoryDoesNotExist;
 
     @Inject
-    public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                      Component pluginHeader, AbstractDatabaseManager databaseManager, CacheManager cacheManager,
-                      StatisticIncreaseHandler statisticIncreaseHandler, AchievementMap achievementMap) {
+    public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AbstractDatabaseManager databaseManager, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.databaseManager = databaseManager;
         this.cacheManager = cacheManager;
@@ -54,15 +54,15 @@ public class AddCommand extends AbstractParsableCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        langErrorValue = pluginHeader + langConfig.getString("error-value");
-        langStatisticIncreased = pluginHeader + langConfig.getString("statistic-increased");
-        langCategoryDoesNotExist = pluginHeader + langConfig.getString("category-does-not-exist");
+        langErrorValue = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("error-value")))).build();
+        langStatisticIncreased = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("statistic-increased")))).build();
+        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override
-    void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
+    void onExecuteForPlayer(CommandSender sender, String @NonNull [] args, Player player) {
         if (!NumberUtils.isCreatable(args[1])) {
-            sender.sendMessage(StringUtils.replaceEach(langErrorValue, new String[]{"VALUE"}, new String[]{args[1]}));
+            sender.sendMessage(replace(langErrorValue, "VALUE", args[1]));
             return;
         }
 
@@ -90,11 +90,9 @@ public class AddCommand extends AbstractParsableCommand {
                 }
                 statisticIncreaseHandler.checkThresholdsAndAchievements(player, category, amount);
             }
-            sender.sendMessage(StringUtils.replaceEach(langStatisticIncreased, new String[]{"ACH", "AMOUNT", "PLAYER"},
-                    new String[]{args[2], args[1], args[3]}));
+            sender.sendMessage(replace(langStatisticIncreased, new String[]{"ACH", "AMOUNT", "PLAYER"}, new String[]{args[2], args[1], args[3]}));
         } else {
-            sender.sendMessage(StringUtils.replaceEach(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"},
-                    new String[]{args[2], StringHelper.getClosestMatch(args[2], categorySubcategories)}));
+            sender.sendMessage(replace(langCategoryDoesNotExist, new String[]{"CAT", "CLOSEST_MATCH"}, new String[]{args[2], StringHelper.getClosestMatch(args[2], categorySubcategories)}));
         }
     }
 }

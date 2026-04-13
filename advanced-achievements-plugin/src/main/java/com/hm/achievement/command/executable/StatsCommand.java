@@ -53,14 +53,13 @@ public class StatsCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
         // Load configuration parameters.
         configColor = ColorHelper.configColor(mainConfig);
         configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundStats = Objects.requireNonNull(mainConfig.getString("SoundStats")).toUpperCase();
-        langNumberAchievements = Component.text(String.valueOf(pluginHeader)).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" "));
+        langNumberAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" ")).build();
     }
 
     @Override
@@ -107,13 +106,8 @@ public class StatsCommand extends AbstractCommand {
 
         // Player has received all achievement; play special effect and sound.
         if (playerAchievements >= totalAchievements) {
-            if (configAdditionalEffects) {
-                player.spawnParticle(Particle.WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
-            }
-
-            if (configSound) {
-                soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST");
-            }
+            if (configAdditionalEffects) player.spawnParticle(Particle.WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
+            if (configSound) soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST");
         }
     }
 }

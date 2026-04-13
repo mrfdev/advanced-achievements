@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -31,41 +30,41 @@ public class HelpCommand extends AbstractCommand {
     private NamedTextColor configColor;
     private String configIcon;
 
-    private TextComponent langCommandList;
-    private TextComponent langCommandListHover;
-    private TextComponent langCommandTop;
-    private TextComponent langCommandTopHover;
-    private TextComponent langCommandInfo;
-    private TextComponent langCommandInfoHover;
-    private TextComponent langCommandBook;
-    private TextComponent langCommandBookHover;
-    private TextComponent langCommandWeek;
-    private TextComponent langCommandWeekHover;
-    private TextComponent langCommandStats;
-    private TextComponent langCommandStatsHover;
-    private TextComponent langCommandMonth;
-    private TextComponent langCommandMonthHover;
-    private TextComponent langCommandToggleHover;
-    private TextComponent langCommandToggle;
-    private TextComponent langCommandReload;
-    private TextComponent langCommandReloadHover;
-    private TextComponent langCommandGenerate;
-    private TextComponent langCommandGenerateHover;
-    private TextComponent langCommandInspect;
-    private TextComponent langCommandInspectHover;
-    private TextComponent langCommandGive;
-    private TextComponent langCommandGiveHover;
-    private TextComponent langCommandAdd;
-    private TextComponent langCommandAddHover;
-    private TextComponent langCommandReset;
-    private TextComponent langCommandResetHover;
-    private TextComponent langCommandCheck;
-    private TextComponent langCommandCheckHover;
-    private TextComponent langCommandDelete;
-    private TextComponent langCommandDeleteHover;
-    private TextComponent langCommandGrant;
-    private TextComponent langCommandGrantHover;
-    private TextComponent langTip;
+    private Component langCommandList;
+    private Component langCommandListHover;
+    private Component langCommandTop;
+    private Component langCommandTopHover;
+    private Component langCommandInfo;
+    private Component langCommandInfoHover;
+    private Component langCommandBook;
+    private Component langCommandBookHover;
+    private Component langCommandWeek;
+    private Component langCommandWeekHover;
+    private Component langCommandStats;
+    private Component langCommandStatsHover;
+    private Component langCommandMonth;
+    private Component langCommandMonthHover;
+    private Component langCommandToggleHover;
+    private Component langCommandToggle;
+    private Component langCommandReload;
+    private Component langCommandReloadHover;
+    private Component langCommandGenerate;
+    private Component langCommandGenerateHover;
+    private Component langCommandInspect;
+    private Component langCommandInspectHover;
+    private Component langCommandGive;
+    private Component langCommandGiveHover;
+    private Component langCommandAdd;
+    private Component langCommandAddHover;
+    private Component langCommandReset;
+    private Component langCommandResetHover;
+    private Component langCommandCheck;
+    private Component langCommandCheckHover;
+    private Component langCommandDelete;
+    private Component langCommandDeleteHover;
+    private Component langCommandGrant;
+    private Component langCommandGrantHover;
+    private Component langTip;
 
     @Inject
     public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, FancyMessageSender fancyMessageSender) {
@@ -82,7 +81,7 @@ public class HelpCommand extends AbstractCommand {
         langCommandList = header("/aach list").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-list"))));
         langCommandListHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-list-hover")));
         langCommandTop = header("/aach top").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-top"))));
-        langCommandTopHover =Component.text(Objects.requireNonNull(langConfig.getString("aach-command-top-hover")));
+        langCommandTopHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-top-hover")));
         langCommandInfo = header("/aach info").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-info"))));
         langCommandInfoHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-info-hover")));
         langCommandBook = header("/aach book").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-book"))));
@@ -114,11 +113,11 @@ public class HelpCommand extends AbstractCommand {
         langCommandGrant = header("/aach grant cat player").append(Component.text(Objects.requireNonNull(langConfig.getString("aach-command-grant"))));
         langCommandGrantHover = Component.text(Objects.requireNonNull(langConfig.getString("aach-command-grant-hover")));
 
-        langTip = translateColorCodes(langConfig.getString("aach-tip")).colorIfAbsent(NamedTextColor.GRAY);
+        langTip = ColorHelper.convertAmpersandToComponent(langConfig.getString("aach-tip"));
     }
 
     private @NonNull TextComponent header(String command) {
-        return Component.text().append(LegacyComponentSerializer.legacySection().deserialize(pluginHeader.toString())).append(Component.text(command, configColor)).append(Component.text(" > ", NamedTextColor.GRAY)).build();
+        return Component.text().append(pluginHeader).append(Component.text(command).color(configColor)).append(Component.text(" > ").color(NamedTextColor.GRAY)).build();
     }
 
     @Override
@@ -183,16 +182,13 @@ public class HelpCommand extends AbstractCommand {
      * Sends a packet message to the server in order to display a clickable and hoverable message. A suggested command
      * is displayed in the chat when clicked on, and an additional help message appears when a command is hovered.
      *
-     * @param sender sender
+     * @param sender  sender
      * @param message message
      * @param command command
-     * @param hover hover
+     * @param hover   hover
      */
-    private void sendJsonClickableHoverableMessage(CommandSender sender, TextComponent message, String command, TextComponent hover) {
-        if (sender instanceof Player player) {
-            fancyMessageSender.sendHoverableCommandMessage(player, message, command, hover);
-        } else {
-            sender.sendMessage(message);
-        }
+    private void sendJsonClickableHoverableMessage(CommandSender sender, Component message, String command, Component hover) {
+        if (sender instanceof Player player) fancyMessageSender.sendHoverableCommandMessage(player, message, command, hover);
+        else sender.sendMessage(message);
     }
 }

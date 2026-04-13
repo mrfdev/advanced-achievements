@@ -4,6 +4,7 @@ import com.hm.achievement.advancement.AdvancementManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,11 +21,10 @@ public class GenerateCommand extends AbstractCommand {
 
     private final AdvancementManager advancementManager;
 
-    private String langAdvancementsGenerated;
+    private Component langAdvancementsGenerated;
 
     @Inject
-    public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                           Component pluginHeader, AdvancementManager advancementManager) {
+    public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancementManager advancementManager) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancementManager = advancementManager;
     }
@@ -32,14 +32,12 @@ public class GenerateCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
-        langAdvancementsGenerated = pluginHeader + langConfig.getString("advancements-generated");
+        langAdvancementsGenerated = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("advancements-generated")))).build();
     }
 
     @Override
     void onExecute(CommandSender sender, String[] args) {
         advancementManager.registerAdvancements();
-
         sender.sendMessage(langAdvancementsGenerated);
     }
 }
