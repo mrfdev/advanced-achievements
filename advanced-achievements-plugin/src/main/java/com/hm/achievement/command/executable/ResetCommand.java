@@ -8,6 +8,7 @@ import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.Collections;
 import java.util.Set;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
@@ -35,7 +36,7 @@ public class ResetCommand extends AbstractParsableCommand {
 
     @Inject
     public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+                        Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;

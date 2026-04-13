@@ -4,6 +4,7 @@ import com.hm.achievement.db.CacheManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,7 +26,7 @@ public class CheckCommand extends AbstractParsableCommand {
 
     @Inject
     public CheckCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        StringBuilder pluginHeader, CacheManager cacheManager) {
+                        Component pluginHeader, CacheManager cacheManager) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
     }

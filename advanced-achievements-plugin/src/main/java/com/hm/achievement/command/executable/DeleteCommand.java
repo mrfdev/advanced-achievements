@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.Collections;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.bukkit.command.CommandSender;
@@ -34,7 +35,7 @@ public class DeleteCommand extends AbstractParsableCommand {
 
     @Inject
     public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         StringBuilder pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager,
+                         Component pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager,
                          AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;

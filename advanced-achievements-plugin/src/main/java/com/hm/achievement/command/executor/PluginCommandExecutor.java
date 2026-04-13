@@ -9,6 +9,7 @@ import jakarta.inject.Singleton;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,12 +27,12 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
 
     private final YamlConfiguration langConfig;
     private final Set<AbstractCommand> commands;
-    private final StringBuilder pluginHeader;
+    private final Component pluginHeader;
 
     private String langInvalidCommand;
 
     @Inject
-    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands, StringBuilder pluginHeader) {
+    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands, Component pluginHeader) {
         this.langConfig = langConfig;
         this.commands = commands;
         this.pluginHeader = pluginHeader;

@@ -68,7 +68,7 @@ public class HelpCommand extends AbstractCommand {
     private TextComponent langTip;
 
     @Inject
-    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, FancyMessageSender fancyMessageSender) {
+    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, FancyMessageSender fancyMessageSender) {
         super(mainConfig, langConfig, pluginHeader);
         this.fancyMessageSender = fancyMessageSender;
     }

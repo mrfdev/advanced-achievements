@@ -4,6 +4,7 @@ import com.hm.achievement.advancement.AdvancementManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -23,7 +24,7 @@ public class GenerateCommand extends AbstractCommand {
 
     @Inject
     public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                           StringBuilder pluginHeader, AdvancementManager advancementManager) {
+                           Component pluginHeader, AdvancementManager advancementManager) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancementManager = advancementManager;
     }

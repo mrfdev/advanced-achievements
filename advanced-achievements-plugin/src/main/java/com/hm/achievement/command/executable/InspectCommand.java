@@ -47,7 +47,7 @@ public class InspectCommand extends AbstractCommand {
     private final Map<String, SupplierCommandPagination> cachedPagination;
 
     @Inject
-    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
+    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.databaseManager = databaseManager;

@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,7 +36,7 @@ public class ListCommand extends AbstractCommand {
     private String langCategoryDoesNotExist;
 
     @Inject
-    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
+    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
         super(mainConfig, langConfig, pluginHeader);
         this.mainGUI = mainGUI;
         this.categoryGUI = categoryGUI;

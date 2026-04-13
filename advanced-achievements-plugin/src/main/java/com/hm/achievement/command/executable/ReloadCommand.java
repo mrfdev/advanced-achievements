@@ -11,6 +11,7 @@ import jakarta.inject.Singleton;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,7 +36,7 @@ public class ReloadCommand extends AbstractCommand {
 
     @Inject
     public ReloadCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
+                         Component pluginHeader, AdvancedAchievements advancedAchievements, Logger logger,
                          Lazy<PluginLoader> pluginLoader, Lazy<Set<Reloadable>> reloadables) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;

@@ -42,7 +42,7 @@ public class InfoCommand extends AbstractCommand {
     private Component langVersionCommandDatabase;
 
     @Inject
-    public InfoCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
+    public InfoCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancedAchievements advancedAchievements, RewardParser rewardParser) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.rewardParser = rewardParser;

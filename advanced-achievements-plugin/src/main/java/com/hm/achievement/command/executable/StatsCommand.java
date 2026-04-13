@@ -43,7 +43,7 @@ public class StatsCommand extends AbstractCommand {
     private Component langNumberAchievements;
 
     @Inject
-    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
+    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;

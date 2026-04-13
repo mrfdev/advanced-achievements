@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class ToggleCommand extends AbstractCommand {
 
     @Inject
     public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         StringBuilder pluginHeader) {
+                         Component pluginHeader) {
         super(mainConfig, langConfig, pluginHeader);
     }
 

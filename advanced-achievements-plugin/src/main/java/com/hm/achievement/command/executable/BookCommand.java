@@ -61,7 +61,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     private DateFormat dateFormat;
 
     @Inject
-    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer, AchievementMap achievementMap) {
+    public BookCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.databaseManager = databaseManager;
         this.soundPlayer = soundPlayer;

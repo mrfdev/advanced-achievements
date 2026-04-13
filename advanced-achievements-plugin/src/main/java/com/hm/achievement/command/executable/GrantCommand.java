@@ -12,6 +12,7 @@ import jakarta.inject.Singleton;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,7 @@ public class GrantCommand extends AbstractParsableCommand {
     private String langAchievementGrantedAll;
 
     @Inject
-    public GrantCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public GrantCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
