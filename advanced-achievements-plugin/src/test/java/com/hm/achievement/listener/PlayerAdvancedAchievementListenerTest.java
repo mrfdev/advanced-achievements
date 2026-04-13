@@ -53,27 +53,29 @@ class PlayerAdvancedAchievementListenerTest {
     private AdvancedAchievements plugin;
 
     @Test
-    void itShouldRegisterNewAchievementInDatabase() {
+    void itShouldRegisterNewAchievementInDatabase() throws IOException {
         AchievementMap achievementMap = new AchievementMap();
         achievementMap.put(new AchievementBuilder().name("connect_1").displayName("Good Choice").build());
         achievementMap.put(new AchievementBuilder().name("place_500_smooth_brick").displayName("Stone Brick Layer").build());
-        try (InputStreamReader mainConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml"))); InputStreamReader langConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml")))) {
-            YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(mainConfigReader);
-            YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langConfigReader);
-            PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), PLUGIN_HEADER, new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
-            underTest.extractConfigurationParameters();
-            when(player.getUniqueId()).thenReturn(PLAYER_UUID);
-            when(player.getName()).thenReturn("DarkPyves");
-            when(plugin.getServer()).thenReturn(server);
-            doReturn(List.of(player)).when(server).getOnlinePlayers();
-            Set<String> receivedAchievements = new HashSet<>();
-            receivedAchievements.add("connect_1");
-            when(abstractDatabaseManager.getPlayerAchievementNames(PLAYER_UUID)).thenReturn(receivedAchievements);
-            Achievement achievement = new AchievementBuilder().name("connect_1").displayName("Good Choice").message("Connected for the first time!").build();
-            underTest.onPlayerAdvancedAchievementReception(new PlayerAdvancedAchievementEvent(player, achievement));
-            verify(abstractDatabaseManager).registerAchievement(eq(PLAYER_UUID), eq("connect_1"), anyLong());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        YamlConfiguration mainConfig;
+        try (InputStreamReader mainConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml")))) {
+            mainConfig = YamlConfiguration.loadConfiguration(mainConfigReader);
         }
+        YamlConfiguration langConfig;
+        try (InputStreamReader langConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml")))) {
+            langConfig = YamlConfiguration.loadConfiguration(langConfigReader);
+        }
+        PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), PLUGIN_HEADER, new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
+        underTest.extractConfigurationParameters();
+        when(player.getUniqueId()).thenReturn(PLAYER_UUID);
+        when(player.getName()).thenReturn("DarkPyves");
+        when(plugin.getServer()).thenReturn(server);
+        doReturn(List.of(player)).when(server).getOnlinePlayers();
+        Set<String> receivedAchievements = new HashSet<>();
+        receivedAchievements.add("connect_1");
+        when(abstractDatabaseManager.getPlayerAchievementNames(PLAYER_UUID)).thenReturn(receivedAchievements);
+        Achievement achievement = new AchievementBuilder().name("connect_1").displayName("Good Choice").message("Connected for the first time!").build();
+        underTest.onPlayerAdvancedAchievementReception(new PlayerAdvancedAchievementEvent(player, achievement));
+        verify(abstractDatabaseManager).registerAchievement(eq(PLAYER_UUID), eq("connect_1"), anyLong());
     }
 }
