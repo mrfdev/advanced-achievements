@@ -10,7 +10,6 @@ import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.lifecycle.Reloadable;
 import com.hm.achievement.utils.ColorHelper;
-import com.hm.achievement.utils.NumberHelper;
 import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -172,7 +171,7 @@ public class CategoryGUI implements Reloadable {
         int pageEnd = Math.min(MAX_ACHIEVEMENTS_PER_PAGE * (pageIndex + 1), achievements.size());
 
         // The inventory must be big enough to contain all page achievements and an entire row for the navigation items.
-        int guiSize = Math.min(NumberHelper.nextMultipleOf9(achievements.size()), MAX_ACHIEVEMENTS_PER_PAGE) + ROW_SIZE;
+        int guiSize = Math.min(Math.ceilDiv(achievements.size(), 9) * 9, MAX_ACHIEVEMENTS_PER_PAGE) + ROW_SIZE;
         AchievementInventoryHolder inventoryHolder = new AchievementInventoryHolder(pageIndex, clickedItem);
         Inventory inventory = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
         inventoryHolder.setInventory(inventory);
