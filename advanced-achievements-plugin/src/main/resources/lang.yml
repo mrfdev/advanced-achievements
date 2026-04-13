@@ -16,8 +16,8 @@ all-achievements-received: "Congratulations, you have received all the achieveme
 invalid-command: "Invalid command. Please type /aach to display the command help."
 
 # Used in /aach reload.
-configuration-successfully-reloaded: "Configuration successfully reloaded."
-configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
+configuration-successfully-reloaded: "&2Configuration successfully reloaded."
+configuration-reload-failed: "&cErrors while reloading configuration. Please view logs for more details."
 
 # Used in /aach top week and month.
 top-achievement: "Top achievement owners:"
