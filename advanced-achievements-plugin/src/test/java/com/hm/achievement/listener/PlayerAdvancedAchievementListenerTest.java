@@ -8,6 +8,7 @@ import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.domain.Achievement.AchievementBuilder;
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
@@ -52,12 +53,18 @@ class PlayerAdvancedAchievementListenerTest {
     private AdvancedAchievements plugin;
 
     @Test
-    void itShouldRegisterNewAchievementInDatabase() {
+    void itShouldRegisterNewAchievementInDatabase() throws IOException {
         AchievementMap achievementMap = new AchievementMap();
         achievementMap.put(new AchievementBuilder().name("connect_1").displayName("Good Choice").build());
         achievementMap.put(new AchievementBuilder().name("place_500_smooth_brick").displayName("Stone Brick Layer").build());
-        YamlConfiguration mainConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml"))));
-        YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml"))));
+        YamlConfiguration mainConfig;
+        try (InputStreamReader mainConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/config-reception.yml")))) {
+            mainConfig = YamlConfiguration.loadConfiguration(mainConfigReader);
+        }
+        YamlConfiguration langConfig;
+        try (InputStreamReader langConfigReader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/lang.yml")))) {
+            langConfig = YamlConfiguration.loadConfiguration(langConfigReader);
+        }
         PlayerAdvancedAchievementListener underTest = new PlayerAdvancedAchievementListener(mainConfig, langConfig, mock(Logger.class), PLUGIN_HEADER, new CacheManager(plugin, abstractDatabaseManager), plugin, null, achievementMap, abstractDatabaseManager, null, new FancyMessageSender(16));
         underTest.extractConfigurationParameters();
         when(player.getUniqueId()).thenReturn(PLAYER_UUID);
