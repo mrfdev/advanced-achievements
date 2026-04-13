@@ -210,9 +210,6 @@ reset-all-successful: "Všetky štatistiky pre hráča PLAYER boli vyčistené."
 # Related to /aach generate.
 advancements-generated: "Úspechy boli úspešne vygenerované."
 
-# Related to /aach inspect
-achievement-not-recognized: "Úspech s názvom 'NAME' nebol rozpoznaný. Myslel si CLOSEST_MATCH?"
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

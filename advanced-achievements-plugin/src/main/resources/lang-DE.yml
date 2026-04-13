@@ -203,9 +203,6 @@ reset-successful: "Die Statistik von Spieler wurde zurückgesetzt."
 # Related to /aach generate
 advancements-generated: "Fortschritte wurden erfolgreich generiert."
 
-# Related to /aach inspect
-achievement-not-recognized: "Der Erfolg mit dem namen 'NAME' wurde nicht erkannt. Meintest du CLOSEST_MATCH?"
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # |         Parameters to appear in future versions        | #

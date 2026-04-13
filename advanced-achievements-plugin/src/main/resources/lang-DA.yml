@@ -213,9 +213,6 @@ reset-all-successful: "Alle statistikker var ryddet for PLAYER."
 # Relateret til /aach generate.
 advancements-generated: "præsentationer var vellykket genereret."
 
-# Relateret til /aach inspect
-achievement-not-recognized: "Præsentation kaldet 'NAME' var ikke genkedt. Mente du CLOSEST_MATCH?"
-
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #
 #                                                                                                                      #

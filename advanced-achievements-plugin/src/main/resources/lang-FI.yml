@@ -198,9 +198,6 @@ reset-successful: " tilastot nollattiin pelaajalle PLAYER."
 # Related to /aach generate.
 advancements-generated: "MC-Saavutukset Generoitu onnistuneesti."
 
-# Related to /aach inspect
-achievement-not-recognized: "Saavutusta nimellä 'NAME' ei tunnistettu. Tarkoititko CLOSEST_MATCH?"
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

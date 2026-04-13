@@ -6,7 +6,6 @@ import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
-import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -15,13 +14,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -74,7 +71,7 @@ public class InspectCommand extends AbstractCommand {
         String displayName = parseAchievementName(args);
         Achievement achievement = getAchievement(displayName);
         if (achievement == null) {
-            sender.sendMessage(Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("achievement-not-recognized"), new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())})))).build());
+            sender.sendMessage(Component.text().append(pluginHeader).append(Component.text("You must specify an achievement name")));
             return;
         }
         int page = getPage(args);

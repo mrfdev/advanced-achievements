@@ -239,9 +239,6 @@ reset-all-successful: "Se han reiniciado todas las estadísticas del jugador PLA
 # Mensajes para /aach generate.
 advancements-generated: "Se han generado logros exitosamente"
 
-# Mensajes para /aach inspect
-achievement-not-recognized: "El logro de NAME no existe. ¿Quizás quisiste decir CLOSEST_MATCH?"
-
 #======================================================================================================================#
 #                                                  NUEVOS MENSAJES                                                     #
 #                                                                                                                      #
