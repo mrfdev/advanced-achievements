@@ -3,6 +3,7 @@ package com.hm.achievement.utils;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -138,5 +139,9 @@ public class StringHelper {
             curr = temp;
         }
         return prev[m];
+    }
+
+    public static @NonNull String componentToLegacySection(Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
     }
 }

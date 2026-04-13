@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.bukkit.Bukkit;
@@ -143,10 +142,10 @@ public class ConfigurationParser {
         pluginHeader.setLength(0);
         String icon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         if (StringUtils.isNotBlank(icon)) {
-            String coloredIcon = LegacyComponentSerializer.legacySection().serialize(Component.text(icon, ColorHelper.configColor(mainConfig)));
+            String coloredIcon = StringHelper.componentToLegacySection(Component.text(icon, ColorHelper.configColor(mainConfig)));
             String rawHeader = Strings.CS.replace(mainConfig.getString("ChatHeader"), "%ICON%", coloredIcon);
-            Component header = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(rawHeader));
-            pluginHeader.append(LegacyComponentSerializer.legacySection().serialize(header)).append(" ");
+            Component header = ColorHelper.convertAmpersandToComponent(rawHeader);
+            pluginHeader.append(StringHelper.componentToLegacySection(header)).append(" ");
         }
         pluginHeader.trimToSize();
     }
