@@ -53,9 +53,7 @@ public class SoundPlayer {
     private Sound parseSound(@NonNull String soundName, @NonNull String fallbackSound) {
         Sound sound = Registry.SOUNDS.get(NamespacedKey.minecraft(soundName.toLowerCase(Locale.ROOT)));
         Sound fallSound = Registry.SOUNDS.get(NamespacedKey.minecraft(fallbackSound.toLowerCase(Locale.ROOT)));
-        if (sound == null) {
-            return Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-        }
+        if (sound == null) return Sound.ENTITY_FIREWORK_ROCKET_BLAST;
         return fallSound;
     }
 }

@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
 import org.apache.commons.lang3.EnumUtils;
@@ -222,7 +221,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param rewards           rewards
      */
     private void displayReceiverMessages(Player player, Component nameToShowUser, Component messageToShowUser, @NonNull List<Reward> rewards) {
-        List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(m -> PlainTextComponentSerializer.plainText().serialize(m)).toList();
+        List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(StringHelper::componentToString).toList();
         Component message = langAchievementNew.replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
         if (configHoverableReceiverChatText) {
             Component hoverComponent = messageToShowUser;
@@ -306,7 +305,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
         rewards.forEach(r -> r.rewarder().accept(player));
         player.sendMessage(langAllAchievementsReceived);
-        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(PlainTextComponentSerializer.plainText().serialize(m), player)).forEach(t -> player.sendMessage(pluginHeader.append(t)));
+        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).forEach(t -> player.sendMessage(pluginHeader.append(t)));
     }
 
     private Component applyPrefix(Component s) {

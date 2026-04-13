@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class providing logging helper methods to retrieve Material instances
@@ -51,12 +52,9 @@ public class MaterialHelper {
             return defaultMaterial;
         }
         Material material = Material.matchMaterial(name);
+        if (material == null) material = Material.matchMaterial(name, true);
         if (material == null) {
-            material = Material.matchMaterial(name, true);
-        }
-        if (material == null) {
-            logger.warning("Material \"" + name + "\" used in " + usageLocation
-                    + " is invalid. Have you spelt the name correctly and is it available for your Minecraft version?");
+            logger.warning("Material \"" + name + "\" used in " + usageLocation + " is invalid. Have you spelt the name correctly and is it available for your Minecraft version?");
             material = defaultMaterial;
         }
         return material;
@@ -68,18 +66,12 @@ public class MaterialHelper {
      * @param itemStack
      * @return true if the item is a non-water potion, false otherwise
      */
-    public boolean isAnyPotionButWater(ItemStack itemStack) {
-        if (itemStack.getType() != Material.POTION) {
-            return false;
-        }
-
+    public boolean isAnyPotionButWater(@NonNull ItemStack itemStack) {
+        if (itemStack.getType() != Material.POTION) return false;
         PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
         if (potionMeta != null) {
             PotionType basePotionType = potionMeta.getBasePotionType();
             return basePotionType != PotionType.WATER;
-        } else {
-            return false;
-        }
+        } else return false;
     }
-
 }

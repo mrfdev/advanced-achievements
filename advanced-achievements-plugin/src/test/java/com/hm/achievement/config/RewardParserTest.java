@@ -3,6 +3,7 @@ package com.hm.achievement.config;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.domain.Reward;
 import com.hm.achievement.utils.MaterialHelper;
+import com.hm.achievement.utils.StringHelper;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -13,7 +14,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -72,7 +72,7 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 1 coin"), reward.listTexts());
-        assertEquals(List.of("You received: 1 coin!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("You received: 1 coin!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(economy).depositPlayer(player, 1);
     }
@@ -85,7 +85,7 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 2 coins"), reward.listTexts());
-        assertEquals(List.of("You received: 2 coins!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("You received: 2 coins!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(economy).depositPlayer(player, 2);
     }
@@ -102,11 +102,10 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("teleportation to somewhere special!"), reward.listTexts());
-        assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("You received your reward: teleportation to somewhere special!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         TextComponent expectedCommand = Component.text("teleport Pyves");
-        String expectedRaw = PlainTextComponentSerializer.plainText().serialize(expectedCommand);
-        verify(server).dispatchCommand(any(), eq(expectedRaw));
+        verify(server).dispatchCommand(any(), eq(StringHelper.componentToString(expectedCommand)));
     }
 
     @Test
@@ -121,14 +120,12 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(Arrays.asList("display 1", "display 2"), reward.listTexts());
-        assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(Arrays.asList("You received your reward: display 1", "You received your reward: display 2"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         TextComponent exec1 = Component.text("execute 1");
         TextComponent exec2 = Component.text("execute 2");
-        String exec1Raw = PlainTextComponentSerializer.plainText().serialize(exec1);
-        String exec2Raw = PlainTextComponentSerializer.plainText().serialize(exec2);
-        verify(server).dispatchCommand(any(), eq(exec1Raw));
-        verify(server).dispatchCommand(any(), eq(exec2Raw));
+        verify(server).dispatchCommand(any(), eq(StringHelper.componentToString(exec1)));
+        verify(server).dispatchCommand(any(), eq(StringHelper.componentToString(exec2)));
     }
 
     @Test
@@ -138,7 +135,7 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("receive 500 experience"), reward.listTexts());
-        assertEquals(List.of("You received: 500 experience!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("You received: 500 experience!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).giveExp(500);
     }
@@ -154,7 +151,7 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("increase max health by 2"), reward.listTexts());
-        assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("Your max health has increased by 2!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).getAttribute(Attribute.MAX_HEALTH);
         verify(healthAttribute).setBaseValue(3.0);
@@ -168,7 +165,7 @@ class RewardParserTest {
         assertEquals(1, rewards.size());
         Reward reward = rewards.getFirst();
         assertEquals(List.of("increase max oxygen by 10"), reward.listTexts());
-        assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts().stream().map(c -> PlainTextComponentSerializer.plainText().serialize(c)).collect(Collectors.toList()));
+        assertEquals(List.of("Your max oxygen has increased by 10!"), reward.chatTexts().stream().map(StringHelper::componentToString).collect(Collectors.toList()));
         reward.rewarder().accept(player);
         verify(player).setMaximumAir(15);
     }

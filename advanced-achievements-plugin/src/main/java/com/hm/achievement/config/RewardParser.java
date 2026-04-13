@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -165,8 +164,7 @@ public class RewardParser {
             ItemMeta itemMeta = playerItem.getItemMeta();
             if (itemMeta != null && itemMeta.hasDisplayName()) {
                 Component displayName = itemMeta.displayName();
-                String plainName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(displayName));
-                itemMeta.displayName(Component.text(plainName).style(Style.style().decoration(TextDecoration.ITALIC, false)));
+                itemMeta.displayName(Objects.requireNonNull(displayName).style(Style.style().decoration(TextDecoration.ITALIC, false)));
                 playerItem.setItemMeta(itemMeta);
             }
             Map<Integer, ItemStack> leftoverItem = player.getInventory().addItem(playerItem);
@@ -208,9 +206,8 @@ public class RewardParser {
         List<Component> chatTexts = listTexts.stream().map(message -> Component.text(Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("custom-command-reward"), new String[]{"MESSAGE"}, new String[]{message})))).collect(Collectors.toList());
         String executePath = configSection.contains("Command") ? "Command.Execute" : "Commands.Execute";
         Consumer<Player> rewarder = player -> getOneOrManyConfigStrings(configSection, executePath).forEach(command -> {
-            Component component = StringHelper.replacePlayerPlaceholders(command, player);
-            String rawCommand = PlainTextComponentSerializer.plainText().serialize(component);
-            server.dispatchCommand(server.getConsoleSender(), rawCommand);
+            Component component = StringHelper.replacePlayerPlaceholders(Component.text(command), player);
+            server.dispatchCommand(server.getConsoleSender(), StringHelper.componentToString(component));
         });
         return new Reward(listTexts, chatTexts, rewarder);
     }
