@@ -13,14 +13,6 @@ Recent changes include Java 25, 26.1.2, and removing deprecated ChatColor method
 earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an
 extensive statistics system, handles YAML configuration files and features fancy in-game GUIs and effects!**
 
-# Key Change for 26.1.2:
-
-Colours are now solely done via the config and not hardcoded in (for the most part). If a string does not support a
-colour yet, please open a [GitHub issue](https://github.com/mrfdev/advanced-achievements/issues) for support to be added. No colours should be hardcoded anymore to allow for
-users to customise their config fully.
-
-Currently only the english lang.yml is updated as I do not have the scope or knowledge to expand into other languages. If you would like to contribute towards syncing the English lang.yml with other languages, please do!
-
 ## Spigot release!
 
 We have [a Spigot release page](https://www.spigotmc.org/resources/advancedachievements.121486/) now (which links to the
