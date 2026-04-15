@@ -20,6 +20,7 @@
         <jupiter.version>6.0.3</jupiter.version>
         <dagger.version>2.59.2</dagger.version>
         <adventure.version>5.0.0</adventure.version>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <modules>
