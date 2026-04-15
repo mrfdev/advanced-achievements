@@ -132,7 +132,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(@NonNull EntityDamageByEntityEvent event) {
         // Cancel damage if the firework was launched by the plugin.
-        event.setCancelled(event.getEntity().getPersistentDataContainer().has(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN));
+        if (event.getDamager() instanceof Firework firework) {
+            if (firework.getPersistentDataContainer().has(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN)) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -227,10 +231,11 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             Component hoverComponent = messageToShowUser;
             for (Component t : chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).toList()) hoverComponent = hoverComponent.append(Component.newline().append(t));
             fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), applyPrefix(hoverComponent));
+        } else {
+            player.sendMessage(applyPrefix(message));
+            player.sendMessage(applyPrefix(messageToShowUser));
+            chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).forEach(t -> player.sendMessage(applyPrefix(t)));
         }
-        player.sendMessage(applyPrefix(message));
-        player.sendMessage(applyPrefix(messageToShowUser).colorIfAbsent(NamedTextColor.WHITE));
-        chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).forEach(t -> player.sendMessage(applyPrefix(t)));
     }
 
     /**
@@ -257,7 +262,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         Firework firework = player.getWorld().spawn(location, Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         Color fireworkColor = Color.fromRGB(configFireworkColor.red(), configFireworkColor.green(), configFireworkColor.blue());
-        FireworkEffect fireworkEffect = FireworkEffect.builder().withColor(fireworkColor).withFade(fireworkColor).build();
+        FireworkEffect fireworkEffect = FireworkEffect.builder().with(getFireworkType()).withColor(fireworkColor).withFade(fireworkColor).build();
         fireworkMeta.addEffects(fireworkEffect);
         firework.setFireworkMeta(fireworkMeta);
         firework.getPersistentDataContainer().set(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN, true);
