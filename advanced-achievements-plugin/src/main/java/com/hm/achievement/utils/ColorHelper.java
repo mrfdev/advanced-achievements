@@ -25,10 +25,6 @@ public class ColorHelper {
         return parseColor(mainConfig.getString("Color", "DARK_PURPLE"));
     }
 
-    public static NamedTextColor configFireworkColor(@NonNull YamlConfiguration mainConfig) {
-        return parseColor(mainConfig.getString("FireworkColor", "DARK_PURPLE"));
-    }
-
     public static @NonNull Component convertAmpersandToComponent(String text) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
     }

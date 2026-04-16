@@ -116,7 +116,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             logger.warning("Failed to load FireworkStyle, using ball_large instead. Please use one of the following: " + "ball_large, ball, burst, creeper, star or random.");
         }
         configFirework = mainConfig.getBoolean("Firework");
-        configFireworkColor = ColorHelper.configFireworkColor(mainConfig);
+        configFireworkColor = ColorHelper.parseColor(mainConfig.getString("FireworkColor", "DARK_PURPLE"));
         configSimplifiedReception = mainConfig.getBoolean("SimplifiedReception");
         configTitleScreen = mainConfig.getBoolean("TitleScreen");
         configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
