@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.pagination.CommandPagination;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
@@ -55,7 +56,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     private List<Integer> cachedAchievementCounts;
     private long lastCacheUpdate = 0L;
 
-    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, Component pluginHeader, Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, PluginHeader pluginHeader, Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.logger = logger;
         this.languageKey = languageKey;

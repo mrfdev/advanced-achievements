@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.gui.CategoryGUI;
 import com.hm.achievement.gui.GUIItems;
 import com.hm.achievement.gui.MainGUI;
@@ -35,7 +36,7 @@ public class ListCommand extends AbstractCommand {
     private Component langCategoryDoesNotExist;
 
     @Inject
-    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
+    public ListCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, MainGUI mainGUI, CategoryGUI categoryGUI, GUIItems guiItems) {
         super(mainConfig, langConfig, pluginHeader);
         this.mainGUI = mainGUI;
         this.categoryGUI = categoryGUI;
@@ -45,7 +46,7 @@ public class ListCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
+        langCategoryDoesNotExist = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override

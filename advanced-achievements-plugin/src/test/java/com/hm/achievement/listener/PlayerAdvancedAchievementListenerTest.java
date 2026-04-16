@@ -2,6 +2,7 @@ package com.hm.achievement.listener;
 
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
@@ -16,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PlayerAdvancedAchievementListenerTest {
 
-    private static final Component PLUGIN_HEADER = Component.text("[HEADER]");
+    private static final PluginHeader PLUGIN_HEADER = new PluginHeader(new StringBuilder("[HEADER]"));
     private static final UUID PLAYER_UUID = UUID.randomUUID();
 
     @Mock

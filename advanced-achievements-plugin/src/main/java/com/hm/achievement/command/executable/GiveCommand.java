@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
@@ -37,7 +38,7 @@ public class GiveCommand extends AbstractParsableCommand {
     private Component langAchievementNoPermission;
 
     @Inject
-    public GiveCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public GiveCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -49,10 +50,10 @@ public class GiveCommand extends AbstractParsableCommand {
 
         configMultiCommand = mainConfig.getBoolean("MultiCommand");
 
-        langAchievementAlreadyReceived = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-already-received")))).build();
-        langAchievementGiven = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-given")))).build();
-        langAchievementNotFound = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-not-found")))).build();
-        langAchievementNoPermission = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-no-permission")))).build();
+        langAchievementAlreadyReceived = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-already-received")))).build();
+        langAchievementGiven = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-given")))).build();
+        langAchievementNotFound = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-not-found")))).build();
+        langAchievementNoPermission = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-no-permission")))).build();
     }
 
     @Override

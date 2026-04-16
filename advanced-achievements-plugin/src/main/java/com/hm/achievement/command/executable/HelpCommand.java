@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.FancyMessageSender;
 import com.hm.achievement.utils.StringHelper;
@@ -67,7 +68,7 @@ public class HelpCommand extends AbstractCommand {
     private Component langTip;
 
     @Inject
-    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, FancyMessageSender fancyMessageSender) {
+    public HelpCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, FancyMessageSender fancyMessageSender) {
         super(mainConfig, langConfig, pluginHeader);
         this.fancyMessageSender = fancyMessageSender;
     }
@@ -117,7 +118,7 @@ public class HelpCommand extends AbstractCommand {
     }
 
     private @NonNull TextComponent header(String command) {
-        return Component.text().append(pluginHeader).append(Component.text(command).color(configColor)).append(Component.text(" > ").color(NamedTextColor.GRAY)).build();
+        return Component.text().append(pluginHeader.get()).append(Component.text(command).color(configColor)).append(Component.text(" > ").color(NamedTextColor.GRAY)).build();
     }
 
     @Override

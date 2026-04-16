@@ -3,6 +3,7 @@ package com.hm.achievement.command.executable;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.pagination.SupplierCommandPagination;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
@@ -45,7 +46,7 @@ public class InspectCommand extends AbstractCommand {
     private final Map<String, SupplierCommandPagination> cachedPagination;
 
     @Inject
-    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
+    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.databaseManager = databaseManager;
@@ -71,7 +72,7 @@ public class InspectCommand extends AbstractCommand {
         String displayName = parseAchievementName(args);
         Achievement achievement = getAchievement(displayName);
         if (achievement == null) {
-            sender.sendMessage(Component.text().append(pluginHeader).append(Component.text("You must specify an achievement name")));
+            sender.sendMessage(Component.text().append(pluginHeader.get()).append(Component.text("You must specify an achievement name")));
             return;
         }
         int page = getPage(args);

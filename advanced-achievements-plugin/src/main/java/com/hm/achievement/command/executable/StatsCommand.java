@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
@@ -43,7 +44,7 @@ public class StatsCommand extends AbstractCommand {
     private Component langNumberAchievements;
 
     @Inject
-    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
+    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -59,7 +60,7 @@ public class StatsCommand extends AbstractCommand {
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundStats = Objects.requireNonNull(mainConfig.getString("SoundStats")).toUpperCase();
-        langNumberAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" ")).build();
+        langNumberAchievements = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" ")).build();
     }
 
     @Override

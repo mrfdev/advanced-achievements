@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -26,7 +27,7 @@ public class CheckCommand extends AbstractParsableCommand {
     private Component langCheckAchievementFalse;
 
     @Inject
-    public CheckCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager) {
+    public CheckCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
     }
@@ -34,8 +35,8 @@ public class CheckCommand extends AbstractParsableCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        langCheckAchievementTrue = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievement-true")))).build();
-        langCheckAchievementFalse = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievements-false")))).build();
+        langCheckAchievementTrue = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievement-true")))).build();
+        langCheckAchievementFalse = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievements-false")))).build();
     }
 
     @Override

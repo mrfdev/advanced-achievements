@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
@@ -34,7 +35,7 @@ public class ResetCommand extends AbstractParsableCommand {
     private Component langCategoryDoesNotExist;
 
     @Inject
-    public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public ResetCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -43,9 +44,9 @@ public class ResetCommand extends AbstractParsableCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        langResetSuccessful = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-successful")))).build();
-        langResetAllSuccessful = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-all-successful")))).build();
-        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
+        langResetSuccessful = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-successful")))).build();
+        langResetAllSuccessful = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("reset-all-successful")))).build();
+        langCategoryDoesNotExist = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override

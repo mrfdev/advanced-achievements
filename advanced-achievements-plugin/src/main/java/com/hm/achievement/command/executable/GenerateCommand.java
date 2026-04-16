@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.advancement.AdvancementManager;
+import com.hm.achievement.config.PluginHeader;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -24,7 +25,7 @@ public class GenerateCommand extends AbstractCommand {
     private Component langAdvancementsGenerated;
 
     @Inject
-    public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AdvancementManager advancementManager) {
+    public GenerateCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, AdvancementManager advancementManager) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancementManager = advancementManager;
     }
@@ -32,7 +33,7 @@ public class GenerateCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-        langAdvancementsGenerated = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("advancements-generated")))).build();
+        langAdvancementsGenerated = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("advancements-generated")))).build();
     }
 
     @Override

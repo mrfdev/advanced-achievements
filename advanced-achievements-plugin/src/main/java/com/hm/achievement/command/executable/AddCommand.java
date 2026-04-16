@@ -3,6 +3,7 @@ package com.hm.achievement.command.executable;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.StatisticIncreaseHandler;
@@ -42,7 +43,7 @@ public class AddCommand extends AbstractParsableCommand {
     private Component langCategoryDoesNotExist;
 
     @Inject
-    public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, AbstractDatabaseManager databaseManager, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler, AchievementMap achievementMap) {
+    public AddCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, AbstractDatabaseManager databaseManager, CacheManager cacheManager, StatisticIncreaseHandler statisticIncreaseHandler, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.databaseManager = databaseManager;
         this.cacheManager = cacheManager;
@@ -54,9 +55,9 @@ public class AddCommand extends AbstractParsableCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        langErrorValue = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("error-value")))).build();
-        langStatisticIncreased = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("statistic-increased")))).build();
-        langCategoryDoesNotExist = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
+        langErrorValue = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("error-value")))).build();
+        langStatisticIncreased = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("statistic-increased")))).build();
+        langCategoryDoesNotExist = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("category-does-not-exist")))).build();
     }
 
     @Override

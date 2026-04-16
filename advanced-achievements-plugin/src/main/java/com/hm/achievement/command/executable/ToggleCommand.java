@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -34,7 +35,7 @@ public class ToggleCommand extends AbstractCommand {
     private Component langToggleHidden;
 
     @Inject
-    public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader) {
+    public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader) {
         super(mainConfig, langConfig, pluginHeader);
     }
 
@@ -42,8 +43,8 @@ public class ToggleCommand extends AbstractCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
         configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
-        langToggleDisplayed = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-displayed")))).build();
-        langToggleHidden = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-hidden")))).build();
+        langToggleDisplayed = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-displayed")))).build();
+        langToggleHidden = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-hidden")))).build();
     }
 
     /**

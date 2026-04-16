@@ -5,6 +5,7 @@ import com.hm.achievement.advancement.AchievementAdvancement;
 import com.hm.achievement.advancement.AdvancementManager;
 import com.hm.achievement.command.executable.ToggleCommand;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.config.RewardParser;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
@@ -69,7 +70,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private final YamlConfiguration mainConfig;
     private final YamlConfiguration langConfig;
     private final Logger logger;
-    private final Component pluginHeader;
+    private final PluginHeader pluginHeader;
     private final CacheManager cacheManager;
     private final AdvancedAchievements advancedAchievements;
     private final RewardParser rewardParser;
@@ -93,7 +94,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private boolean configBossBarProgress;
 
     @Inject
-    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, Component pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
+    public PlayerAdvancedAchievementListener(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Logger logger, PluginHeader pluginHeader, CacheManager cacheManager, AdvancedAchievements advancedAchievements, RewardParser rewardParser, AchievementMap achievementMap, AbstractDatabaseManager databaseManager, ToggleCommand toggleCommand, FancyMessageSender fancyMessageSender) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.logger = logger;
@@ -124,8 +125,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
         configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
         langAchievementReceived = Component.text(Objects.requireNonNull(langConfig.getString("achievement-received")));
-        langAchievementNew = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-new"))));
-        langAllAchievementsReceived = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("all-achievements-received"))));
+        langAchievementNew = pluginHeader.get().append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-new"))));
+        langAllAchievementsReceived = pluginHeader.get().append(Component.text(Objects.requireNonNull(langConfig.getString("all-achievements-received"))));
         langBossBarProgress = langConfig.getString("boss-bar-progress");
     }
 
@@ -198,7 +199,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
             fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), applyPrefix(hoverComponent));
         } else {
             player.sendMessage(applyPrefix(message));
-            player.sendMessage(applyPrefix(messageToShowUser));
+            player.sendMessage(pluginHeader.get().color(NamedTextColor.WHITE).append(applyPrefix(messageToShowUser)));
             chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).forEach(t -> player.sendMessage(applyPrefix(t)));
         }
     }
@@ -213,7 +214,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private void displayNotification(Player receiver, Component nameToShowUser, Player otherPlayer) {
         Component message = langAchievementReceived.replaceText(b -> b.matchLiteral("PLAYER").replacement(receiver.getName())).replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
         if (configActionBarNotify) otherPlayer.sendActionBar(message.decorate(TextDecoration.ITALIC));
-        else otherPlayer.sendMessage(pluginHeader.append(message).decorate(TextDecoration.ITALIC));
+        else otherPlayer.sendMessage(pluginHeader.get().append(message).decorate(TextDecoration.ITALIC));
     }
 
     /**
@@ -283,12 +284,12 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     private void handleAllAchievementsReceived(@NonNull Player player) {
         List<Reward> rewards = rewardParser.parseRewards("AllAchievementsReceivedRewards");
         rewards.forEach(r -> r.rewarder().accept(player));
-        player.sendMessage(langAllAchievementsReceived);
-        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).forEach(t -> player.sendMessage(pluginHeader.append(t)));
+        player.sendMessage(applyPrefix(langAllAchievementsReceived));
+        rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).forEach(t -> player.sendMessage(pluginHeader.get().append(t)));
     }
 
     private Component applyPrefix(Component s) {
-        if (mainConfig.getBoolean("PrefixEnabled")) return Component.text("[AACH] ").color(NamedTextColor.GRAY).append(pluginHeader).append(s);
+        if (mainConfig.getBoolean("PrefixEnabled")) return Component.text("[AACH] ", NamedTextColor.GRAY).append(s);
         return s;
     }
 }

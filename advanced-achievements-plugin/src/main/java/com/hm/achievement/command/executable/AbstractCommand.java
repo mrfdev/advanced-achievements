@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.lifecycle.Reloadable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
@@ -15,11 +16,11 @@ public abstract class AbstractCommand implements Reloadable {
 
     final YamlConfiguration mainConfig;
     final YamlConfiguration langConfig;
-    final Component pluginHeader;
+    final PluginHeader pluginHeader;
 
     private String langNoPermissions;
 
-    AbstractCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, Component pluginHeader) {
+    AbstractCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, PluginHeader pluginHeader) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.pluginHeader = pluginHeader;

@@ -7,7 +7,6 @@ import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
-import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 @Module
@@ -21,14 +20,7 @@ public class ConfigModule {
 
     @Provides
     @Singleton
-    Component providePluginHeader() {
-        return Component.empty();
-    }
-
-    @Provides
-    @Singleton
-    // TODO: Convert all to component
-    StringBuilder provideLegacyPluginHeader() {
+    StringBuilder providePluginHeader() {
         return new StringBuilder();
     }
 

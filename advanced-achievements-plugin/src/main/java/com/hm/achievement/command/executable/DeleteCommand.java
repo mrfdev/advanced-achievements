@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.CacheManager;
 import jakarta.inject.Inject;
@@ -33,7 +34,7 @@ public class DeleteCommand extends AbstractParsableCommand {
     private Component langAllDeleteAchievements;
 
     @Inject
-    public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, Component pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
+    public DeleteCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.databaseManager = databaseManager;
@@ -44,9 +45,9 @@ public class DeleteCommand extends AbstractParsableCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
 
-        langCheckAchievementFalse = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievements-false")))).build();
-        langDeleteAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-achievements")))).build();
-        langAllDeleteAchievements = Component.text().append(pluginHeader).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-all-achievements")))).build();
+        langCheckAchievementFalse = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("check-achievements-false")))).build();
+        langDeleteAchievements = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-achievements")))).build();
+        langAllDeleteAchievements = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("delete-all-achievements")))).build();
     }
 
     @Override
