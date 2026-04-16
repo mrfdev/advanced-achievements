@@ -123,19 +123,16 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         configHoverableReceiverChatText = mainConfig.getBoolean("HoverableReceiverChatText");
         configBossBarProgress = mainConfig.getBoolean("BossBarProgress");
         configReceiverChatMessages = mainConfig.getBoolean("ReceiverChatMessages");
-        langAchievementReceived = Component.text(Objects.requireNonNull(langConfig.getString("achievement-received"))).color(NamedTextColor.WHITE);
-        langAchievementNew = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-new"))).color(NamedTextColor.WHITE));
+        langAchievementReceived = Component.text(Objects.requireNonNull(langConfig.getString("achievement-received")));
+        langAchievementNew = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-new"))));
         langAllAchievementsReceived = pluginHeader.append(Component.text(Objects.requireNonNull(langConfig.getString("all-achievements-received"))));
         langBossBarProgress = langConfig.getString("boss-bar-progress");
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(@NonNull EntityDamageByEntityEvent event) {
-        // Cancel damage if the firework was launched by the plugin.
-        if (event.getDamager() instanceof Firework firework) {
-            if (firework.getPersistentDataContainer().has(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN)) {
-                event.setCancelled(true);
-            }
+        if (event.getDamager() instanceof Firework firework && firework.getPersistentDataContainer().has(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN)) {
+            event.setCancelled(true);
         }
     }
 
@@ -143,25 +140,17 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     public void onPlayerAdvancedAchievementReception(@NonNull PlayerAdvancedAchievementEvent event) {
         Achievement achievement = event.getAchievement();
         Player player = event.getPlayer();
-        // Achievement could have already been received if MultiCommand is set to true
-        // in the configuration.
+        // Achievement could have already been received if MultiCommand is set to true in the configuration.
         if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())) {
             cacheManager.registerNewlyReceivedAchievement(player.getUniqueId(), achievement.getName());
-
-            Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achievement.getName())));
             // Matching advancement might not exist if user has not called /aach generate.
-            if (advancement != null) {
-                player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
-            }
+            Advancement advancement = Bukkit.getAdvancement(new NamespacedKey(advancedAchievements, AdvancementManager.getKey(achievement.getName())));
+            if (advancement != null) player.getAdvancementProgress(advancement).awardCriteria(AchievementAdvancement.CRITERIA_NAME);
         }
         databaseManager.registerAchievement(player.getUniqueId(), achievement.getName(), System.currentTimeMillis());
-
         achievement.getRewards().forEach(r -> r.rewarder().accept(player));
         displayAchievement(player, achievement);
-
-        if (cacheManager.getPlayerAchievements(player.getUniqueId()).size() == achievementMap.getAll().size()) {
-            handleAllAchievementsReceived(player);
-        }
+        if (cacheManager.getPlayerAchievements(player.getUniqueId()).size() == achievementMap.getAll().size()) handleAllAchievementsReceived(player);
     }
 
     /**
@@ -182,42 +171,18 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         }
 
         // Notify other online players that the player has received an achievement.
-        for (Player p : advancedAchievements.getServer().getOnlinePlayers()) {
-            // Notify other players only if NotifyOtherPlayers is enabled and player has not
-            // used /aach toggle, or if
-            // NotifyOtherPlayers is disabled and player has used /aach toggle.
-            if (!p.getName().equals(player.getName()) && (configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p, achievement.getType()))) {
-                displayNotification(player, nameToShowUser, p);
-            }
-        }
-
-        if (configFirework) {
-            displayFirework(player);
-        } else if (configSimplifiedReception) {
-            displaySimplifiedReception(player);
-        }
-
-        if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) {
-            Title title = Title.title(nameToShowUser, messageToShowUser, Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5)));
-            player.showTitle(title);
-        }
-
-        if (configBossBarProgress) {
-            int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
-            int totalAmount = achievementMap.getAll().size();
-            double progress = ((double) receivedAmount) / totalAmount;
-            String message = StringUtils.replaceEach(langBossBarProgress, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
-            BossBar bossBar = Bukkit.getServer().createBossBar(message, BarColor.PURPLE, BarStyle.SOLID);
-            bossBar.setProgress(progress);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
-        }
+        // Notify if NotifyOtherPlayers is enabled and player has not used /aach toggle,
+        // or if NotifyOtherPlayers is disabled and player has used /aach toggle.
+        advancedAchievements.getServer().getOnlinePlayers().stream().filter(p -> !p.getName().equals(player.getName())).filter(p -> configNotifyOtherPlayers ^ toggleCommand.isPlayerToggled(p, achievement.getType())).forEach(p -> displayNotification(player, nameToShowUser, p));
+        if (configFirework) displayFirework(player);
+        else if (configSimplifiedReception) displaySimplifiedReception(player);
+        if (configTitleScreen || player.hasPermission("achievement.config.title.screen")) player.showTitle(Title.title(nameToShowUser, messageToShowUser, Times.times(Duration.ofSeconds(5), Duration.ofSeconds(0), Duration.ofSeconds(5))));
+        if (configBossBarProgress) displayBossBarProgress(player);
     }
 
     /**
      * Displays texts related to the achievement in the receiver's chat. This method
-     * can display a single hoverable
-     * message or several messages one after the other.
+     * can display a single hoverable message or several messages one after the other.
      *
      * @param player            player
      * @param nameToShowUser    name shown to user
@@ -228,8 +193,8 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
         List<String> chatMessages = rewards.stream().map(Reward::chatTexts).flatMap(List::stream).map(m -> StringHelper.replacePlayerPlaceholders(m, player)).map(StringHelper::componentToString).toList();
         Component message = langAchievementNew.replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
         if (configHoverableReceiverChatText) {
-            Component hoverComponent = messageToShowUser;
-            for (Component t : chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).toList()) hoverComponent = hoverComponent.append(Component.newline().append(t));
+            // Build hover component by folding all chat message lines onto the base message
+            Component hoverComponent = chatMessages.stream().map(ColorHelper::convertAmpersandToComponent).reduce(messageToShowUser, (acc, t) -> acc.append(Component.newline().append(t)));
             fancyMessageSender.sendHoverableMessage(player, applyPrefix(message), applyPrefix(hoverComponent));
         } else {
             player.sendMessage(applyPrefix(message));
@@ -241,9 +206,9 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     /**
      * Displays an action bar message or chat notification to another player.
      *
-     * @param receiver
-     * @param nameToShowUser
-     * @param otherPlayer
+     * @param receiver       the player who received the achievement
+     * @param nameToShowUser the achievement name
+     * @param otherPlayer    the player being notified
      */
     private void displayNotification(Player receiver, Component nameToShowUser, Player otherPlayer) {
         Component message = langAchievementReceived.replaceText(b -> b.matchLiteral("PLAYER").replacement(receiver.getName())).replaceText(b -> b.matchLiteral("ACH").replacement(nameToShowUser));
@@ -257,38 +222,32 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
      * @param player
      */
     private void displayFirework(@NonNull Player player) {
-        // Set firework to launch beneath player.
         Location location = player.getLocation().subtract(0, 1, 0);
         Firework firework = player.getWorld().spawn(location, Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         Color fireworkColor = Color.fromRGB(configFireworkColor.red(), configFireworkColor.green(), configFireworkColor.blue());
-        FireworkEffect fireworkEffect = FireworkEffect.builder().with(getFireworkType()).withColor(fireworkColor).withFade(fireworkColor).build();
-        fireworkMeta.addEffects(fireworkEffect);
+        fireworkMeta.addEffects(FireworkEffect.builder().with(getFireworkType()).withColor(fireworkColor).withFade(fireworkColor).build());
         firework.setFireworkMeta(fireworkMeta);
         firework.getPersistentDataContainer().set(new NamespacedKey(advancedAchievements, ADVANCED_ACHIEVEMENTS_FIREWORK), PersistentDataType.BOOLEAN, true);
         firework.setVelocity(location.getDirection().multiply(0));
     }
 
     /**
-     * Gets the type of the firework, which can either be predefined or random.
-     * Can be set to random via the config
+     * Gets the type of the firework, either predefined or random based on config.
      *
-     * @return the firework type.
+     * @return the firework type
      */
-    @SuppressWarnings("unused")
     private Type getFireworkType() {
         if ("RANDOM".equals(configFireworkStyle)) {
             Type[] fireworkTypes = Type.values();
             return fireworkTypes[RANDOM.nextInt(fireworkTypes.length)];
-        } else {
-            return Type.valueOf(configFireworkStyle);
         }
+        return Type.valueOf(configFireworkStyle);
     }
 
     /**
      * Displays a simplified particle effect and calm sound when receiving an
-     * achievement. Is used instead of
-     * displayFirework.
+     * achievement. Used instead of displayFirework.
      *
      * @param player
      */
@@ -301,8 +260,23 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     }
 
     /**
-     * Handles rewards and displaying messages when a player has received all
-     * achievements.
+     * Displays a boss bar showing the player's achievement progress.
+     *
+     * @param player
+     */
+    private void displayBossBarProgress(@NonNull Player player) {
+        int receivedAmount = cacheManager.getPlayerAchievements(player.getUniqueId()).size();
+        int totalAmount = achievementMap.getAll().size();
+        double progress = ((double) receivedAmount) / totalAmount;
+        String message = StringUtils.replaceEach(langBossBarProgress, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
+        BossBar bossBar = Bukkit.getServer().createBossBar(message, BarColor.PURPLE, BarStyle.SOLID);
+        bossBar.setProgress(progress);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.addPlayer(player), 110);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(advancedAchievements, () -> bossBar.removePlayer(player), 240);
+    }
+
+    /**
+     * Handles rewards and displaying messages when a player has received all achievements.
      *
      * @param player
      */
@@ -314,7 +288,7 @@ public class PlayerAdvancedAchievementListener implements Listener, Reloadable {
     }
 
     private Component applyPrefix(Component s) {
-        if (mainConfig.getBoolean("PrefixEnabled")) return Component.text("[AACH] ").color(NamedTextColor.GRAY).append(s);
+        if (mainConfig.getBoolean("PrefixEnabled")) return Component.text("[AACH] ").color(NamedTextColor.GRAY).append(pluginHeader).append(s);
         return s;
     }
 }
