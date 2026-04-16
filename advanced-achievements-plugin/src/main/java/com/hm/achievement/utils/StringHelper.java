@@ -17,14 +17,8 @@ import org.jspecify.annotations.NonNull;
  */
 public class StringHelper {
 
-    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("([&§])([a-f]|r|[k-o]|[0-9])");
-
-    private StringHelper() {
-        // Not called.
-    }
-
     public static String removeFormattingCodes(String text) {
-        return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");
+        return Pattern.compile("([&§])([a-f]|r|[k-o]|[0-9])").matcher(text).replaceAll("");
     }
 
     public static String getClosestMatch(String toMatch, @NonNull Collection<String> possibleMatches) {
