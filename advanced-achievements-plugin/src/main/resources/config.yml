@@ -52,7 +52,7 @@ AdditionalEffects: true
 # or month when ranked in the top list.
 Sound: true
 
-# For /aach book. All sound values can be found here: https://github.com/PyvesB/advanced-achievements/wiki/Sound-names
+# For /aach book. All sound values can be found here: https://jd.papermc.io/paper/26.1.2/org/bukkit/Sound.html
 SoundBook: entity_player_levelup
 
 # For /aach stats when all achievements have been received.
@@ -288,7 +288,7 @@ BungeeMode: false
 #======================================================================================================================#
 
 # Count blocks placed. You can use any of the following:
-# - block names (available names: https://github.com/PyvesB/advanced-achievements/wiki/Material-names).
+# - block names (available names: https://jd.papermc.io/paper/26.1.2/org/bukkit/Material.html).
 # - notations such as sand:1 (i.e. sand item with metadata 1, red sand) for 1.7-1.12 Minecraft versions .
 # - custom display name of items (e.g. the name of a player's head).
 Places:
