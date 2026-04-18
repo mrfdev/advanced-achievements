@@ -40,7 +40,6 @@ public class SoundPlayer {
         } else {
             logger.warning("soundToPlay is null");
         }
-        logger.info("playing sound " + soundToPlay);
     }
 
     /**

@@ -53,11 +53,11 @@ public class BookCommand extends AbstractCommand implements Cleanable {
     private boolean configAdditionalEffects;
     private boolean configSound;
     private String configSoundBook;
-    private String langBookDelay;
-    private String langBookNotReceived;
+    private Component langBookDelay;
+    private Component langBookNotReceived;
     private Component langBookDate;
     private String langBookName;
-    private String langBookReceived;
+    private Component langBookReceived;
     private DateFormat dateFormat;
 
     @Inject
@@ -77,11 +77,12 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundBook = Objects.requireNonNull(mainConfig.getString("SoundBook")).toUpperCase();
-        langBookDelay = pluginHeader + StringUtils.replaceEach(langConfig.getString("book-delay"), new String[]{"TIME"}, new String[]{Integer.toString(configTimeBook / 1000)});
-        langBookNotReceived = pluginHeader + langConfig.getString("book-not-received");
+        langBookDelay = replace(Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("book-delay")))).build(), "TIME", Integer.toString(configTimeBook / 1000));
+        langBookNotReceived = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("book-not-received")))).build();
         langBookDate = ColorHelper.convertAmpersandToComponent(langConfig.getString("book-date"));
         langBookName = langConfig.getString("book-name");
-        langBookReceived = pluginHeader + langConfig.getString("book-received");
+        langBookReceived = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("book-received")))).build();
+
 
         String localeString = mainConfig.getString("DateLocale");
         dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.forLanguageTag(Objects.requireNonNull(localeString)));
@@ -125,7 +126,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
      * Constructs the pages of a book.
      *
      * @param achievements achievements
-     * @param player player
+     * @param player       player
      */
     private void fillBook(@NonNull List<AwardedDBAchievement> achievements, Player player) {
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);

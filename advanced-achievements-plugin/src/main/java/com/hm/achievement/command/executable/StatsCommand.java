@@ -102,7 +102,7 @@ public class StatsCommand extends AbstractCommand {
             }
         }
         // Display enriched progress bar.
-        Component message = Component.text(String.valueOf(pluginHeader)).append(Component.text("[")).append(barDisplay).append(Component.text("]", NamedTextColor.DARK_GRAY));
+        Component message = Component.text().append(pluginHeader.get()).append(Component.text("[")).append(barDisplay).append(Component.text("]")).build();
         player.sendMessage(message);
 
         // Player has received all achievement; play special effect and sound.

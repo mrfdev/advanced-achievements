@@ -48,9 +48,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     private boolean configAdditionalEffects;
     private boolean configSound;
     private String configSoundRanking;
-    private String langPeriodAchievement;
-    private String langPlayerRank;
-    private String langNotRanked;
+    private Component langPeriodAchievement;
+    private Component langPlayerRank;
+    private Component langNotRanked;
     // Used for caching.
     private Map<String, Integer> cachedSortedRankings;
     private List<Integer> cachedAchievementCounts;
@@ -73,9 +73,9 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
         configSound = mainConfig.getBoolean("Sound");
         configSoundRanking = Objects.requireNonNull(mainConfig.getString("SoundRanking")).toUpperCase();
 
-        langPeriodAchievement = pluginHeader + langConfig.getString(languageKey);
-        langPlayerRank = pluginHeader + langConfig.getString("player-rank") + " " + configColor;
-        langNotRanked = pluginHeader + langConfig.getString("not-ranked");
+        langPeriodAchievement = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString(languageKey)))).build();
+        langPlayerRank = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("player-rank")))).append(Component.text(" ").color(configColor)).build();
+        langNotRanked = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("not-ranked")))).build();
     }
 
     @Override
@@ -112,7 +112,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
                 if (playerRank <= configTopList) {
                     launchEffects((Player) sender);
                 }
-                sender.sendMessage(langPlayerRank + playerRank + NamedTextColor.GRAY + "/" + configColor + cachedSortedRankings.size());
+                sender.sendMessage(langPlayerRank.append(Component.text(playerRank)).color(NamedTextColor.GRAY).append(Component.text("/").append(Component.text(cachedSortedRankings.size()))).color(NamedTextColor.GRAY));
             }
         }
     }
