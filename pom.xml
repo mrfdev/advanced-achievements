@@ -227,9 +227,6 @@
                 <groupId>io.github.greymagic27</groupId>
                 <artifactId>McTestServer</artifactId>
                 <version>1.0.6</version>
-                <configuration>
-                    <AACH>true</AACH>
-                </configuration>
             </plugin>
         </plugins>
     </build>
