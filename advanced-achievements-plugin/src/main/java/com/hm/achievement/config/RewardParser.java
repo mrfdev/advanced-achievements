@@ -150,8 +150,7 @@ public class RewardParser {
                 String name = nameBuilder.toString().trim();
                 if (name.isEmpty()) name = StringHelper.toReadableName(rewardMaterial.get());
                 if (itemMeta != null) {
-                    Component displayName = Component.text(name).style(Style.style().decoration(TextDecoration.ITALIC, false));
-                    itemMeta.displayName(displayName);
+                    itemMeta.displayName(Component.text(name).decorate(TextDecoration.ITALIC));
                     itemStack.setItemMeta(itemMeta);
                 }
                 listTexts.add(StringUtils.replaceEach(langConfig.getString("list-reward-item"), new String[]{"AMOUNT", "ITEM"}, new String[]{Integer.toString(amount), name}));
