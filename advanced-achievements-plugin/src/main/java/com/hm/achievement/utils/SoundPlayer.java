@@ -2,11 +2,9 @@ package com.hm.achievement.utils;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.Locale;
 import java.util.logging.Logger;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
@@ -34,9 +32,9 @@ public class SoundPlayer {
      * @param fallbackSound
      */
     public void play(@NonNull Player player, String providedSound, String fallbackSound) {
-        Sound soundToPlay = parseSound(providedSound, fallbackSound);
+        NamespacedKey soundToPlay = parseSound(providedSound, fallbackSound);
         if (soundToPlay != null) {
-            player.playSound(player.getLocation(), soundToPlay, 1, 0.7f);
+            player.playSound(player.getLocation(), String.valueOf(soundToPlay), 1, 0.7f);
         } else {
             logger.warning("soundToPlay is null");
         }
@@ -49,10 +47,10 @@ public class SoundPlayer {
      * @param fallbackSound The fallback sound to use if parsing fails.
      * @return The resolved Sound enum value.
      */
-    private Sound parseSound(@NonNull String soundName, @NonNull String fallbackSound) {
-        Sound sound = Registry.SOUNDS.get(NamespacedKey.minecraft(soundName.toLowerCase(Locale.ROOT)));
-        Sound fallSound = Registry.SOUNDS.get(NamespacedKey.minecraft(fallbackSound.toLowerCase(Locale.ROOT)));
-        if (sound == null) return Sound.ENTITY_FIREWORK_ROCKET_BLAST;
-        return fallSound;
+    NamespacedKey parseSound(@NonNull String soundName, @NonNull String fallbackSound) {
+        NamespacedKey key = NamespacedKey.minecraft(soundName.toLowerCase());
+        if (Registry.SOUNDS.get(key) != null) return key;
+        logger.warning("Sound " + soundName + " is invalid, falling back to " + fallbackSound);
+        return NamespacedKey.minecraft(fallbackSound.toLowerCase());
     }
 }
