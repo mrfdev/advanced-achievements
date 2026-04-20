@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
@@ -145,7 +145,7 @@ public class BookCommand extends AbstractCommand implements Cleanable {
         bookMeta.addPages(bookPages.toArray(new Component[0]));
         bookMeta.setAuthor(player.getName());
         bookMeta.setTitle(langBookName);
-        bookMeta.lore(Collections.singletonList(Component.text(StringUtils.replaceEach(String.valueOf(langBookDate), new String[]{"DATE"}, new String[]{dateFormat.format(System.currentTimeMillis())}))));
+        bookMeta.lore(Collections.singletonList(langBookDate.replaceText(TextReplacementConfig.builder().matchLiteral("DATE").replacement(dateFormat.format(System.currentTimeMillis())).build())));
         book.setItemMeta(bookMeta);
 
         // Check whether player has room in his inventory, else drop book on the ground.
