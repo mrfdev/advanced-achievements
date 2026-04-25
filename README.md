@@ -10,7 +10,7 @@
 
 Custom fork for Minecraft server 1MoreBlock.com
 
-Recent changes include java 21+, 1.21.11, and legacy color code fixes.
+Recent changes include Java 25, 26.1.2, and removing deprecated ChatColor methods in favour of Adventure Components.
 
 **Advanced Achievements enables unique and challenging achievements on Minecraft servers. Collect as many as you can,
 earn rewards, climb the rankings and receive RP books! The plugin supports SQLite, MySQL, H2 and PostgreSQL, manages an
@@ -26,23 +26,22 @@ releases page here on GitHub by the way, but here it is.)
 <br/>
 </p>
 
-## :star: Support and feedback
+## ⭐ Support and feedback
 
-Thought of a cool idea? Found a problem or need some help? Simply open an [**issue
-**](https://github.com/mrfdev/advanced-achievements/issues)!
+Thought of a cool idea? Found a problem or need some help? Simply open an [**issue**](https://github.com/mrfdev/advanced-achievements/issues)!
 
 Find the project useful, fun or interesting? **Star** the repository by clicking on the icon on the top right of this
 page!
 
-## :computer: Code contributions
+## 🖥️ Code contributions
 
 Want to make Advanced Achievements better, faster, stronger? Contributions are welcome, open a **pull request** and
 share your code! Simply **fork** the repository by clicking on the icon on the top right of this page to get started.
 
-## :balance_scale: License
+## ⚖️ License
 
 GNU General Public License v3.0
 
-## Special credits
+## 📜 Special credits
 
 Pierre-Yves Bigourdan, [@PyvesB](https://github.com/PyvesB/) 

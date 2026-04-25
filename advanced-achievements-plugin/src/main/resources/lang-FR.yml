@@ -214,9 +214,6 @@ reset-all-successful: "Toute les statistiques ont été réinitialisées pour PL
 # Used in /aach generate.
 advancements-generated: "Avancements générés avec succès."
 
-# Used in /aach inspect
-achievement-not-recognized: "Le succès 'NAME' n'existe pas. Voulez-vous dire CLOSEST_MATCH ?"
-
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #
 #                                                                                                                      #

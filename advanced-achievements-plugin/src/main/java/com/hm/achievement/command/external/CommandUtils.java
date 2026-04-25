@@ -1,11 +1,10 @@
 package com.hm.achievement.command.external;
 
+import com.hm.achievement.utils.StringHelper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -507,7 +506,7 @@ public class CommandUtils {
 
     private static boolean isName(String arg, Entity e) {
         if (getName(arg) == null) return true;
-        return isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg).equals(Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.customName()))).replace(" ", "_")) || (e instanceof Player && e.getName().replace(" ", "_").equalsIgnoreCase(getName(arg))));
+        return isInverted(arg) == (e.customName() == null) && isInverted(arg) != (getName(arg).equals(StringHelper.componentToString((e.customName())).replace(" ", "_")) || (e instanceof Player && e.getName().replace(" ", "_").equalsIgnoreCase(getName(arg))));
     }
 
     private static boolean isType(String arg, @NonNull Entity e) {
@@ -526,7 +525,7 @@ public class CommandUtils {
     }
 
     public static @NonNull String getString(@NonNull String arg) {
-        return arg.split("=")[1].replaceAll("!", "");
+        return arg.split("=")[1].replace("!", "");
     }
 
     private static boolean isLessThan(String arg, double value) {

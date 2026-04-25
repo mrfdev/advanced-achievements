@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
@@ -43,7 +44,7 @@ public class StatsCommand extends AbstractCommand {
     private Component langNumberAchievements;
 
     @Inject
-    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
+    public StatsCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -53,14 +54,13 @@ public class StatsCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
         // Load configuration parameters.
-        configColor = ColorHelper.parseColor(mainConfig.getString("Color"));
+        configColor = ColorHelper.configColor(mainConfig);
         configIcon = StringHelper.unescapeJava(mainConfig.getString("Icon"));
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundStats = Objects.requireNonNull(mainConfig.getString("SoundStats")).toUpperCase();
-        langNumberAchievements = Component.text(String.valueOf(pluginHeader)).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" "));
+        langNumberAchievements = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("number-achievements")))).append(Component.text(" ")).build();
     }
 
     @Override
@@ -102,18 +102,13 @@ public class StatsCommand extends AbstractCommand {
             }
         }
         // Display enriched progress bar.
-        Component message = Component.text(String.valueOf(pluginHeader)).append(Component.text("[")).append(barDisplay).append(Component.text("]", NamedTextColor.DARK_GRAY));
+        Component message = Component.text().append(pluginHeader.get()).append(Component.text("[")).append(barDisplay).append(Component.text("]")).build();
         player.sendMessage(message);
 
         // Player has received all achievement; play special effect and sound.
         if (playerAchievements >= totalAchievements) {
-            if (configAdditionalEffects) {
-                player.spawnParticle(Particle.WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
-            }
-
-            if (configSound) {
-                soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST");
-            }
+            if (configAdditionalEffects) player.spawnParticle(Particle.WITCH, player.getLocation(), 400, 0, 1, 0, 0.5f);
+            if (configSound) soundPlayer.play(player, configSoundStats, "ENTITY_FIREWORK_ROCKET_BLAST");
         }
     }
 }

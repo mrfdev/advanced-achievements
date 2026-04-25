@@ -16,8 +16,8 @@ all-achievements-received: "Congratulations, you have received all the achieveme
 invalid-command: "Invalid command. Please type /aach to display the command help."
 
 # Used in /aach reload.
-configuration-successfully-reloaded: "Configuration successfully reloaded."
-configuration-reload-failed: "Errors while reloading configuration. Please view logs for more details."
+configuration-successfully-reloaded: "&2Configuration successfully reloaded."
+configuration-reload-failed: "&cErrors while reloading configuration. Please view logs for more details."
 
 # Used in /aach top week and month.
 top-achievement: "Top achievement owners:"
@@ -110,7 +110,7 @@ aach-command-inspect: "Inspect recipients of ACH."
 aach-command-inspect-hover: "Lists most recent recipients of an achievement, max 1000."
 aach-command-grant: "Grant ACH to NAME."
 aach-command-grant-hover: "Player must be online. Grants achievement to player"
-aach-tip: "&lHINT &8You can &7&n&ohover&8 or &7&n&oclick&8 on the commands!"
+aach-tip: "&l&7HINT &8You can &7&n&ohover&8 or &7&n&oclick&8 on the commands!"
 
 # Used in /aach info.
 version-command-version: "Version:"
@@ -134,11 +134,11 @@ list-reception: "Reception date:"
 list-progress: "Progress:"
 list-reward: "Reward:"
 list-rewards: "Rewards:"
-list-reward-money: "receive AMOUNT"
-list-reward-item: "receive AMOUNT ITEM"
-list-reward-experience: "receive AMOUNT experience"
-list-reward-increase-max-health: "increase max health by AMOUNT"
-list-reward-increase-max-oxygen: "increase max oxygen by AMOUNT"
+list-reward-money: "Receive AMOUNT"
+list-reward-item: "Receive AMOUNT ITEM"
+list-reward-experience: "Receive AMOUNT experience"
+list-reward-increase-max-health: "Increase max health by AMOUNT"
+list-reward-increase-max-oxygen: "Increase max oxygen by AMOUNT"
 list-achievement-received: "&5\u2714&f "
 list-achievement-not-received: "&4\u2718 "
 list-category-not-unlocked: "You have not yet unlocked this category."
@@ -221,9 +221,6 @@ reset-all-successful: "All statistics were cleared for PLAYER."
 
 # Used in /aach generate.
 advancements-generated: "Advancements were successfully generated."
-
-# Used in /aach inspect
-achievement-not-recognized: "Achievement called 'NAME' was not recognized. Did you mean CLOSEST_MATCH?"
 
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #

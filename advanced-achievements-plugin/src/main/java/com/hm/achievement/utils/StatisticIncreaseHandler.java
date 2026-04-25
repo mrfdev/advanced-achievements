@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for classes which track statistic increases (such as
@@ -35,8 +36,7 @@ public class StatisticIncreaseHandler implements Reloadable {
     private Set<String> configExcludedWorlds;
 
     @Inject
-    public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                                    CacheManager cacheManager) {
+    public StatisticIncreaseHandler(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         this.mainConfig = mainConfig;
         this.achievementMap = achievementMap;
         this.cacheManager = cacheManager;
@@ -71,13 +71,11 @@ public class StatisticIncreaseHandler implements Reloadable {
      * @param subcategory
      * @param currentValue
      */
-    public void checkThresholdsAndAchievements(Player player, Category category, String subcategory,
-                                               long currentValue) {
-        checkThresholdsAndAchievements(player, achievementMap.getForCategoryAndSubcategory(category, subcategory),
-                currentValue);
+    public void checkThresholdsAndAchievements(Player player, Category category, String subcategory, long currentValue) {
+        checkThresholdsAndAchievements(player, achievementMap.getForCategoryAndSubcategory(category, subcategory), currentValue);
     }
 
-    private void checkThresholdsAndAchievements(Player player, List<Achievement> achievements, long currentValue) {
+    private void checkThresholdsAndAchievements(Player player, @NonNull List<Achievement> achievements, long currentValue) {
         for (Achievement achievement : achievements) {
             // Check whether player has met the threshold.
             if (currentValue < achievement.getThreshold()) {
@@ -85,8 +83,7 @@ public class StatisticIncreaseHandler implements Reloadable {
                 return;
             }
             // Check whether player has received the achievement and has permission to do so.
-            if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName())
-                    && player.hasPermission("achievement." + achievement.getName())) {
+            if (!cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.getName()) && player.hasPermission("achievement." + achievement.getName())) {
                 Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(player, achievement));
             }
         }
@@ -99,14 +96,8 @@ public class StatisticIncreaseHandler implements Reloadable {
      * @param category
      * @return true if the increase should be taken into account, false otherwise
      */
-    protected boolean shouldIncreaseBeTakenIntoAccount(Player player, Category category) {
+    protected boolean shouldIncreaseBeTakenIntoAccount(@NonNull Player player, Category category) {
         GameMode gameMode = player.getGameMode();
-        return !player.hasMetadata("NPC")
-                && player.hasPermission(category.toPermName())
-                && (!configRestrictCreative || gameMode != GameMode.CREATIVE)
-                && (!configRestrictSpectator || gameMode != GameMode.SPECTATOR)
-                && (!configRestrictAdventure || gameMode != GameMode.ADVENTURE)
-                && !configExcludedWorlds.contains(player.getWorld().getName());
+        return !player.hasMetadata("NPC") && player.hasPermission(category.toPermName()) && (!configRestrictCreative || gameMode != GameMode.CREATIVE) && (!configRestrictSpectator || gameMode != GameMode.SPECTATOR) && (!configRestrictAdventure || gameMode != GameMode.ADVENTURE) && !configExcludedWorlds.contains(player.getWorld().getName());
     }
-
 }

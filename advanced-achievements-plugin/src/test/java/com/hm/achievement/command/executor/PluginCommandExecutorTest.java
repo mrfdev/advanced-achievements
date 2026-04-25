@@ -4,6 +4,7 @@ import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.HelpCommand;
 import com.hm.achievement.command.executable.InspectCommand;
 import com.hm.achievement.command.executable.ListCommand;
+import com.hm.achievement.config.PluginHeader;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.command.Command;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PluginCommandExecutorTest {
 
-    private static final String PLUGIN_HEADER = "header ";
+    private static final PluginHeader PLUGIN_HEADER = new PluginHeader(new StringBuilder("[HEADER]"));
     private static final String ERROR_MESSAGE = "error message";
     private static final String label = "label";
 
@@ -59,8 +60,7 @@ class PluginCommandExecutorTest {
         commands.add(helpCommand);
         commands.add(listCommand);
         commands.add(argsCommand);
-        StringBuilder pluginHeader = new StringBuilder(PLUGIN_HEADER);
-        underTest = new PluginCommandExecutor(langConfig, commands, pluginHeader);
+        underTest = new PluginCommandExecutor(langConfig, commands, PLUGIN_HEADER);
         underTest.extractConfigurationParameters();
     }
 

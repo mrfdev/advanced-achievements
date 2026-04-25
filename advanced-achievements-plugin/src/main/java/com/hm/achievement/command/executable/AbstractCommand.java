@@ -1,9 +1,11 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.lifecycle.Reloadable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for commands.
@@ -14,11 +16,11 @@ public abstract class AbstractCommand implements Reloadable {
 
     final YamlConfiguration mainConfig;
     final YamlConfiguration langConfig;
-    final StringBuilder pluginHeader;
+    final PluginHeader pluginHeader;
 
     private String langNoPermissions;
 
-    AbstractCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader) {
+    AbstractCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, PluginHeader pluginHeader) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.pluginHeader = pluginHeader;
@@ -53,7 +55,12 @@ public abstract class AbstractCommand implements Reloadable {
      */
     abstract void onExecute(CommandSender sender, String[] args);
 
-    String translateColorCodes(String translate) {
-        return ChatColor.translateAlternateColorCodes('&', translate);
+    protected Component replace(@NonNull Component component, String placeholder, String value) {
+        return component.replaceText(b -> b.matchLiteral(placeholder).replacement(value));
+    }
+
+    protected Component replace(@NonNull Component component, String @NonNull [] placeholders, String[] values) {
+        for (int i = 0; i < placeholders.length; i++) component = replace(component, placeholders[i], values[i]);
+        return component;
     }
 }

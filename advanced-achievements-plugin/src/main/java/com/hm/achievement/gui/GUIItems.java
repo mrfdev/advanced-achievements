@@ -4,6 +4,7 @@ import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.MaterialHelper;
 import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -134,12 +134,12 @@ public class GUIItems implements Reloadable {
     private @NonNull ItemStack createButton(String category, String msg, String lore) {
         ItemStack button = createItemStack(category);
         ItemMeta meta = button.getItemMeta();
-        Component displayName = LegacyComponentSerializer.legacyAmpersand().deserialize(Objects.requireNonNull(StringHelper.unescapeJava(langConfig.getString(msg))));
+        Component displayName = ColorHelper.convertAmpersandToComponent(StringHelper.unescapeJava(langConfig.getString(msg)));
         meta.displayName(displayName);
         if (lore != null) {
             String loreString = StringHelper.unescapeJava(langConfig.getString(lore));
             if (!Objects.requireNonNull(loreString).isEmpty()) {
-                Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(loreString);
+                Component loreComponent = ColorHelper.convertAmpersandToComponent(loreString);
                 List<Component> loreComponents = Collections.singletonList(loreComponent);
                 meta.lore(loreComponents);
             }
@@ -164,7 +164,7 @@ public class GUIItems implements Reloadable {
             itemMeta.customName(null);
         } else {
             String formattedDisplayName = StringUtils.replaceEach(configListAchievementFormat, new String[]{"%ICON%", "%NAME%"}, new String[]{configIcon, "&l" + displayName + "&8"});
-            itemMeta.customName(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedDisplayName));
+            itemMeta.customName(ColorHelper.convertAmpersandToComponent(formattedDisplayName));
         }
         item.setItemMeta(itemMeta);
     }
@@ -204,5 +204,4 @@ public class GUIItems implements Reloadable {
     public ItemStack getCategoryLock() {
         return categoryLock;
     }
-
 }

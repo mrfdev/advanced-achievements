@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.utils.SoundPlayer;
 import jakarta.inject.Inject;
@@ -19,8 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class MonthCommand extends AbstractRankingCommand {
 
     @Inject
-    public MonthCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                        StringBuilder pluginHeader, Logger logger, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+    public MonthCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, Logger logger, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader, logger, "month-achievement", databaseManager, soundPlayer);
     }
 

@@ -14,8 +14,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>21</java.version>
-        <revision>7.3.9</revision>
+        <java.version>25</java.version>
+        <revision>7.4.0</revision>
         <mockito.version>5.23.0</mockito.version>
         <jupiter.version>6.0.3</jupiter.version>
         <dagger.version>2.59.2</dagger.version>
@@ -63,7 +63,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21.11-R0.1-SNAPSHOT</version>
+                <version>[26.1.2.build,)</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -84,7 +84,6 @@
                 <version>v5.2.6.2</version>
                 <scope>provided</scope>
             </dependency>
-            <!--suppress VulnerableLibrariesLocal -->
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>CMI-API</artifactId>
@@ -154,7 +153,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.5.0-jre</version>
+                <version>33.6.0-jre</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -227,6 +226,11 @@
                 <groupId>io.github.greymagic27</groupId>
                 <artifactId>McTestServer</artifactId>
                 <version>1.0.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.10.0</version>
             </plugin>
         </plugins>
     </build>

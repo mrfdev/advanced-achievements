@@ -1,7 +1,9 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.pagination.CommandPagination;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
+import com.hm.achievement.utils.ColorHelper;
 import com.hm.achievement.utils.SoundPlayer;
 import com.hm.achievement.utils.StringHelper;
 import java.util.ArrayList;
@@ -11,13 +13,15 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class in charge of factoring out common functionality for /aach top, week and month commands.
@@ -39,21 +43,20 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     private final AbstractDatabaseManager databaseManager;
     private final SoundPlayer soundPlayer;
 
-    private ChatColor configColor;
+    private NamedTextColor configColor;
     private int configTopList;
     private boolean configAdditionalEffects;
     private boolean configSound;
     private String configSoundRanking;
-    private String langPeriodAchievement;
-    private String langPlayerRank;
-    private String langNotRanked;
+    private Component langPeriodAchievement;
+    private Component langPlayerRank;
+    private Component langNotRanked;
     // Used for caching.
     private Map<String, Integer> cachedSortedRankings;
     private List<Integer> cachedAchievementCounts;
     private long lastCacheUpdate = 0L;
 
-    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader,
-                           Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
+    AbstractRankingCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, PluginHeader pluginHeader, Logger logger, String languageKey, AbstractDatabaseManager databaseManager, SoundPlayer soundPlayer) {
         super(mainConfig, langConfig, pluginHeader);
         this.logger = logger;
         this.languageKey = languageKey;
@@ -64,16 +67,15 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
-        configColor = ChatColor.getByChar(Objects.requireNonNull(mainConfig.getString("Color")));
+        configColor = ColorHelper.configColor(mainConfig);
         configTopList = mainConfig.getInt("TopList");
         configAdditionalEffects = mainConfig.getBoolean("AdditionalEffects");
         configSound = mainConfig.getBoolean("Sound");
         configSoundRanking = Objects.requireNonNull(mainConfig.getString("SoundRanking")).toUpperCase();
 
-        langPeriodAchievement = pluginHeader + langConfig.getString(languageKey);
-        langPlayerRank = pluginHeader + langConfig.getString("player-rank") + " " + configColor;
-        langNotRanked = pluginHeader + langConfig.getString("not-ranked");
+        langPeriodAchievement = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString(languageKey)))).build();
+        langPlayerRank = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("player-rank")))).append(Component.text(" ").color(configColor)).build();
+        langNotRanked = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("not-ranked")))).build();
     }
 
     @Override
@@ -87,7 +89,7 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
 
         sender.sendMessage(langPeriodAchievement);
 
-        List<String> rankingMessages = getRankingMessages(sender);
+        List<Component> rankingMessages = getRankingMessages(sender);
 
         // If config has top set at less than one page, don't use pagination.
         if (configTopList < PER_PAGE) {
@@ -110,34 +112,27 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
                 if (playerRank <= configTopList) {
                     launchEffects((Player) sender);
                 }
-                sender.sendMessage(
-                        langPlayerRank + playerRank + ChatColor.GRAY + "/" + configColor + cachedSortedRankings.size());
+                sender.sendMessage(langPlayerRank.append(Component.text(playerRank)).color(NamedTextColor.GRAY).append(Component.text("/").append(Component.text(cachedSortedRankings.size()))).color(NamedTextColor.GRAY));
             }
         }
     }
 
-    private int getPage(String[] args) {
+    private int getPage(String @NonNull [] args) {
         return args.length > 1 && NumberUtils.isDigits(args[1]) ? Integer.parseInt(args[1]) : 1;
     }
 
-    private List<String> getRankingMessages(CommandSender sender) {
-        List<String> rankingMessages = new ArrayList<>();
+    private @NonNull List<Component> getRankingMessages(CommandSender sender) {
+        List<Component> rankingMessages = new ArrayList<>();
         int currentRank = 1;
         for (Entry<String, Integer> ranking : cachedSortedRankings.entrySet()) {
             String playerName = Bukkit.getOfflinePlayer(UUID.fromString(ranking.getKey())).getName();
             if (playerName != null) {
-                // Color the name of the player if he is in the top list.
-                ChatColor color = playerName.equals(sender.getName()) ? configColor : ChatColor.GRAY;
-                rankingMessages.add(color + " " + getRankingSymbol(currentRank) + " " + playerName + " - "
-                        + ranking.getValue());
-            } else {
-                logger.warning("Ranking command: could not find player's name using a database UUID.");
-            }
-
+                // Colour the name of the player if he is in the top list.
+                NamedTextColor color = playerName.equals(sender.getName()) ? configColor : NamedTextColor.GRAY;
+                rankingMessages.add(Component.text(" " + getRankingSymbol(currentRank) + " " + playerName + " - " + ranking.getValue()).color(color));
+            } else logger.warning("Ranking command: could not find player's name using a database UUID.");
             ++currentRank;
-            if (currentRank > configTopList) {
-                break;
-            }
+            if (currentRank > configTopList) break;
         }
         return rankingMessages;
     }
@@ -145,8 +140,8 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     /**
      * Returns a UTF-8 circled number based on the player's rank.
      *
-     * @param rank
-     * @return an UTF-8 string corresponding to the rank
+     * @param rank rank
+     * @return a UTF-8 string corresponding to the rank
      */
     private String getRankingSymbol(int rank) {
         int decimalRankSymbol;
@@ -172,15 +167,10 @@ public abstract class AbstractRankingCommand extends AbstractCommand {
     /**
      * Launches sound and particle effects if player is in a top list.
      *
-     * @param player
+     * @param player player
      */
     private void launchEffects(Player player) {
-        if (configAdditionalEffects) {
-            player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
-        }
-
-        if (configSound) {
-            soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
-        }
+        if (configAdditionalEffects) player.spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0, 1, 0, 0.5f);
+        if (configSound) soundPlayer.play(player, configSoundRanking, "ENTITY_FIREWORK_ROCKET_BLAST");
     }
 }

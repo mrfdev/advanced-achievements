@@ -3,7 +3,8 @@ package com.hm.achievement.utils;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.StringUtils;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -16,14 +17,8 @@ import org.jspecify.annotations.NonNull;
  */
 public class StringHelper {
 
-    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("([&§])([a-f]|r|[k-o]|[0-9])");
-
-    private StringHelper() {
-        // Not called.
-    }
-
     public static String removeFormattingCodes(String text) {
-        return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");
+        return Pattern.compile("([&§])([a-f]|r|[k-o]|[0-9])").matcher(text).replaceAll("");
     }
 
     public static String getClosestMatch(String toMatch, @NonNull Collection<String> possibleMatches) {
@@ -39,17 +34,8 @@ public class StringHelper {
         return closestMatch;
     }
 
-    public static @NonNull Component replacePlayerPlaceholders(Object input, @NonNull Player player) {
-        String str;
-        if (input instanceof Component) {
-            str = input.toString();
-        } else if (input instanceof String) {
-            str = (String) input;
-        } else {
-            throw new IllegalStateException("Input must be string or component");
-        }
-        str = StringUtils.replaceEach(str, new String[]{"PLAYER_WORLD", "PLAYER_X", "PLAYER_Y", "PLAYER_Z", "PLAYER"}, new String[]{player.getWorld().getName(), Integer.toString(player.getLocation().getBlockX()), Integer.toString(player.getLocation().getBlockY()), Integer.toString(player.getLocation().getBlockZ()), player.getName()});
-        return Component.text(str);
+    public static @NonNull Component replacePlayerPlaceholders(@NonNull Component input, @NonNull Player player) {
+        return input.replaceText(b -> b.matchLiteral("PLAYER_WORLD").replacement(player.getWorld().getName())).replaceText(b -> b.matchLiteral("PLAYER_X").replacement(Integer.toString(player.getLocation().getBlockX()))).replaceText(b -> b.matchLiteral("PLAYER_Y").replacement(Integer.toString(player.getLocation().getBlockY()))).replaceText(b -> b.matchLiteral("PLAYER_Z").replacement(Integer.toString(player.getLocation().getBlockZ()))).replaceText(b -> b.matchLiteral("PLAYER").replacement(player.getName()));
     }
 
     public static @NonNull String toReadableName(@NonNull Material material) {
@@ -138,5 +124,13 @@ public class StringHelper {
             curr = temp;
         }
         return prev[m];
+    }
+
+    public static @NonNull String componentToLegacySection(Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
+    }
+
+    public static @NonNull String componentToString(Component component) {
+        return PlainTextComponentSerializer.plainText().serialize(component);
     }
 }

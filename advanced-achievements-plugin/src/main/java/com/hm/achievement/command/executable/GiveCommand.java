@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
@@ -9,9 +10,10 @@ import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,14 +32,13 @@ public class GiveCommand extends AbstractParsableCommand {
     private final AchievementMap achievementMap;
 
     private boolean configMultiCommand;
-    private String langAchievementAlreadyReceived;
-    private String langAchievementGiven;
-    private String langAchievementNotFound;
-    private String langAchievementNoPermission;
+    private Component langAchievementAlreadyReceived;
+    private Component langAchievementGiven;
+    private Component langAchievementNotFound;
+    private Component langAchievementNoPermission;
 
     @Inject
-    public GiveCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                       StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public GiveCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -49,26 +50,23 @@ public class GiveCommand extends AbstractParsableCommand {
 
         configMultiCommand = mainConfig.getBoolean("MultiCommand");
 
-        langAchievementAlreadyReceived = pluginHeader + langConfig.getString("achievement-already-received");
-        langAchievementGiven = pluginHeader + langConfig.getString("achievement-given");
-        langAchievementNotFound = pluginHeader + langConfig.getString("achievement-not-found");
-        langAchievementNoPermission = pluginHeader + langConfig.getString("achievement-no-permission");
+        langAchievementAlreadyReceived = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-already-received")))).build();
+        langAchievementGiven = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-given")))).build();
+        langAchievementNotFound = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-not-found")))).build();
+        langAchievementNoPermission = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-no-permission")))).build();
     }
 
     @Override
     void onExecuteForPlayer(CommandSender sender, String[] args, Player player) {
-        Optional<Achievement> achievement = achievementMap.getForCategory(CommandAchievements.COMMANDS).stream()
-                .filter(ach -> ach.getSubcategory().equals(args[1]))
-                .findAny();
+        Optional<Achievement> achievement = achievementMap.getForCategory(CommandAchievements.COMMANDS).stream().filter(ach -> ach.getSubcategory().equals(args[1])).findAny();
 
         if (achievement.isPresent()) {
             // Check whether player has already received achievement and cannot receive it again.
-            if (!configMultiCommand
-                    && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.get().getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{args[2]}));
+            if (!configMultiCommand && cacheManager.hasPlayerAchievement(player.getUniqueId(), achievement.get().getName())) {
+                sender.sendMessage(replace(langAchievementAlreadyReceived, "PLAYER", args[2]));
                 return;
             } else if (!player.hasPermission("achievement." + achievement.get().getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[]{"PLAYER"}, new String[]{args[2]}));
+                sender.sendMessage(replace(langAchievementNoPermission, "PLAYER", args[2]));
                 return;
             }
 
@@ -77,9 +75,7 @@ public class GiveCommand extends AbstractParsableCommand {
             sender.sendMessage(langAchievementGiven);
         } else {
             Set<String> commandKeys = achievementMap.getSubcategoriesForCategory(CommandAchievements.COMMANDS);
-            sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound,
-                    new String[]{"CLOSEST_MATCH"},
-                    new String[]{StringHelper.getClosestMatch(args[1], commandKeys)}));
+            sender.sendMessage(replace(langAchievementNotFound, "CLOSEST_MATCH", StringHelper.getClosestMatch(args[1], commandKeys)));
         }
     }
 }

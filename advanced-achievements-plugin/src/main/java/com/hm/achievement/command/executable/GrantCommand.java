@@ -2,6 +2,7 @@ package com.hm.achievement.command.executable;
 
 import com.hm.achievement.category.CommandAchievements;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.domain.Achievement;
 import com.hm.achievement.utils.PlayerAdvancedAchievementEvent;
@@ -9,10 +10,11 @@ import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,15 +27,15 @@ public class GrantCommand extends AbstractParsableCommand {
     private final CacheManager cacheManager;
     private final AchievementMap achievementMap;
     private boolean configMultiCommand;
-    private String langAchievementAlreadyReceived;
-    private String langAchievementGranted;
-    private String langAchievementNotFound;
-    private String langAchievementNoPermission;
-    private String langPlayerNotFound;
-    private String langAchievementGrantedAll;
+    private Component langAchievementAlreadyReceived;
+    private Component langAchievementGranted;
+    private Component langAchievementNotFound;
+    private Component langAchievementNoPermission;
+    private Component langPlayerNotFound;
+    private Component langAchievementGrantedAll;
 
     @Inject
-    public GrantCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
+    public GrantCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, CacheManager cacheManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.cacheManager = cacheManager;
         this.achievementMap = achievementMap;
@@ -43,12 +45,12 @@ public class GrantCommand extends AbstractParsableCommand {
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
         configMultiCommand = mainConfig.getBoolean("MultiCommand");
-        langAchievementAlreadyReceived = pluginHeader + langConfig.getString("achievement-already-received");
-        langAchievementGranted = pluginHeader + langConfig.getString("achievement-granted");
-        langAchievementGrantedAll = pluginHeader + langConfig.getString("achievement-granted-all");
-        langAchievementNotFound = pluginHeader + langConfig.getString("achievement-not-found");
-        langAchievementNoPermission = pluginHeader + langConfig.getString("achievement-no-permission");
-        langPlayerNotFound = pluginHeader + langConfig.getString("player-not-found", "Player not found.");
+        langAchievementAlreadyReceived = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-already-received")))).build();
+        langAchievementGranted = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-granted")))).build();
+        langAchievementGrantedAll = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-granted-all")))).build();
+        langAchievementNotFound = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-not-found")))).build();
+        langAchievementNoPermission = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("achievement-no-permission")))).build();
+        langPlayerNotFound = Component.text().append(pluginHeader.get()).append(Component.text(langConfig.getString("player-not-found", "Player not found."))).build();
     }
 
     @Override
@@ -75,9 +77,9 @@ public class GrantCommand extends AbstractParsableCommand {
                 grantedAny = true;
             }
             if (grantedAny) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementGrantedAll, new String[]{"PLAYER"}, new String[]{playerName}));
+                sender.sendMessage(replace(langAchievementGrantedAll, "PLAYER", playerName));
             } else {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{playerName}));
+                sender.sendMessage(replace(langAchievementAlreadyReceived, "PLAYER", playerName));
             }
             return;
         }
@@ -86,18 +88,18 @@ public class GrantCommand extends AbstractParsableCommand {
         if (achievement.isPresent()) {
             Achievement ach = achievement.get();
             if (!configMultiCommand && cacheManager.hasPlayerAchievement(targetPlayer.getUniqueId(), ach.getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementAlreadyReceived, new String[]{"PLAYER"}, new String[]{playerName}));
+                sender.sendMessage(replace(langAchievementAlreadyReceived, "PLAYER", playerName));
                 return;
             }
             if (!sender.hasPermission("achievement." + ach.getName())) {
-                sender.sendMessage(StringUtils.replaceEach(langAchievementNoPermission, new String[]{"PLAYER"}, new String[]{playerName}));
+                sender.sendMessage(replace(langAchievementNoPermission, "PLAYER", playerName));
                 return;
             }
             Bukkit.getPluginManager().callEvent(new PlayerAdvancedAchievementEvent(targetPlayer, ach));
-            sender.sendMessage(StringUtils.replaceEach(langAchievementGranted, new String[]{"PLAYER"}, new String[]{playerName}));
+            sender.sendMessage(replace(langAchievementGranted, "PLAYER", playerName));
         } else {
             Set<String> names = achievementMap.getForCategory(CommandAchievements.COMMANDS).stream().map(Achievement::getName).collect(Collectors.toSet());
-            sender.sendMessage(StringUtils.replaceEach(langAchievementNotFound, new String[]{"CLOSEST_MATCH"}, new String[]{StringHelper.getClosestMatch(achName, names)}));
+            sender.sendMessage(replace(langAchievementNotFound, "CLOSEST_MATCH", StringHelper.getClosestMatch(achName, names)));
         }
     }
 }

@@ -3,13 +3,12 @@ package com.hm.achievement.listener.statistics;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creeper;
@@ -18,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Listener class to deal with Kills achievements.
@@ -28,21 +28,19 @@ import org.bukkit.event.entity.EntityDeathEvent;
 public class KillsListener extends AbstractListener {
 
     @Inject
-    public KillsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                         CacheManager cacheManager) {
+    public KillsListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(MultipleAchievements.KILLS, mainConfig, achievementMap, cacheManager);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDeath(EntityDeathEvent event) {
+    public void onEntityDeath(@NonNull EntityDeathEvent event) {
         Player player = event.getEntity().getKiller();
         if (player == null) {
             return;
         }
 
         Entity entity = event.getEntity();
-        String mobType = (entity instanceof Creeper && ((Creeper) entity).isPowered()) ? "poweredcreeper"
-                : entity.getType().name().toLowerCase();
+        String mobType = (entity instanceof Creeper && ((Creeper) entity).isPowered()) ? "poweredcreeper" : entity.getType().name().toLowerCase();
 
         Set<String> subcategories = new HashSet<>();
 
@@ -50,9 +48,8 @@ public class KillsListener extends AbstractListener {
             addMatchingSubcategories(subcategories, mobType);
         }
 
-        if (entity.customName() != null
-                && player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(entity.customName())))))) {
-            addMatchingSubcategories(subcategories, PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(entity.customName())));
+        if (entity.customName() != null && player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(StringHelper.componentToString(entity.customName()))))) {
+            addMatchingSubcategories(subcategories, StringHelper.componentToString(entity.customName()));
         }
 
         if (entity instanceof Player) {

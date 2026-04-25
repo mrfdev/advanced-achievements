@@ -214,9 +214,6 @@ reset-all-successful: "Todas as estatísticas foram apagadas para PLAYER."
 # Related to /aach generate.
 advancements-generated: "Avanços foram gerados com sucesso."
 
-# Used in /aach inspect
-achievement-not-recognized: "Conquista chamada 'NAME' não foi reconhecido. Você quis dizer CLOSEST_MATCH?"
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

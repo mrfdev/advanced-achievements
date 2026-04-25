@@ -205,10 +205,6 @@ reset-successful: PLAYER oyuncusunun istatistikleri sıfırlandı.
 # Related to /aach generate.
 advancements-generated: Gelişimler başarıyla oluşturuldu.
 
-# Related to /aach inspect
-achievement-not-recognized: '''NAME'' isimli başarım bulunamadı. Bunu mu demek istediniz:
-  CLOSEST_MATCH?'
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

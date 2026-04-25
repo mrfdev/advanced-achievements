@@ -253,9 +253,9 @@ public abstract class AbstractDatabaseManager implements Reloadable {
             // Either consider all the achievements or only those received after the start date.
             String sql = start == 0L
                     ? "SELECT playername, COUNT(*) FROM " + prefix
-                    + "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
+                      + "achievements GROUP BY playername ORDER BY COUNT(*) DESC"
                     : "SELECT playername, COUNT(*) FROM " + prefix
-                    + "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
+                      + "achievements WHERE date > ? GROUP BY playername ORDER BY COUNT(*) DESC";
             Map<String, Integer> topList = new LinkedHashMap<>();
             try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
                 if (start > 0L) {

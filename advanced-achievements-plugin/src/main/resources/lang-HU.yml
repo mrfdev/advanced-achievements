@@ -199,9 +199,6 @@ reset-successful: " a statisztikák törölve PLAYER játékostól."
 # Related to /aach generate.
 advancements-generated: "A küldetések sikeresen létrehozva."
 
-# Related to /aach inspect
-achievement-not-recognized: "A(z) 'NAME' elnevezésű küldetést nem sikerült felismerni. Úgy érted CLOSEST_MATCH?"
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

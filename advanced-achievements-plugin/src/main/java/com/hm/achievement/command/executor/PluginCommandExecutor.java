@@ -2,6 +2,7 @@ package com.hm.achievement.command.executor;
 
 import com.hm.achievement.command.executable.AbstractCommand;
 import com.hm.achievement.command.executable.CommandSpec;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.lifecycle.Reloadable;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -26,12 +27,12 @@ public class PluginCommandExecutor implements CommandExecutor, Reloadable {
 
     private final YamlConfiguration langConfig;
     private final Set<AbstractCommand> commands;
-    private final StringBuilder pluginHeader;
+    private final PluginHeader pluginHeader;
 
     private String langInvalidCommand;
 
     @Inject
-    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands, StringBuilder pluginHeader) {
+    public PluginCommandExecutor(@Named("lang") YamlConfiguration langConfig, Set<AbstractCommand> commands, PluginHeader pluginHeader) {
         this.langConfig = langConfig;
         this.commands = commands;
         this.pluginHeader = pluginHeader;

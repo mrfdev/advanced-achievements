@@ -1,12 +1,12 @@
 package com.hm.achievement.command.pagination;
 
+import com.hm.achievement.utils.ColorHelper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jspecify.annotations.NonNull;
 
@@ -23,13 +23,13 @@ import org.jspecify.annotations.NonNull;
  */
 public class SupplierCommandPagination extends CommandPagination {
 
-    private final List<Supplier<String>> toPaginate;
+    private final List<Supplier<Component>> toPaginate;
     private final YamlConfiguration langConfig;
     private final int perPage;
     private final int size;
     private final int maxPage;
 
-    public SupplierCommandPagination(@NonNull List<Supplier<String>> toPaginate, int perPage, YamlConfiguration langConfig) {
+    public SupplierCommandPagination(@NonNull List<Supplier<Component>> toPaginate, int perPage, YamlConfiguration langConfig) {
         super(new ArrayList<>(), perPage, langConfig);
         this.toPaginate = toPaginate;
         size = toPaginate.size();
@@ -45,23 +45,16 @@ public class SupplierCommandPagination extends CommandPagination {
     }
 
     @Override
-    public void sendPage(int page, @NonNull Consumer<String> to) {
+    public void sendPage(int page, @NonNull Consumer<Component> to) {
         int pageToSend = Math.min(page, maxPage);
-
-        String header = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[]{"PAGE", "MAX"}, new String[]{Integer.toString(pageToSend), Integer.toString(maxPage)})));
-        String footer = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("pagination-footer")));
-
+        Component header = ColorHelper.convertAmpersandToComponent(StringUtils.replaceEach(langConfig.getString("pagination-header"), new String[]{"PAGE", "MAX"}, new String[]{Integer.toString(pageToSend), Integer.toString(maxPage)}));
+        Component footer = ColorHelper.convertAmpersandToComponent(langConfig.getString("pagination-footer"));
         to.accept(header);
-
         int index = pageToSend - 1;
         // Handling case where empty list is given to CommandPagination
         int pageStart = index > 0 ? (index * perPage) : 0;
         int nextPageStart = pageToSend * perPage;
-
-        for (int i = pageStart; i < Math.min(nextPageStart, size); i++) {
-            to.accept(toPaginate.get(i).get());
-        }
-
+        for (int i = pageStart; i < Math.min(nextPageStart, size); i++) to.accept(toPaginate.get(i).get());
         to.accept(footer);
     }
 }

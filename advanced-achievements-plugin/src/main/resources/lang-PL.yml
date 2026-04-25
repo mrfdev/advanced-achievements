@@ -212,9 +212,6 @@ advancements-generated: Pomyslnie wygenerowano postepy.
 error-value: Wartosc musi byc liczba!
 statistic-increased: Statystyka ACH zostala zwiekszona o AMOUNT dla PLAYER !
 
-# Related to /aach inspect
-achievement-not-recognized: Nie odnaleziono osiagniecia. Czy chodzilo ci o CLOSEST_MATCH?
-
 #============================================================#
 # +--------------------------------------------------------+ #
 # | Parameters in future plugin versions will  appear here | #

@@ -1,5 +1,6 @@
 package com.hm.achievement.command.executable;
 
+import com.hm.achievement.config.PluginHeader;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -7,8 +8,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,23 +31,20 @@ public class ToggleCommand extends AbstractCommand {
     private final Map<String, Set<UUID>> typesToToggledPlayers = new HashMap<>();
 
     private boolean configNotifyOtherPlayers;
-    private String langToggleDisplayed;
-    private String langToggleHidden;
+    private Component langToggleDisplayed;
+    private Component langToggleHidden;
 
     @Inject
-    public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                         StringBuilder pluginHeader) {
+    public ToggleCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader) {
         super(mainConfig, langConfig, pluginHeader);
     }
 
     @Override
     public void extractConfigurationParameters() {
         super.extractConfigurationParameters();
-
         configNotifyOtherPlayers = mainConfig.getBoolean("NotifyOtherPlayers");
-
-        langToggleDisplayed = pluginHeader + langConfig.getString("toggle-displayed");
-        langToggleHidden = pluginHeader + langConfig.getString("toggle-hidden");
+        langToggleDisplayed = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-displayed")))).build();
+        langToggleHidden = Component.text().append(pluginHeader.get()).append(Component.text(Objects.requireNonNull(langConfig.getString("toggle-hidden")))).build();
     }
 
     /**
@@ -55,20 +55,14 @@ public class ToggleCommand extends AbstractCommand {
      * @return true if player has used the toggle command, false otherwise
      */
     public boolean isPlayerToggled(Player player, String type) {
-        return toggledPlayers.contains(player.getUniqueId())
-                || typesToToggledPlayers.getOrDefault(type, Collections.emptySet()).contains(player.getUniqueId());
+        return toggledPlayers.contains(player.getUniqueId()) || typesToToggledPlayers.getOrDefault(type, Collections.emptySet()).contains(player.getUniqueId());
     }
 
     @Override
     void onExecute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player player)) {
-            return;
-        }
-
+        if (!(sender instanceof Player player)) return;
         Set<UUID> toggledPlayersForType = toggledPlayers;
-        if (args.length > 1) {
-            toggledPlayersForType = typesToToggledPlayers.computeIfAbsent(args[1], t -> new HashSet<>());
-        }
+        if (args.length > 1) toggledPlayersForType = typesToToggledPlayers.computeIfAbsent(args[1], _ -> new HashSet<>());
 
         if (toggledPlayersForType.contains(player.getUniqueId())) {
             toggledPlayersForType.remove(player.getUniqueId());
@@ -80,10 +74,7 @@ public class ToggleCommand extends AbstractCommand {
     }
 
     private void displayChatMessage(Player player, boolean notifications) {
-        if (notifications) {
-            player.sendMessage(langToggleDisplayed);
-        } else {
-            player.sendMessage(langToggleHidden);
-        }
+        if (notifications) player.sendMessage(langToggleDisplayed);
+        else player.sendMessage(langToggleHidden);
     }
 }

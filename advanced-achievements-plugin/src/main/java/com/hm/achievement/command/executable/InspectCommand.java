@@ -3,10 +3,10 @@ package com.hm.achievement.command.executable;
 import com.hm.achievement.AdvancedAchievements;
 import com.hm.achievement.command.pagination.SupplierCommandPagination;
 import com.hm.achievement.config.AchievementMap;
+import com.hm.achievement.config.PluginHeader;
 import com.hm.achievement.db.AbstractDatabaseManager;
 import com.hm.achievement.db.data.AwardedDBAchievement;
 import com.hm.achievement.domain.Achievement;
-import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -43,17 +43,16 @@ public class InspectCommand extends AbstractCommand {
     private final AchievementMap achievementMap;
 
     private final Map<String, Long> lastCached;
-    private final Map<String, SupplierCommandPagination> cachedPaginations;
+    private final Map<String, SupplierCommandPagination> cachedPagination;
 
     @Inject
-    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, StringBuilder pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
+    public InspectCommand(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, PluginHeader pluginHeader, AdvancedAchievements advancedAchievements, AbstractDatabaseManager databaseManager, AchievementMap achievementMap) {
         super(mainConfig, langConfig, pluginHeader);
         this.advancedAchievements = advancedAchievements;
         this.databaseManager = databaseManager;
         this.achievementMap = achievementMap;
-
         this.lastCached = new HashMap<>();
-        this.cachedPaginations = new HashMap<>();
+        this.cachedPagination = new HashMap<>();
     }
 
     @SuppressWarnings("EmptyMethod")
@@ -73,7 +72,7 @@ public class InspectCommand extends AbstractCommand {
         String displayName = parseAchievementName(args);
         Achievement achievement = getAchievement(displayName);
         if (achievement == null) {
-            sender.sendMessage(pluginHeader + StringUtils.replaceEach(langConfig.getString("achievement_not_recognized"), new String[]{"NAME", "CLOSEST_MATCH"}, new String[]{displayName, StringHelper.getClosestMatch(displayName, achievementMap.getAllSanitisedDisplayNames())}));
+            sender.sendMessage(Component.text().append(pluginHeader.get()).append(Component.text("You must specify an achievement name")));
             return;
         }
         int page = getPage(args);
@@ -84,7 +83,7 @@ public class InspectCommand extends AbstractCommand {
             checkAndCache(achievement.getName());
 
             // Send pagination
-            SupplierCommandPagination pagination = cachedPaginations.get(achievement.getName());
+            SupplierCommandPagination pagination = cachedPagination.get(achievement.getName());
             pagination.sendPage(page, sender);
         });
     }
@@ -115,7 +114,7 @@ public class InspectCommand extends AbstractCommand {
             }
         }
         for (String achievementName : toRemove) {
-            cachedPaginations.remove(achievementName);
+            cachedPagination.remove(achievementName);
             lastCached.remove(achievementName);
         }
 
@@ -124,18 +123,18 @@ public class InspectCommand extends AbstractCommand {
     private void checkAndCache(String achievementName) {
         if (System.currentTimeMillis() - CACHE_EXPIRATION_DELAY > lastCached.getOrDefault(achievementName, 0L)) {
             List<AwardedDBAchievement> recipientList = databaseManager.getAchievementsRecipientList(achievementName);
-            List<Supplier<String>> messages;
-            if (recipientList.isEmpty()) messages = List.of(() -> "No one has this achievement yet");
+            List<Supplier<Component>> messages;
+            if (recipientList.isEmpty()) messages = List.of(() -> Component.text("No one has this achievement yet"));
             else {
-                messages = recipientList.stream().map(achievement -> (Supplier<String>) () -> {
+                messages = recipientList.stream().map(achievement -> (Supplier<Component>) () -> {
                     UUID uuid = achievement.awardedTo();
                     OfflinePlayer player = advancedAchievements.getServer().getOfflinePlayer(uuid);
                     String identifier = player.hasPlayedBefore() ? player.getName() : uuid.toString();
-                    return "  " + identifier + " (" + achievement.formattedDate() + ")";
+                    return Component.text("  " + identifier + " (" + achievement.formattedDate() + ")");
                 }).collect(Collectors.toList());
             }
             SupplierCommandPagination pagination = new SupplierCommandPagination(messages, PER_PAGE, langConfig);
-            cachedPaginations.put(achievementName, pagination);
+            cachedPagination.put(achievementName, pagination);
             lastCached.put(achievementName, System.currentTimeMillis());
         }
     }

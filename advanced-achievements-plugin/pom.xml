@@ -52,7 +52,6 @@
             <artifactId>petmaster</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMI-API</artifactId>
@@ -163,7 +162,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <finalName>advanced-achievements-plugin-${project.version}</finalName>
+                            <finalName>advanced-achievements-${project.version}</finalName>
                             <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
@@ -197,6 +196,10 @@
                                     <shadedPattern>com.hm.fasterxml.jackson</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                            </transformers>
                         </configuration>
                         <phase>package</phase>
                         <goals>

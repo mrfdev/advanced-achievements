@@ -41,6 +41,20 @@ public class CraftsListener extends AbstractListener {
         super(MultipleAchievements.CRAFTS, mainConfig, achievementMap, cacheManager);
     }
 
+    private static int getMaxAmount(@NonNull CraftItemEvent event) {
+        int maxAmount = event.getInventory().getMaxStackSize();
+        ItemStack[] matrix = event.getInventory().getMatrix();
+        for (ItemStack itemStack : matrix) {
+            if (itemStack != null && itemStack.getType() != Material.AIR) {
+                int itemStackAmount = itemStack.getAmount();
+                if (itemStackAmount < maxAmount && itemStackAmount > 0) {
+                    maxAmount = itemStackAmount;
+                }
+            }
+        }
+        return maxAmount;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftItem(@NonNull CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player player) || event.getAction() == InventoryAction.NOTHING
@@ -64,16 +78,7 @@ public class CraftsListener extends AbstractListener {
 
         int eventAmount = item.getAmount();
         if (event.isShiftClick()) {
-            int maxAmount = event.getInventory().getMaxStackSize();
-            ItemStack[] matrix = event.getInventory().getMatrix();
-            for (ItemStack itemStack : matrix) {
-                if (itemStack != null && itemStack.getType() != Material.AIR) {
-                    int itemStackAmount = itemStack.getAmount();
-                    if (itemStackAmount < maxAmount && itemStackAmount > 0) {
-                        maxAmount = itemStackAmount;
-                    }
-                }
-            }
+            int maxAmount = getMaxAmount(event);
             eventAmount *= maxAmount;
             eventAmount = Math.min(eventAmount, InventoryHelper.getAvailableSpace(player, item));
             if (eventAmount == 0) {

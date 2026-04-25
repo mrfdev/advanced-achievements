@@ -3,13 +3,13 @@ package com.hm.achievement.listener.statistics;
 import com.hm.achievement.category.MultipleAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
+import com.hm.achievement.utils.StringHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -29,8 +29,7 @@ import org.jspecify.annotations.NonNull;
 public class PlacesListener extends AbstractListener {
 
     @Inject
-    public PlacesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap,
-                          CacheManager cacheManager) {
+    public PlacesListener(@Named("main") YamlConfiguration mainConfig, AchievementMap achievementMap, CacheManager cacheManager) {
         super(MultipleAchievements.PLACES, mainConfig, achievementMap, cacheManager);
     }
 
@@ -50,7 +49,7 @@ public class PlacesListener extends AbstractListener {
         if (itemMeta != null && itemMeta.hasDisplayName()) {
             Component displayNameComp = itemMeta.customName();
             if (displayNameComp != null) {
-                String displayName = LegacyComponentSerializer.legacySection().serialize(displayNameComp);
+                String displayName = StringHelper.componentToLegacySection(displayNameComp);
                 if (player.hasPermission(category.toChildPermName(StringUtils.deleteWhitespace(displayName)))) {
                     addMatchingSubcategories(subcategories, displayName);
                 }

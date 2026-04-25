@@ -1,6 +1,7 @@
 package com.hm.achievement.command.executable;
 
 import com.hm.achievement.command.external.CommandUtils;
+import com.hm.achievement.config.PluginHeader;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,7 +19,7 @@ public abstract class AbstractParsableCommand extends AbstractCommand {
     private String langPlayerOffline;
     private String langEntityNotPlayer;
 
-    AbstractParsableCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, StringBuilder pluginHeader) {
+    AbstractParsableCommand(YamlConfiguration mainConfig, YamlConfiguration langConfig, PluginHeader pluginHeader) {
         super(mainConfig, langConfig, pluginHeader);
     }
 

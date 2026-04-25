@@ -6,6 +6,7 @@ import com.hm.achievement.category.NormalAchievements;
 import com.hm.achievement.config.AchievementMap;
 import com.hm.achievement.db.CacheManager;
 import com.hm.achievement.lifecycle.Reloadable;
+import com.hm.achievement.utils.ColorHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -16,7 +17,6 @@ import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -37,18 +37,14 @@ public class MainGUI implements Reloadable {
     private final Set<Category> disabledCategories;
     private final GUIItems guiItems;
     private final AchievementMap achievementMap;
-
     private boolean configHideNotReceivedCategories;
     private boolean configHideNoPermissionCategories;
-
     private String langListAchievementsInCategoryPlural;
     private String langListAchievementInCategorySingular;
-
     private Component langListGUITitle;
 
     @Inject
-    public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig,
-                   CacheManager cacheManager, Set<Category> disabledCategories, GUIItems guiItems, AchievementMap achievementMap) {
+    public MainGUI(@Named("main") YamlConfiguration mainConfig, @Named("lang") YamlConfiguration langConfig, CacheManager cacheManager, Set<Category> disabledCategories, GUIItems guiItems, AchievementMap achievementMap) {
         this.mainConfig = mainConfig;
         this.langConfig = langConfig;
         this.cacheManager = cacheManager;
@@ -61,8 +57,7 @@ public class MainGUI implements Reloadable {
     public void extractConfigurationParameters() {
         configHideNotReceivedCategories = mainConfig.getBoolean("HideNotReceivedCategories");
         configHideNoPermissionCategories = mainConfig.getBoolean("HideNoPermissionCategories");
-
-        langListGUITitle = Component.text(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(langConfig.getString("list-gui-title"))));
+        langListGUITitle = ColorHelper.convertAmpersandToComponent(langConfig.getString("list-gui-title"));
         langListAchievementsInCategoryPlural = langConfig.getString("list-achievements-in-category-plural");
         langListAchievementInCategorySingular = langConfig.getString("list-achievements-in-category-singular");
     }
@@ -79,7 +74,6 @@ public class MainGUI implements Reloadable {
         int guiSize = ((totalEnabledCategories - 1) / 9 + 1) * 9; // Round up to multiple of 9
         Inventory mainGUI = Bukkit.createInventory(inventoryHolder, guiSize, langListGUITitle);
         inventoryHolder.setInventory(mainGUI);
-
         int displayedSoFar = 0;
         for (Entry<OrderedCategory, ItemStack> achievementItem : guiItems.getOrderedAchievementItems().entrySet()) {
             Category category = achievementItem.getKey().category();
@@ -89,7 +83,6 @@ public class MainGUI implements Reloadable {
                 ++displayedSoFar;
             }
         }
-
         // Display the main GUI to the player.
         player.openInventory(mainGUI);
     }
@@ -104,9 +97,7 @@ public class MainGUI implements Reloadable {
      */
     private boolean shouldDisplayCategory(ItemStack item, Player player, Category category) {
         // Hide category if an empty name is defined for it, if it's disabled or if the player is missing permissions.
-        return item.getItemMeta().hasCustomName() && !Objects.requireNonNull(item.getItemMeta().customName()).equals(Component.empty()) &&
-                !disabledCategories.contains(category)
-                && (!configHideNoPermissionCategories || player.hasPermission(category.toPermName()));
+        return item.getItemMeta().hasCustomName() && !Objects.requireNonNull(item.getItemMeta().customName()).equals(Component.empty()) && !disabledCategories.contains(category) && (!configHideNoPermissionCategories || player.hasPermission(category.toPermName()));
     }
 
     /**
@@ -119,9 +110,7 @@ public class MainGUI implements Reloadable {
      * @param position
      */
     private void displayCategory(ItemStack item, Inventory gui, Player player, Category category, int position) {
-        long receivedAmount = achievementMap.getForCategory(category).stream()
-                .filter(a -> cacheManager.hasPlayerAchievement(player.getUniqueId(), a.getName()))
-                .count();
+        long receivedAmount = achievementMap.getForCategory(category).stream().filter(a -> cacheManager.hasPlayerAchievement(player.getUniqueId(), a.getName())).count();
         if (!configHideNotReceivedCategories || receivedAmount > 0) {
             int totalAmount = achievementMap.getForCategory(category).size();
             String message = totalAmount > 1 ? langListAchievementsInCategoryPlural : langListAchievementInCategorySingular;
@@ -131,7 +120,7 @@ public class MainGUI implements Reloadable {
                 ItemStack itemWithLore = item.clone();
                 ItemMeta itemMetaWithLore = itemWithLore.getItemMeta();
                 String amountMessage = StringUtils.replaceEach(message, new String[]{"AMOUNT"}, new String[]{receivedAmount + "/" + totalAmount});
-                List<Component> loreComponents = List.of(Component.text(ChatColor.translateAlternateColorCodes('&', "&8" + amountMessage)));
+                List<Component> loreComponents = List.of(Component.text(amountMessage));
                 itemMetaWithLore.lore(loreComponents);
                 itemWithLore.setItemMeta(itemMetaWithLore);
                 gui.setItem(position, itemWithLore);
