@@ -153,6 +153,8 @@ Custom:
   Item: feather
 Commands:
   Item: bookshelf
+mcMMO:
+  Item: iron_pickaxe
 
 #======================================================================================================================#
 #                                                  FUTURE PAREMETERS                                                   #

@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>25</java.version>
-        <revision>7.4.0</revision>
+        <revision>7.4.1</revision>
         <mockito.version>5.23.0</mockito.version>
         <jupiter.version>6.1.0</jupiter.version>
         <dagger.version>2.59.2</dagger.version>
@@ -43,6 +43,10 @@
         <repository>
             <id>jitpack-repo</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
     </repositories>
 
@@ -156,6 +160,12 @@
                 <version>33.6.0-jre</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.gmail.nossr50.mcMMO</groupId>
+                <artifactId>mcMMO</artifactId>
+                <version>2.2.031</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -226,6 +236,14 @@
                 <groupId>io.github.greymagic27</groupId>
                 <artifactId>McTestServer</artifactId>
                 <version>1.0.6</version>
+                <configuration>
+                    <additionalPlugins>
+                        <plugin>
+                            <pluginName>mcMMO.jar</pluginName>
+                            <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/263/artifact/target/mcMMO.jar</pluginUrl>
+                        </plugin>
+                    </additionalPlugins>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
