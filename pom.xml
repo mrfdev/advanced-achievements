@@ -45,8 +45,8 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>codemc</id>
-            <url>https://repo.codemc.io/repository/maven-public/</url>
+            <id>mcmmo</id>
+            <url>https://nexus.neetgames.com/repository/maven-public</url>
         </repository>
     </repositories>
 
