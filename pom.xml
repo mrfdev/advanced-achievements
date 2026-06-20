@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>25</java.version>
-        <revision>7.4.1</revision>
+        <revision>7.4.2</revision>
         <mockito.version>5.23.0</mockito.version>
         <jupiter.version>6.1.0</jupiter.version>
         <dagger.version>2.59.2</dagger.version>
