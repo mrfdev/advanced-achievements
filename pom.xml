@@ -85,13 +85,13 @@
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>Jobs</artifactId>
-                <version>v5.2.6.2</version>
+                <version>-b3a4d77e0a-1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.Zrips</groupId>
                 <artifactId>CMI-API</artifactId>
-                <version>9.7.14.3</version>
+                <version>9.8.6.4</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -240,7 +240,7 @@
                     <additionalPlugins>
                         <plugin>
                             <pluginName>mcMMO.jar</pluginName>
-                            <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/263/artifact/target/mcMMO.jar</pluginUrl>
+                            <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/318/artifact/target/mcMMO.jar</pluginUrl>
                         </plugin>
                     </additionalPlugins>
                 </configuration>
