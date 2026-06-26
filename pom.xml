@@ -18,7 +18,7 @@
         <revision>7.4.2</revision>
         <mockito.version>5.23.0</mockito.version>
         <jupiter.version>6.1.0</jupiter.version>
-        <dagger.version>2.59.2</dagger.version>
+        <dagger.version>2.60</dagger.version>
         <adventure.version>5.1.1</adventure.version>
     </properties>
 
