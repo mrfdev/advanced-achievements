@@ -931,7 +931,7 @@ ConsumedPotions:
     Goal: Drink 100 potions.
     Message: Drinking weird beverages all the time...
     Name: consumedpotions_100
-    DisplayName: Alcoholic
+    DisplayName: Potioneer
     Type: normal
 PlayedTime:
   1:
