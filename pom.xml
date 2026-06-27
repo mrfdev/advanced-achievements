@@ -19,7 +19,7 @@
         <mockito.version>5.23.0</mockito.version>
         <jupiter.version>6.1.0</jupiter.version>
         <dagger.version>2.60</dagger.version>
-        <adventure.version>5.1.1</adventure.version>
+        <adventure.version>5.2.0</adventure.version>
     </properties>
 
     <modules>
