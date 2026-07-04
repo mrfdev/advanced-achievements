@@ -240,7 +240,7 @@
                     <additionalPlugins>
                         <plugin>
                             <pluginName>mcMMO.jar</pluginName>
-                            <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/318/artifact/target/mcMMO.jar</pluginUrl>
+                            <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/lastBuild/artifact/target/mcMMO.jar</pluginUrl>
                         </plugin>
                     </additionalPlugins>
                 </configuration>
