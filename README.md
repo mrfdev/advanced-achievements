@@ -1,4 +1,3 @@
-[![CodeQL](https://github.com/mrfdev/advanced-achievements/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/mrfdev/advanced-achievements/actions/workflows/github-code-scanning/codeql)
 [![Java CI with Maven](https://github.com/mrfdev/advanced-achievements/actions/workflows/maven.yml/badge.svg)](https://github.com/mrfdev/advanced-achievements/actions/workflows/maven.yml)
 
 <p >
