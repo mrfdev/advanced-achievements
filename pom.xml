@@ -235,7 +235,7 @@
             <plugin>
                 <groupId>io.github.greymagic27</groupId>
                 <artifactId>McTestServer</artifactId>
-                <version>1.0.7</version>
+                <version>1.0.8</version>
                 <configuration>
                     <additionalPlugins>
                         <plugin>
@@ -243,6 +243,9 @@
                             <pluginUrl>https://popicraft.net/jenkins/job/mcMMO/lastBuild/artifact/target/mcMMO.jar</pluginUrl>
                         </plugin>
                     </additionalPlugins>
+                    <serverProperties>
+                        <property>debug=true</property>
+                    </serverProperties>
                 </configuration>
             </plugin>
             <plugin>
