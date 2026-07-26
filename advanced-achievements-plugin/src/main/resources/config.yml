@@ -1217,6 +1217,13 @@ mcMMO:
       Name: tridents_lvl_25
       DisplayName: Neptune has asked for his trident back
       Type: normal
+  spears:
+    25:
+      Goal: Reach spears level 25
+      Message: You've reached spears level 25!
+      Name: spears_lvl_25
+      DisplayName: Aha! Long range poking sick
+      Type: normal
   unarmed:
     25:
       Goal: Reach unarmed level 25

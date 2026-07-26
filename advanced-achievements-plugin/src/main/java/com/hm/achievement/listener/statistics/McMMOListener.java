@@ -37,8 +37,9 @@ public class McMMOListener extends AbstractListener implements Listener {
     public void onSkillLevelUp(@NonNull McMMOPlayerLevelUpEvent event) {
         Player player = event.getPlayer();
         String skillName = event.getSkill().name().toLowerCase(Locale.ENGLISH);
-        if (!player.hasPermission(category.toChildPermName(skillName))) {
-            LOGGER.info("Player " + player.getName() + " missing permission for skill " + skillName);
+        String permission = category.toChildPermName(skillName);
+        if (!player.hasPermission(permission)) {
+            LOGGER.info("Player " + player.getName() + " missing permission " + permission + " for skill " + skillName);
             return;
         }
         Set<String> subcategories = new HashSet<>();
