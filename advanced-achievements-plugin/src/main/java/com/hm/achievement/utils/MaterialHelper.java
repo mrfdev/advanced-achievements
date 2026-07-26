@@ -52,7 +52,6 @@ public class MaterialHelper {
             return defaultMaterial;
         }
         Material material = Material.matchMaterial(name);
-        if (material == null) material = Material.matchMaterial(name, true);
         if (material == null) {
             logger.warning("Material \"" + name + "\" used in " + usageLocation + " is invalid. Have you spelt the name correctly and is it available for your Minecraft version?");
             material = defaultMaterial;
