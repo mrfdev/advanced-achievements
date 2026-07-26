@@ -49,7 +49,6 @@ public class ConfigurationParser {
     private final Set<Category> disabledCategories;
     private final StringBuilder pluginHeader;
     private final Logger logger;
-    private final int serverVersion;
     private final YamlUpdater yamlUpdater;
     private final AdvancedAchievements plugin;
     private final RewardParser rewardParser;
@@ -63,7 +62,6 @@ public class ConfigurationParser {
         this.disabledCategories = disabledCategories;
         this.pluginHeader = pluginHeader;
         this.logger = logger;
-        this.serverVersion = serverVersion;
         this.yamlUpdater = yamlUpdater;
         this.plugin = plugin;
         this.rewardParser = rewardParser;
@@ -169,12 +167,6 @@ public class ConfigurationParser {
             disabledCategories.add(MultipleAchievements.JOBSREBORN);
             logger.warning("Overriding configuration: disabling JobsReborn category.");
             logger.warning("Ensure you have placed JobsReborn in your plugins folder or add JobsReborn to the DisabledCategories list in config.yml.");
-        }
-        // Raids introduced in 1.14.
-        if (!disabledCategories.contains(NormalAchievements.RAIDSWON) && serverVersion < 14) {
-            disabledCategories.add(NormalAchievements.RAIDSWON);
-            logger.warning("Overriding configuration: disabling RaidsWon category.");
-            logger.warning("Raids are not available in your server version, please add RaidsWon to the DisabledCategories list in config.yml.");
         }
         if (!disabledCategories.contains(MultipleAchievements.MCMMO) && !Bukkit.getPluginManager().isPluginEnabled("mcMMO")) {
             disabledCategories.add(MultipleAchievements.MCMMO);
