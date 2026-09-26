@@ -102,7 +102,7 @@ ItemDrops:
 ItemPickups:
   Item: chest
 HoePlowings:
-  Item: grass_path
+  Item: dirt_path
 Fertilising:
   Item: bone_meal
 Taming:
