@@ -37,6 +37,10 @@
             <url>https://repo.extendedclip.com/releases</url>
         </repository>
         <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
@@ -65,9 +69,9 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>io.papermc.paper</groupId>
-                <artifactId>paper-api</artifactId>
-                <version>[26.3.build,)</version>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>26.3-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -88,27 +92,6 @@
                 <version>-b3a4d77e0a-1</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.Zrips</groupId>
-                <artifactId>CMI-API</artifactId>
-                <version>9.8.6.4</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.essentialsx</groupId>
-                <artifactId>EssentialsX</artifactId>
-                <version>2.21.2</version>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.papermc</groupId>
-                        <artifactId>paperlib</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.papermc.paper</groupId>
-                        <artifactId>paper-api</artifactId>
-                    </exclusion>
-                </exclusions>
             <dependency>
                 <groupId>me.clip</groupId>
                 <artifactId>placeholderapi</artifactId>
@@ -173,6 +156,12 @@
                 <groupId>com.gmail.nossr50.mcMMO</groupId>
                 <artifactId>mcMMO</artifactId>
                 <version>2.3.001</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.md-5</groupId>
+                <artifactId>bungeecord-chat</artifactId>
+                <version>1.21-R0.4</version>
                 <scope>provided</scope>
             </dependency>
 
