@@ -1,6 +1,7 @@
 package com.hm.achievement.utils;
 
 import com.hm.achievement.AdvancedAchievements;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -57,7 +57,6 @@ public class AfkTracker implements Listener {
 
     @EventHandler
     public void onPlayerMove(final @NonNull PlayerMoveEvent event) {
-        if (event.getTo() == null) return;
         if (event.getFrom().getBlockX() != event.getTo().getBlockX()
                 || event.getFrom().getBlockY() != event.getTo().getBlockY()
                 || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
@@ -66,7 +65,7 @@ public class AfkTracker implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(final @NonNull AsyncPlayerChatEvent event) {
+    public void onPlayerChat(final @NonNull AsyncChatEvent event) {
         recordActivity(event.getPlayer());
     }
 
